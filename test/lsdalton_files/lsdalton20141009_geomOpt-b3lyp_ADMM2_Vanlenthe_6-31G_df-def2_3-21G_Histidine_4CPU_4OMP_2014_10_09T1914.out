@@ -1,0 +1,451 @@
+  
+     ******************************************************************    
+     **********  LSDALTON - An electronic structure program  **********    
+     ******************************************************************    
+  
+  
+      This is output from LSDALTON 2014.0
+  
+  
+      IF RESULTS OBTAINED WITH THIS CODE ARE PUBLISHED,
+      THE FOLLOWING PAPER SHOULD BE CITED:
+      
+      K. Aidas, C. Angeli, K. L. Bak, V. Bakken, R. Bast,
+      L. Boman, O. Christiansen, R. Cimiraglia, S. Coriani,
+      P. Dahle, E. K. Dalskov, U. Ekstroem, T. Enevoldsen,
+      J. J. Eriksen, P. Ettenhuber, B. Fernandez,
+      L. Ferrighi, H. Fliegl, L. Frediani, K. Hald,
+      A. Halkier, C. Haettig, H. Heiberg,
+      T. Helgaker, A. C. Hennum, H. Hettema,
+      E. Hjertenaes, S. Hoest, I.-M. Hoeyvik,
+      M. F. Iozzi, B. Jansik, H. J. Aa. Jensen,
+      D. Jonsson, P. Joergensen, J. Kauczor,
+      S. Kirpekar, T. Kjaergaard, W. Klopper,
+      S. Knecht, R. Kobayashi, H. Koch, J. Kongsted,
+      A. Krapp, K. Kristensen, A. Ligabue,
+      O. B. Lutnaes, J. I. Melo, K. V. Mikkelsen, R. H. Myhre,
+      C. Neiss, C. B. Nielsen, P. Norman,
+      J. Olsen, J. M. H. Olsen, A. Osted,
+      M. J. Packer, F. Pawlowski, T. B. Pedersen,
+      P. F. Provasi, S. Reine, Z. Rinkevicius,
+      T. A. Ruden, K. Ruud, V. Rybkin,
+      P. Salek, C. C. M. Samson, A. Sanchez de Meras,
+      T. Saue, S. P. A. Sauer, B. Schimmelpfennig,
+      K. Sneskov, A. H. Steindal, K. O. Sylvester-Hvid,
+      P. R. Taylor, A. M. Teale, E. I. Tellgren,
+      D. P. Tew, A. J. Thorvaldsen, L. Thoegersen,
+      O. Vahtras, M. A. Watson, D. J. D. Wilson,
+      M. Ziolkowski, and H. AAgren,
+      "The Dalton quantum chemistry program system",
+      WIREs Comput. Mol. Sci. (doi: 10.1002/wcms.1172)
+  
+  
+                                                
+      LSDALTON authors in alphabetical order (main contribution(s) in parenthesis)
+      ----------------------------------------------------------------------------
+      Vebjoern Bakken,         University of Oslo,        Norway    (geometry optimizer)
+      Radovan Bast,            KTH Stockholm,             Sweden    (CMake, Testing)
+      Sonia Coriani,           University of Trieste,     Italy     (response)
+      Patrick Ettenhuber,      Aarhus University,         Denmark   (CCSD)
+      Trygve Helgaker,         University of Oslo,        Norway    (supervision)
+      Stinne Hoest,            Aarhus University,         Denmark   (SCF optimization)
+      Ida-Marie Hoeyvik,       Aarhus University,         Denmark   (orbital localization, SCF optimization)
+      Robert Izsak,            University of Oslo,        Norway    (ADMM)
+      Branislav Jansik,        Aarhus University,         Denmark   (trilevel, orbital localization)
+      Poul Joergensen,         Aarhus University,         Denmark   (supervision)
+      Joanna Kauczor,          Aarhus University,         Denmark   (response solver)
+      Thomas Kjaergaard,       Aarhus University,         Denmark   (response, integrals)
+      Andreas Krapp,           University of Oslo,        Norway    (FMM, dispersion-corrected DFT)
+      Kasper Kristensen,       Aarhus University,         Denmark   (response, DEC)
+      Patrick Merlot,          University of Oslo,        Norway    (ADMM)
+      Cecilie Nygaard,         Aarhus University,         Denmark   (SOEO)
+      Jeppe Olsen,             Aarhus University,         Denmark   (supervision)
+      Simen Reine,             University of Oslo,        Norway    (integrals, geometry optimizer)
+      Vladimir Rybkin,         University of Oslo,        Norway    (geometry optimizer, dynamics)
+      Pawel Salek,             KTH Stockholm,             Sweden    (FMM, DFT functionals)
+      Andrew M. Teale,         University of Nottingham   England   (E-coefficients)
+      Erik Tellgren,           University of Oslo,        Norway    (density fitting, E-coefficients)
+      Andreas J. Thorvaldsen,  University of Tromsoe,     Norway    (response)
+      Lea Thoegersen,          Aarhus University,         Denmark   (SCF optimization)
+      Mark Watson,             University of Oslo,        Norway    (FMM)
+      Marcin Ziolkowski,       Aarhus University,         Denmark   (DEC)
+  
+  
+     NOTE:
+      
+     This is an experimental code for the evaluation of molecular
+     energies and properties using various electronic structure models.
+     The authors accept no responsibility for the performance of the code or
+     for the correctness of the results.
+      
+     The code (in whole or part) is provided under a licence and
+     is not to be reproduced for further distribution without
+     the written permission of the authors or their representatives.
+      
+     See the home page "http://daltonprogram.org"
+     for further information.
+  
+  
+   This is an MPI run using       4 processes.
+ Who compiled             | patrime
+ Host                     | login-0-1.local
+ System                   | Linux-2.6.32-431.20.3.el6.x86_64
+ CMake generator          | Unix Makefiles
+ Processor                | x86_64
+ 64-bit integers          | OFF
+ MPI                      | ON
+ Fortran compiler         | /cluster/software/VERSIONS/openmpi.intel-1.6.5/bin
+                          | /mpif90
+ Fortran compiler version | ifort (IFORT) 14.0.2 20140120
+ C compiler               | /cluster/software/VERSIONS/openmpi.intel-1.6.5/bin
+                          | /mpicc
+ C compiler version       | icc (ICC) 14.0.2 20140120
+ C++ compiler             | /cluster/software/VERSIONS/openmpi.intel-1.6.5/bin
+                          | /mpicxx
+ C++ compiler version     | unknown
+ BLAS                     | -Wl,--start-group;/cluster/software/VERSIONS/intel
+                          | -2013.sp1.2/mkl/lib/intel64/libmkl_scalapack_lp64.
+                          | so;/cluster/software/VERSIONS/intel-2013.sp1.2/mkl
+                          | /lib/intel64/libmkl_intel_lp64.so;/cluster/softwar
+                          | e/VERSIONS/intel-2013.sp1.2/mkl/lib/intel64/libmkl
+                          | _intel_thread.so;/cluster/software/VERSIONS/intel-
+                          | 2013.sp1.2/mkl/lib/intel64/libmkl_core.so;/cluster
+                          | /software/VERSIONS/intel-2013.sp1.2/mkl/lib/intel6
+                          | 4/libmkl_blacs_intelmpi_lp64.so;/usr/lib64/libpthr
+                          | ead.so;/usr/lib64/libm.so;-openmp;-Wl,--end-group
+ LAPACK                   | -Wl,--start-group;/cluster/software/VERSIONS/intel
+                          | -2013.sp1.2/mkl/lib/intel64/libmkl_lapack95_lp64.a
+                          | ;/cluster/software/VERSIONS/intel-2013.sp1.2/mkl/l
+                          | ib/intel64/libmkl_intel_lp64.so;-openmp;-Wl,--end-
+                          | group
+ Static linking           | OFF
+ Last Git revision        | 114d58c507b262f6c79267477c0b0fb28b22e5b1
+ Configuration time       | 2014-10-09 14:29:47.252751
+ Default 1st order method will be used: BFGS update.
+ Optimization will be performed in redundant internal coordinates.
+ Model Hessian will be used as initial Hessian.
+ The model Hessian    parameters of Roland Lindh will be used.
+ 
+ Current Hessian will not be written out to DALTON.HES.
+
+ 
+ Trust region method will be used to control step (default).
+ 
+
+ New thresholding scheme for geometry convergence will be used
+ -------------------------------------------------------------
+ Root-mean-square gradient threshold set to    :      1.00D-04
+ Maximum gradient element threshold set to     :      5.00D-04
+ Root-mean-square step threshold set to        :      3.00D-04
+ Maximum step element threshold set to         :      1.50D-03
+
+Start simulation
+     Date and time (Linux)  : Thu Oct  9 19:43:24 2014
+     Host name              : compute-1-4.local                       
+                      
+ -----------------------------------------
+          PRINTING THE MOLECULE.INP FILE 
+ -----------------------------------------
+                      
+  BASIS                                   
+  6-31G Aux=df-def2 ADMM=3-21G            
+  geometry optimized with ADMM2 using 6-31
+  Output is in Bohr                       
+  Atomtypes=4    Charge=0   Nosymmetry                        
+  Charge=1.00   Atoms=9                                       
+  H         -2.17356347      1.90522337      0.25455721       
+  H         -3.75123607     -0.45217796      5.47452789       
+  H         -2.01838203      3.45689709      4.42293912       
+  H          0.57566832      1.67201802      4.68768673       
+  H         -0.23802027     -2.23988209     -0.80154881       
+  H          0.63072116     -2.70463484      2.37334503       
+  H          5.35514085     -0.69790796      3.77725447       
+  H          6.58755095      3.88494216     -2.59138922       
+  H          2.17043033      1.91921391     -3.03488365       
+  Charge=6.00   Atoms=6                                       
+  C         -4.24934301     -1.10402006      1.98975136       
+  C          4.96884265      0.25477395      2.01772251       
+  C          5.72157696      2.63568946     -1.23773826       
+  C         -1.83317562      0.50674782      1.74863024       
+  C          0.37525319     -1.25493030      0.91450618       
+  C          2.82257191      0.09684848      0.53706767       
+  Charge=7.00   Atoms=3                                       
+  N         -1.28625882      1.69450024      4.21200748       
+  N          6.76332980      1.83602818      0.90136254       
+  N          3.32602362      1.64162689     -1.54496487       
+  Charge=8.00   Atoms=2                                       
+  O         -5.33156510     -2.03936977      0.15402194       
+  O         -4.99044067     -1.45108413      4.42837147       
+                      
+ -----------------------------------------
+          PRINTING THE LSDALTON.INP FILE 
+ -----------------------------------------
+                      
+  **GENERAL                                                                                           
+  .SCALAPACK                                                                                          
+  .TIME                                                                                               
+  .NOGCBASIS                                                                                          
+  **OPTIMIZE                                                                                          
+  .MAX IT                                                                                             
+  1000                                                                                                
+  .LOOSE                                                                                              
+  .REDINT                                                                                             
+  .INIMOD                                                                                             
+  **INTEGRALS                                                                                         
+  .THRESH                                                                                             
+  1.0D-12                                                                                             
+  .DENSFIT                                                                                            
+  .ADMM                                                                                               
+  **WAVE FUNCTIONS                                                                                    
+  .DFT                                                                                                
+  B3LYP                                                                                               
+  *DENSOPT                                                                                            
+  .MAXIT                                                                                              
+  500                                                                                                 
+  .VanLenthe                                                                                          
+  *DFT INPUT                                                                                          
+  .GRID5                                                                                              
+  *END OF INPUT                                                                                       
+  
+  MOLPRINT IS SET TO       0
+ 
+ 
+ Integrals calculated using            4  fragments
+ BASISSETLIBRARY  : REGULAR  
+   
+BASISSETLIBRARY
+ Number of Basisset           1
+ BASISSET:  6-31G                                             
+  CHARGES:    1.0000    6.0000    7.0000    8.0000
+                      
+ BASISSETLIBRARY  : AUXILIARY
+   
+BASISSETLIBRARY
+ Number of Basisset           1
+ BASISSET:  df-def2                                           
+  CHARGES:    1.0000    6.0000    7.0000    8.0000
+                      
+ BASISSETLIBRARY  : ADMM     
+   
+BASISSETLIBRARY
+ Number of Basisset           1
+ BASISSET:  3-21G                                             
+  CHARGES:    1.0000    6.0000    7.0000    8.0000
+                      
+   
+  CALLING BUILD BASIS WITH DEFAULT REGULAR   BASIS
+   
+ OPENING FILE
+ /cluster/home/patrime/DALTON/2014_09_07T2354_src/build-scalapack/basis/6-31G
+   
+  CALLING BUILD BASIS WITH DEFAULT AUXILIARY BASIS
+   
+ OPENING FILE
+ /cluster/home/patrime/DALTON/2014_09_07T2354_src/build-scalapack/basis/df-def2
+   
+  CALLING BUILD BASIS WITH DEFAULT ADMM      BASIS
+   
+ OPENING FILE
+ /cluster/home/patrime/DALTON/2014_09_07T2354_src/build-scalapack/basis/3-21G
+                      
+THE MOLECULE
+ --------------------------------------------------------------------
+ Molecular Charge                    :    0.0000
+    Regular basisfunctions             :      117
+    Auxiliary basisfunctions           :      997
+    ADMM basisfunctions                :      117
+    Valence basisfunctions             :        0
+    Primitive Regular basisfunctions   :      278
+    Primitive Auxiliary basisfunctions :     1247
+    Primitive ADMM basisfunctions      :      192
+    Primitive Valence basisfunctions   :        0
+ --------------------------------------------------------------------
+                      
+                      
+ --------------------------------------------------------------------
+  atom  charge  Atomicbasis      Auxiliarybasisset   Phantom   nPrimREG  nContREG
+ --------------------------------------------------------------------
+     1   1.000  6-31G         df-def2                 F              4           2
+     2   1.000  6-31G         df-def2                 F              4           2
+     3   1.000  6-31G         df-def2                 F              4           2
+     4   1.000  6-31G         df-def2                 F              4           2
+     5   1.000  6-31G         df-def2                 F              4           2
+     6   1.000  6-31G         df-def2                 F              4           2
+     7   1.000  6-31G         df-def2                 F              4           2
+     8   1.000  6-31G         df-def2                 F              4           2
+     9   1.000  6-31G         df-def2                 F              4           2
+    10   6.000  6-31G         df-def2                 F             22           9
+    11   6.000  6-31G         df-def2                 F             22           9
+    12   6.000  6-31G         df-def2                 F             22           9
+    13   6.000  6-31G         df-def2                 F             22           9
+    14   6.000  6-31G         df-def2                 F             22           9
+    15   6.000  6-31G         df-def2                 F             22           9
+    16   7.000  6-31G         df-def2                 F             22           9
+    17   7.000  6-31G         df-def2                 F             22           9
+    18   7.000  6-31G         df-def2                 F             22           9
+    19   8.000  6-31G         df-def2                 F             22           9
+    20   8.000  6-31G         df-def2                 F             22           9
+                      
+ The cartesian centers in Atomic units. 
+  ATOM  NAME  ISOTOPE            X                 Y                 Z     
+     1  H           1       -2.17356347        1.90522337        0.25455721
+     2  H           1       -3.75123607       -0.45217796        5.47452789
+     3  H           1       -2.01838203        3.45689709        4.42293912
+     4  H           1        0.57566832        1.67201802        4.68768673
+     5  H           1       -0.23802027       -2.23988209       -0.80154881
+     6  H           1        0.63072116       -2.70463484        2.37334503
+     7  H           1        5.35514085       -0.69790796        3.77725447
+     8  H           1        6.58755095        3.88494216       -2.59138922
+     9  H           1        2.17043033        1.91921391       -3.03488365
+    10  C           1       -4.24934301       -1.10402006        1.98975136
+    11  C           1        4.96884265        0.25477395        2.01772251
+    12  C           1        5.72157696        2.63568946       -1.23773826
+    13  C           1       -1.83317562        0.50674782        1.74863024
+    14  C           1        0.37525319       -1.25493030        0.91450618
+    15  C           1        2.82257191        0.09684848        0.53706767
+    16  N           1       -1.28625882        1.69450024        4.21200748
+    17  N           1        6.76332980        1.83602818        0.90136254
+    18  N           1        3.32602362        1.64162689       -1.54496487
+    19  O           1       -5.33156510       -2.03936977        0.15402194
+    20  O           1       -4.99044067       -1.45108413        4.42837147
+                      
+                      
+Atoms and basis sets
+  Total number of atoms        :     20
+  THE  REGULAR   is on R =   1
+---------------------------------------------------------------------
+  atom label  charge basisset                prim     cont   basis
+---------------------------------------------------------------------
+      1 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      2 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      3 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      4 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      5 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      6 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      7 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      8 H      1.000 6-31G                      4        2 [4s|2s]                                      
+      9 H      1.000 6-31G                      4        2 [4s|2s]                                      
+     10 C      6.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     11 C      6.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     12 C      6.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     13 C      6.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     14 C      6.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     15 C      6.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     16 N      7.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     17 N      7.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     18 N      7.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     19 O      8.000 6-31G                     22        9 [10s4p|3s2p]                                 
+     20 O      8.000 6-31G                     22        9 [10s4p|3s2p]                                 
+---------------------------------------------------------------------
+total         82                              278      117
+---------------------------------------------------------------------
+                      
+                      
+Atoms and basis sets
+  Total number of atoms        :     20
+  THE  AUXILIARY is on R =   2
+---------------------------------------------------------------------
+  atom label  charge basisset                prim     cont   basis
+---------------------------------------------------------------------
+      1 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      2 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      3 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      4 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      5 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      6 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      7 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      8 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+      9 H      1.000 df-def2                   20       18 [4s2p2d|2s2p2d]                              
+     10 C      6.000 df-def2                   97       75 [14s10p6d2f1g|10s8p5d1f1g]                   
+     11 C      6.000 df-def2                   97       75 [14s10p6d2f1g|10s8p5d1f1g]                   
+     12 C      6.000 df-def2                   97       75 [14s10p6d2f1g|10s8p5d1f1g]                   
+     13 C      6.000 df-def2                   97       75 [14s10p6d2f1g|10s8p5d1f1g]                   
+     14 C      6.000 df-def2                   97       75 [14s10p6d2f1g|10s8p5d1f1g]                   
+     15 C      6.000 df-def2                   97       75 [14s10p6d2f1g|10s8p5d1f1g]                   
+     16 N      7.000 df-def2                   97       77 [14s10p6d2f1g|10s8p4d2f1g]                   
+     17 N      7.000 df-def2                   97       77 [14s10p6d2f1g|10s8p4d2f1g]                   
+     18 N      7.000 df-def2                   97       77 [14s10p6d2f1g|10s8p4d2f1g]                   
+     19 O      8.000 df-def2                   97       77 [14s10p6d2f1g|10s8p4d2f1g]                   
+     20 O      8.000 df-def2                   97       77 [14s10p6d2f1g|10s8p4d2f1g]                   
+---------------------------------------------------------------------
+total         82                             1247      997
+---------------------------------------------------------------------
+                      
+                      
+Atoms and basis sets
+  Total number of atoms        :     20
+  THE  ADMM      is on R =   7
+---------------------------------------------------------------------
+  atom label  charge basisset                prim     cont   basis
+---------------------------------------------------------------------
+      1 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      2 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      3 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      4 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      5 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      6 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      7 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      8 H      1.000 3-21G                      3        2 [3s|2s]                                      
+      9 H      1.000 3-21G                      3        2 [3s|2s]                                      
+     10 C      6.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     11 C      6.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     12 C      6.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     13 C      6.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     14 C      6.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     15 C      6.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     16 N      7.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     17 N      7.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     18 N      7.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     19 O      8.000 3-21G                     15        9 [6s3p|3s2p]                                  
+     20 O      8.000 3-21G                     15        9 [6s3p|3s2p]                                  
+---------------------------------------------------------------------
+total         82                              192      117
+---------------------------------------------------------------------
+                      
+ Configuration:
+ ==============
+    This is an OpenMP calculation using   4 threads.
+    This is an MPI calculation using   4 processors
+ 
+     This is a DFT calculation of type: B3LYP
+ Weighted mixed functional:
+                       VWN:    0.19000
+                       LYP:    0.81000
+                     Becke:    0.72000
+                    Slater:    0.80000
+   
+  The Exchange-Correlation Grid specifications:
+  Radial Quadrature : Treutler-Ahlrichs M4-T2 scheme
+                      (J. Chem. Phys. (1995) 102, 346).
+                      Implies also that the angular integration quality becomes Z-dependant
+  Space partitioning: Becke partitioning scheme with atomic size correction
+                      J. Chem. Phys. (1988) vol 88 page 2547
+                      Combined with a blockwise handling of grid points
+                      J. Chem. Phys. (2004) vol 121, page 2915.
+                      Useful for large molecules.
+ 
+  We use grid pruning according to Mol. Phys. (1993) vol 78 page 997
+ 
+     DFT LSint Radial integration threshold:   0.2154D-16
+     DFT LSint integration order range     :   [  5:  47]
+     Hardness of the partioning function   :   3
+     DFT LSint screening thresholds        :   0.10D-08   0.20D-09   0.20D-11
+     Threshold for number of electrons     :   0.10D-02
+     The Exact Exchange Factor             : 0.2000D+00
+ 
+Density subspace min. method    : Van Lenthe modified DIIS
+Density optimization : Diagonalization                    
+with Van Lenthe fixed level shifts      
+ 
+ Maximum size of Fock/density queue in averaging:           7
+ 
+Convergence threshold for gradient:   0.10E-03
+We perform the calculation in the standard input basis
+ 
+    The Overall Screening threshold is set to              :1.0000E-12
+    The Screening threshold used for Coulomb               :1.0000E-14
+    The Screening threshold used for Exchange              :1.0000E-12
+    The Screening threshold used for One-electron operators:1.0000E-19
+    This is an MPI calculation using   4 processors combinded
+    with SCALAPACK for memory distribution and parallelization.
+Matrix type: mtype_scalapack

@@ -1,1 +1,1 @@
-TO parse input and ouput LSDALTON files 
+To parse input and ouput LSDALTON files 
