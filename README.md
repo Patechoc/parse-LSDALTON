@@ -11,3 +11,8 @@ Directory structure:
 You can just run the tests like so:
 $ cd my_project
 $ python -m unittest test_read_LSDALTON_output
+
+or
+$ python -m unittest discover -v
+
+(see https://docs.python.org/2/library/unittest.html for more information about unit testing)

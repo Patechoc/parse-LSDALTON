@@ -23,6 +23,7 @@ def get_info_from_gradient(grad=[]):
     absGrad = np.absolute(matGrad)
     nbAtom = len(absGrad)
     obj = {}
+    obj['matGrad'] = matGrad
     obj['maxGrad'] = np.amax(absGrad)
     obj['minGrad'] = np.amin(absGrad)
     obj['rmsGrad'] = math.sqrt((sum( [x*x for x in absGrad.flatten()]))/(3.*nbAtom))
