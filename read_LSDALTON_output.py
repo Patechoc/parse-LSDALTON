@@ -19,11 +19,12 @@ def get_info_from_gradient(grad=[]):
     Keyword arguments:
     grad -- the molecular gradient as a list of x,y,z components for each atom (symbol)
     """
-    matGrad = np.array([[float(line[key]) for key in ['x','y','z']] for line in grad])
+    matGrad  = np.array([[float(line[key]) for key in ['x','y','z']] for line in grad])
+    gradient = [[ line['atom'], np.array([float(line[key]) for key in ['x','y','z']]) ] for line in grad]
     absGrad = np.absolute(matGrad)
     nbAtom = len(absGrad)
     obj = {}
-    obj['matGrad'] = matGrad
+    obj['gradient'] = gradient
     obj['maxGrad'] = np.amax(absGrad)
     obj['minGrad'] = np.amin(absGrad)
     obj['rmsGrad'] = math.sqrt((sum( [x*x for x in absGrad.flatten()]))/(3.*nbAtom))
@@ -60,8 +61,7 @@ def get_last_molecular_gradient(path_to_file=""):
 	
 	# reBuild the gradient matrix
 	# using dict comprehension syntax version
-	grad = [ {key: value for (key, value) in zip(["atom","x","y","z"], line.split())} for line in out]
-	#print grad
+	grad = np.array([ {key: value for (key, value) in zip(["atom","x","y","z"], line.split())} for line in out])
 	return grad
 
 
