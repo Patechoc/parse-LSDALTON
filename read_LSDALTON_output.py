@@ -1,6 +1,5 @@
-# ============================================================================ #
-# Imports
-# ============================================================================ #
+#!/usr/bin/env python 
+
 import sys, os, re, math
 import numpy as np
 #from glob import glob
@@ -14,13 +13,22 @@ import subprocess as subproc
     #data = [map(int, row) for row in csv.reader(f)]
 
 
-def get_info_from_gradient(grad=[]):
+def get_infoGradient(path_to_file=""):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
     Keyword arguments:
     grad -- the molecular gradient as a list of x,y,z components for each atom (symbol)
     """
-    matGrad  = np.array([[float(line[key]) for key in ['x','y','z']] for line in grad])
-    gradient = [[ line['atom'], np.array([float(line[key]) for key in ['x','y','z']]) ] for line in grad]
+    gradString = get_last_molecular_gradient(path_to_file)
+    obj = get_infoGradient_from_gradString(gradString)
+    return obj
+    
+def get_infoGradient_from_gradString(gradString=[]):
+    """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
+    Keyword arguments:
+    gradString -- the molecular gradient as a list of x,y,z components for each atom (symbol)
+    """
+    matGrad  = np.array([[float(line[key]) for key in ['x','y','z']] for line in gradString])
+    gradient = [[ line['atom'], np.array([float(line[key]) for key in ['x','y','z']]) ] for line in gradString]
     absGrad = np.absolute(matGrad)
     nbAtom = len(absGrad)
     obj = {}
@@ -124,16 +132,11 @@ class LSDALTONinput(object):
 # Testing
 # ============================================================================ #
 if __name__ == "__main__":
-	path_to_file = "./files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
-	#path_to_file = "./files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
+    path_to_file = "./files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
+    #path_to_file = "./files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
 	
-	print path_to_file
-	grad = get_last_molecular_gradient(path_to_file)
-        get_info_from_gradient(grad)
-    #rep = "./files/lsdalton_files/"
-    #listFiles = [filename for filename in os.listdir(rep) if filename.endswith(".out")]
-    #print 'Files present in', rep
-    #print ''.join(f+"\n" for f in listFiles)
-    ##print get_MOL_string(filename)
-    ##print get_DAL_string(filename)
+    grad = get_last_molecular_gradient(path_to_file)
+    gradInfo = get_infoGradient_from_gradString(grad)
+    print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
+    print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python 
+
 import unittest
 import random
 import read_LSDALTON_output as readLS
@@ -60,8 +62,8 @@ class molecular_gradient(unittest.TestCase):
                    {'y': '-0.0000333703', 'x': '-0.0000222115', 'z': '-0.0000752538', 'atom': 'O'}]
         [ [self.assertEqual(elems[0][key], elems[1][key]) for key in ['atom','x','y','z']] for elems in zip(self.grad,grad_01)  ]
 
-    def test_get_info_from_gradient(self):
-        obj = readLS.get_info_from_gradient(self.grad)
+    def test_get_infoGradient_from_gradString(self):
+        obj = readLS.get_infoGradient_from_gradString(self.grad)
         obj_stored = {'minGrad': 1.4501999999999999e-06, 'maxGrad': 7.8052699999999999e-05, 'rmsGrad': 2.937091073023046e-05}
         [self.assertEqual(obj[key], obj_stored[key]) for key in ['minGrad','maxGrad','rmsGrad']]
         grad_stored = [['H', np.array([ -1.06785000e-05,   1.45020000e-06,  -8.52600000e-06])],
