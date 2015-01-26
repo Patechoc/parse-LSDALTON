@@ -12,6 +12,63 @@ import subprocess as subproc
 #with open('input.txt') ad f:
     #data = [map(int, row) for row in csv.reader(f)]
 
+# ============================================================================ #
+# Class: DAL_input
+# ============================================================================ #
+class DAL_input(object):
+    def __init__(self, molecule, inputKeywords, nb_procs = 1, nb_threads = 1, revisionGIT = None):
+#    def __init__(self, jobs, time, pause = 60):
+        self.ismolecule = molecule
+        self.inputKeywords = inputKeywords
+        self.nb_proc = nb_proc
+        self.nb_threads = nb_threads
+        self.revisionGIT = revisionGIT
+
+
+# ============================================================================ #
+# Class: LSDALTONinput
+# ============================================================================ #
+class LSDALTONinput(object):
+    def __init__(self, molecule, inputKeywords, nb_procs = 1, nb_threads = 1, revisionGIT = None):
+#    def __init__(self, jobs, time, pause = 60):
+        self.molecule = molecule
+        self.inputKeywords = inputKeywords
+        self.nb_proc = nb_proc
+        self.nb_threads = nb_threads
+        self.revisionGIT = revisionGIT
+
+
+
+def get_MOL_string(filename):
+    cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
+    print cmd
+    outString = check_output(cmd, shell=True)
+    return outString
+
+def parse_MOL_string(string):
+    # get comment (hopefully name of the molecule)
+    # count number of atoms, give the molecular formula
+    # get number of electrons: nb_atoms*Z
+    cmd= 'grep -i "Atoms="" '+filename
+    print cmd
+    out = check_output(cmd, shell=True)
+    mol_input = {}
+    return mol_input
+
+
+def parse_DAL_string(string):
+    dal_input = {}
+    # find out if LinK or ADMM
+    # if ADMM, which ADMM
+    # is it B3LYP, BLYP, camB3LYP
+    return dal_input
+
+def get_DAL_string(filename):
+    cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
+    print cmd
+    outString = check_output(cmd, shell=True)
+    return outString
+
 
 def get_infoGradient(path_to_file=""):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
