@@ -191,7 +191,7 @@ class LSDALTONinput(object):
 if __name__ == "__main__":
     path_to_file = "./files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
     #path_to_file = "./files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
-	
+    #path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_Histidine_8CPU_16OMP_2014_11_13T1203.out"
     grad = get_last_molecular_gradient(path_to_file)
     gradInfo = get_infoGradient_from_gradString(grad)
     print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
