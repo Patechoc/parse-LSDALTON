@@ -134,7 +134,7 @@ for basis in basis_list:
 # data = Data([trace1, trace2, trace3])
 
 # layout = Layout(
-#     title='ADMM impact on molecular gradient'+today_str,
+#     title='Impact on molecular gradient'+today_str,
 #     xaxis=XAxis(
 #         title='set of molecules',
 #         # titlefont=Font(
@@ -157,4 +157,4 @@ for basis in basis_list:
 
 
 # fig = Figure(data=data, layout=layout)
-# plot_url = py.plot(fig, filename='ADMM2 Gradient differences')
+# plot_url = py.plot(fig, filename='Gradient differences')
