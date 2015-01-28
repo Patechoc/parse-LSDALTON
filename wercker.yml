@@ -8,4 +8,4 @@ build:
     - script:
         name: python unit test
         code: |
-          python -m unittest discover -v
+          python test_read_LSDALTON_output
