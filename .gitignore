@@ -1,2 +1,3 @@
 oldScripts/
 venv/
+**/*.pyc
