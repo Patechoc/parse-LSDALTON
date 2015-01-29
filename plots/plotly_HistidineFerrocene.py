@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys, os
+import csv
 import numpy as np
 import plotly.plotly as py
 from datetime import date
@@ -9,24 +10,29 @@ import subprocess as subproc
 import read_LSDALTON_output as readLS
 import compare_LSDALTON_outputs as compLS
 
-mol_list = ['Histidine','Ferrocene']
-basis_list = ['6-31Gs']
-dal_list = [{'abrev':'OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_'},
-            {'abrev':'B88X', 'pattern':'b3lyp_gradient_ADMM2_'}]
-dal_ref = [{'LinK':'geomOpt-b3lyp_Vanlenthe_'}]
-path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
-path_to_dals = path_to_ref
 
+def main():
+    today = date.today()
+    today_str = today.isoformat()
 
-bleu  ="rgb( 31,119,180)" ## "color":"rgb(54,144,192)",
-orange="rgb(255,127, 14)"
-vert  ="rgb( 44,160, 40)"
-rouge ="rgb(214, 39, 40)"
-violet="rgb(148,103,189)"
-colors=[bleu, orange, vert, rouge, violet]
+    mol_list = ['Histidine','Ferrocene']
+    basis_list = ['6-31Gs']
+    dal_list = [{'abrev':'OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_'},
+                {'abrev':'B88X', 'pattern':'b3lyp_gradient_ADMM2_'}]
+    dal_ref = [{'LinK':'geomOpt-b3lyp_Vanlenthe_'}]
+    path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
+    path_to_dals = path_to_ref
+    results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
 
-today = date.today()
-today_str = today.isoformat()
+def get_colors():
+    bleu  ="rgb( 31,119,180)" ## "color":"rgb(54,144,192)",
+    orange="rgb(255,127, 14)"
+    vert  ="rgb( 44,160, 40)"
+    rouge ="rgb(214, 39, 40)"
+    violet="rgb(148,103,189)"
+    colors=[bleu, orange, vert, rouge, violet]
+    return colors
+
 
 def run_command_or_exit(cmd):
     out = None
@@ -39,28 +45,37 @@ def run_command_or_exit(cmd):
         print "Not able to open the reference output using:\n", cmd
     return out
 
+def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals):
+    results = {}
+    for basisVal in basis_list:
+        basis = basisVal.strip()
+        results[basis] = {} 
+        print basis
+        for molVal in mol_list:
+            mol  = molVal.strip()
+            results[basis][mol] = {} 
+            print "\t"+mol
+            file_ref = ""
 
-for basis in basis_list:
-    print basis
-    for mol in mol_list:
-        print "\t"+mol
-        file_ref = ""
+            cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+basis+"*"+mol+"*"
+            file_ref = run_command_or_exit(cmd).strip()
+            print "\t"+file_ref
+            dal_files = []
+            for dalObj in dal_list:
+                dft_func = dalObj['abrev'].strip()
+                dalPattern = dalObj['pattern'].strip()
+                print "\t\t"+dft_func
+                file_dal = ""
+                cmd= "ls "+ path_to_dals+"/lsd*"+dalPattern+"*"+basis+"*"+mol+"*"
+                file_dal = run_command_or_exit(cmd).strip()
+                print "\t\t"+file_dal
 
-        cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+basis+"*"+mol+"*"
-        file_ref = run_command_or_exit(cmd).strip()
-        print "\t"+file_ref
-        dal_files = []
-        for dal in dal_list:
-            print "\t\t"+dal['abrev']
-            file_dal = ""
-            cmd= "ls "+ path_to_dals+"/lsd*"+dal['pattern']+"*"+basis+"*"+mol+"*"
-            file_dal = run_command_or_exit(cmd).strip()
-            print "\t\t"+file_dal
-
-            ## compare gradient of reference with ADMM
-            print file_ref
-            diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
-            print diffGrad
+                ## compare gradient of reference with ADMM
+                #print file_ref
+                diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
+                #print diffGrad
+                results[basis][mol][dft_func] =  diffGrad['matDiffGrad'].flatten()
+    return results
 
 
 
@@ -158,3 +173,9 @@ for basis in basis_list:
 
 # fig = Figure(data=data, layout=layout)
 # plot_url = py.plot(fig, filename='Gradient differences')
+
+
+
+if __name__ == "__main__":
+    main()
+
