@@ -4,11 +4,11 @@ import sys, os
 import csv
 import numpy as np
 import plotly.plotly as py
-from datetime import date
-from plotly.graph_objs import *
 import subprocess as subproc
 import read_LSDALTON_output as readLS
 import compare_LSDALTON_outputs as compLS
+from datetime import date
+from plotly.graph_objs import *
 
 
 def main():
@@ -23,6 +23,7 @@ def main():
     path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
     path_to_dals = path_to_ref
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
+    print results
 
 def get_colors():
     bleu  ="rgb( 31,119,180)" ## "color":"rgb(54,144,192)",
