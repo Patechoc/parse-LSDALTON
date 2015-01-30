@@ -83,30 +83,33 @@ def generate_plot(results, today_str):
     ## DATA TO PLOT
     #y0 = np.random.randn(50)
     #y1 = np.random.randn(50)+1
-    traces = []
+
     myColors = get_colors()
-    
+    traceFunc = {}
     for regbase in results.keys():
+        traces = np.array([])
         numFunc = 0
+        yFunc = np.array([])
+        xFunc = np.array([])
         for func in results[regbase].keys():
             numFunc = numFunc+1
-            yX = []
-            xFunc = []
             for mol in results[regbase][func].keys():
                 elemsPerMol = results[regbase][func][mol] ### elements of grad. diff
-                xFunc.append([mol for elem in elemsPerMol])
-                yX.append(elemsPerMol)
-            traceX = Box(y = yX,    ### diffGrad elements
+                print  "np.array(elemsPerMol)\n",np.array(elemsPerMol),"\n"
+                xFunc = np.append(xFunc,[mol for elem in elemsPerMol])
+                yFunc = np.append(yFunc,[elemsPerMol])
+                print "yFunc:\n",yFunc,"\n"
+            traceFunc[func] = Box(y = yFunc,    ### diffGrad elements
                          x = xFunc,   ### elements grouped on the same molecule
                          name=func, ### ADMM functional combined for this basis set choice
                          marker=Marker(color=myColors[numFunc]),
                          boxpoints='all',
                          jitter=0.4,
                          pointpos=-0.0
-            )
-            traces.append(traceX)
+                     )
+            traces = np.append(traces,traceFunc[func])
             data = Data(traces)
-
+    print traceFunc['OPTX']
     layout = Layout(
         title='Impact on molecular gradient ('+today_str+')',
         xaxis=XAxis(
@@ -136,3 +139,30 @@ def generate_plot(results, today_str):
 if __name__ == "__main__":
     main()
 
+
+
+20   Histidine.mol
+21   Ferrocene.mol
+30   AT-basepair.mol
+42   Penicillin.mol
+47   Cu-complex.mol
+
+50   Dibenzo-Crown18.6.mol
+56   Tetracycline.mol
+57   Beclomethasone.mol
+60   c60_Ih.mol
+74   Cholesterole.mol
+86   CO-Heme.mol
+90   c90_D5h.mol
+90   CCCNa.mol
+100   c100_D5d.mol
+
+113   taxol.mol
+150   AGAGNaCl.mol
+168   valinomycin.mol
+176   vanomycin.mol
+180   c180.mol
+240   c240.mol
+371   collagen-like-peptide.mol
+392   titin.mol
+642   crambin.mol
