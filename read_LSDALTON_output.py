@@ -70,20 +70,29 @@ def get_DAL_string(filename):
     return outString
 
 
-def get_infoGradient(path_to_file=""):
+def get_infoGradient(path_to_file):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
     Keyword arguments:
     grad -- the molecular gradient as a list of x,y,z components for each atom (symbol)
     """
-    gradString = get_last_molecular_gradient(path_to_file)
+    obj = None
+    gradString = []
+    if (path_to_file != "" and path_to_file != None): 
+        gradString = get_last_molecular_gradient(path_to_file)
+    else:
+        obj = None
+    if gradString == None:
+        return None
     obj = get_infoGradient_from_gradString(gradString)
     return obj
     
-def get_infoGradient_from_gradString(gradString=[]):
+def get_infoGradient_from_gradString(gradString):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
     Keyword arguments:
     gradString -- the molecular gradient as a list of x,y,z components for each atom (symbol)
     """
+    if (gradString== None or gradString==[]):
+        return None
     matGrad  = np.array([[float(line[key]) for key in ['x','y','z']] for line in gradString])
     gradient = [[ line['atom'], np.array([float(line[key]) for key in ['x','y','z']]) ] for line in gradString]
     absGrad = np.absolute(matGrad)
@@ -97,19 +106,24 @@ def get_infoGradient_from_gradString(gradString=[]):
     
 
 def get_last_molecular_gradient(path_to_file=""):
-	assert os.path.exists(path_to_file) == 1
-	# try finding the last "Molcular gradient"
+    isFile = os.path.isfile(path_to_file.strip())
+    if isFile == False:
+        print "Path to file is not correct: ",path_to_file
+        return None
+    else:
+        # try finding the last "Molcular gradient"
 	out = ""
 	try:
 		cmd= 'sed -n "/Molecular gradient/,/RMS gradient/p" '+path_to_file
 		out1 = subproc.check_output(cmd, shell=True)
-		#print out
+                if (out1==""):
+                    return None
 		out2=out1.rsplit('-----------------------', 1)[1]
 		out3=out2.rsplit('RMS gradient norm', 1)[0]
 		out = [line.strip() for line in out3.split('\n') if line.strip() != '']
 	except:
 		print "Not able to extract the molecular gradient from this file:\n", path_to_file
-		
+		return None
 	## reBuild the gradient matrix
 	# using FOR LOOP
 	#grad = []
@@ -192,7 +206,7 @@ if __name__ == "__main__":
     path_to_file = "./files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
     #path_to_file = "./files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
     #path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_Histidine_8CPU_16OMP_2014_11_13T1203.out"
-    grad = get_last_molecular_gradient(path_to_file)
+    grad = get_last_molecular_gradient(path_to_file.strip())
     gradInfo = get_infoGradient_from_gradString(grad)
     print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
     print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])

@@ -16,6 +16,8 @@ def get_compareInfoGradients(path_to_file1="", path_to_file2=""):
     """
     obj1 = readLS.get_infoGradient(path_to_file1)
     obj2 = readLS.get_infoGradient(path_to_file2)
+    if (obj1==None or obj2==None):
+        return None
     grad1 = obj1['gradient']
     grad2 = obj2['gradient']
     assert (len(grad1) == len(grad2)), \

@@ -8,13 +8,14 @@ import read_LSDALTON_output as readLS
 import compare_LSDALTON_outputs as compLS
 from datetime import date
 from plotly.graph_objs import *
-
+import molecules
 
 def main():
     today = date.today()
     today_str = today.isoformat()
 
-    mol_list = ['Histidine','Ferrocene']
+    #mol_list = ['Histidine','Ferrocene']
+    mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
     basis_list = ['6-31Gs']
     dal_list = [{'abrev':'OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_'},
                 {'abrev':'B88X', 'pattern':'b3lyp_gradient_ADMM2_'}]
@@ -22,7 +23,7 @@ def main():
     path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
     path_to_dals = path_to_ref
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
-    generate_plot(results, today_str)
+    generate_plot(results, mol_list, today_str)
     
 
 def get_colors():
@@ -36,18 +37,19 @@ def get_colors():
 
 
 def run_command_or_exit(cmd):
-    out = None
     try:
         out = subproc.check_output(cmd, shell=True)
-    except Exception as inst:
-        print type(inst)     # the exception instance
-        print inst.args      # arguments stored in .args
-        print inst           # __str__ allows args to be printed directly
-        print "Not able to open the reference output using:\n", cmd
+    except subproc.CalledProcessError, e:
+#        print type(inst)     # the exception instance
+#        print inst.args      # arguments stored in .args
+#        print inst           # __str__ allows args to be printed directly
+        print "Not able to run this command:\n", cmd
+        out = None
     return out
 
 def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals):
     results = {}
+    combinationAvoided = []
     for basisVal in basis_list:
         basis = basisVal.strip()
         results[basis] = {} 
@@ -63,23 +65,30 @@ def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
                 mol  = molVal.strip()
                 print "\t"+mol
                 file_ref = ""
-                cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+basis+"*"+mol+"*"
-                file_ref = run_command_or_exit(cmd).strip()
-                print "\t"+file_ref
+                cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+basis+"*"+mol+"*.out"
+                file_ref = run_command_or_exit(cmd)
+                #if file_ref != None:
+                #    print "\t\t"+file_ref
                 
-                cmd= "ls "+ path_to_dals+"/lsd*"+dalPattern+"*"+basis+"*"+mol+"*"
-                file_dal = run_command_or_exit(cmd).strip()
-                print "\t\t"+file_dal
+                cmd= "ls "+ path_to_dals+"/lsd*"+dalPattern+"*"+basis+"*"+mol+"*.out"
+                file_dal = run_command_or_exit(cmd)
+                #if file_dal != None:
+                #    print "\t\t"+file_dal
 
                 ## compare gradient of reference with ADMM
                 #print file_ref
                 diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
                 #print diffGrad
-                results[basis][dft_func][mol] =  diffGrad['matDiffGrad'].flatten()
+                if diffGrad != None:
+                    results[basis][dft_func][mol] =  np.absolute(diffGrad['matDiffGrad'].flatten())
+                else:
+                    combinationAvoided.append([basis,dft_func,mol])
+    print "Combinations avoided:\n"
+    print "\n".join(["\t".join(combi) for combi in combinationAvoided])
     return results
 
 
-def generate_plot(results, today_str):
+def generate_plot(results, mol_list, today_str):
     ## DATA TO PLOT
     #y0 = np.random.randn(50)
     #y1 = np.random.randn(50)+1
@@ -94,11 +103,10 @@ def generate_plot(results, today_str):
         for func in results[regbase].keys():
             numFunc = numFunc+1
             for mol in results[regbase][func].keys():
+            #for mol in [m for m in mol_list if "5" in results[regbase][func].keys()]:
                 elemsPerMol = results[regbase][func][mol] ### elements of grad. diff
-                print  "np.array(elemsPerMol)\n",np.array(elemsPerMol),"\n"
                 xFunc = np.append(xFunc,[mol for elem in elemsPerMol])
                 yFunc = np.append(yFunc,[elemsPerMol])
-                print "yFunc:\n",yFunc,"\n"
             traceFunc[func] = Box(y = yFunc,    ### diffGrad elements
                          x = xFunc,   ### elements grouped on the same molecule
                          name=func, ### ADMM functional combined for this basis set choice
@@ -109,7 +117,7 @@ def generate_plot(results, today_str):
                      )
             traces = np.append(traces,traceFunc[func])
             data = Data(traces)
-    print traceFunc['OPTX']
+    #print traceFunc['OPTX']
     layout = Layout(
         title='Impact on molecular gradient ('+today_str+')',
         xaxis=XAxis(
@@ -138,31 +146,3 @@ def generate_plot(results, today_str):
 
 if __name__ == "__main__":
     main()
-
-
-
-20   Histidine.mol
-21   Ferrocene.mol
-30   AT-basepair.mol
-42   Penicillin.mol
-47   Cu-complex.mol
-
-50   Dibenzo-Crown18.6.mol
-56   Tetracycline.mol
-57   Beclomethasone.mol
-60   c60_Ih.mol
-74   Cholesterole.mol
-86   CO-Heme.mol
-90   c90_D5h.mol
-90   CCCNa.mol
-100   c100_D5d.mol
-
-113   taxol.mol
-150   AGAGNaCl.mol
-168   valinomycin.mol
-176   vanomycin.mol
-180   c180.mol
-240   c240.mol
-371   collagen-like-peptide.mol
-392   titin.mol
-642   crambin.mol
