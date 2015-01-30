@@ -102,8 +102,8 @@ def generate_plot(results, mol_list, today_str):
         xFunc = np.array([])
         for func in results[regbase].keys():
             numFunc = numFunc+1
-            for mol in results[regbase][func].keys():
-            #for mol in [m for m in mol_list if "5" in results[regbase][func].keys()]:
+            #for mol in results[regbase][func].keys():
+            for mol in [m for m in mol_list if m in results[regbase][func].keys()]:
                 elemsPerMol = results[regbase][func][mol] ### elements of grad. diff
                 xFunc = np.append(xFunc,[mol for elem in elemsPerMol])
                 yFunc = np.append(yFunc,[elemsPerMol])
@@ -119,28 +119,31 @@ def generate_plot(results, mol_list, today_str):
             data = Data(traces)
     #print traceFunc['OPTX']
     layout = Layout(
-        title='Impact on molecular gradient ('+today_str+')',
-        xaxis=XAxis(
-            title='set of molecules',
+        #title='Impact on molecular gradient', # ('+today_str+')',
+        #xaxis=XAxis(
+            #title='set of molecules',
             # titlefont=Font(
             #     family='Courier New, monospace',
             #     size=18,
             #     color='#7f7f7f'
             # )
-        ),
+        #),
         yaxis=YAxis(
-            title='Errors in molecular gradient',
+            title='Abs. errors in molecular gradient',
             zeroline=False,
             # titlefont=Font(
             #     family='Courier New, monospace',
             #     size=18,
             #     color='#7f7f7f'
             # )
+            type='log',
+            autorange=True,
+            exponentformat='power',
         ),
         boxmode='group',
     )
     fig = Figure(data=data, layout=layout)
-    plot_url = py.plot(fig, filename='Gradient differences')
+    #plot_url = py.plot(fig, filename='Gradient differences')
 
 
 
