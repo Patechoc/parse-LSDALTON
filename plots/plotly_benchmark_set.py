@@ -23,7 +23,7 @@ def main():
     path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
     path_to_dals = path_to_ref
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
-    generate_plot(results, mol_list, today_str)
+    generate_boxplot(results, mol_list, today_str)
     
 
 def get_colors():
@@ -88,7 +88,7 @@ def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
     return results
 
 
-def generate_plot(results, mol_list, today_str):
+def generate_boxplot(results, mol_list, today_str):
     ## DATA TO PLOT
     #y0 = np.random.randn(50)
     #y1 = np.random.randn(50)+1
@@ -119,7 +119,7 @@ def generate_plot(results, mol_list, today_str):
             data = Data(traces)
     #print traceFunc['OPTX']
     layout = Layout(
-        #title='Impact on molecular gradient', # ('+today_str+')',
+        title='Impact on gradient using ADMM2 (6-31G*/3-21G)', # ('+today_str+')',
         #xaxis=XAxis(
             #title='set of molecules',
             # titlefont=Font(
@@ -143,7 +143,7 @@ def generate_plot(results, mol_list, today_str):
         boxmode='group',
     )
     fig = Figure(data=data, layout=layout)
-    #plot_url = py.plot(fig, filename='Gradient differences')
+    plot_url = py.plot(fig, filename='Gradient differences')
 
 
 
