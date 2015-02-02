@@ -18,12 +18,15 @@ def main():
     mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
     basis_list = ['6-31Gs']
     dal_list = [{'abrev':'OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_'},
+                {'abrev':'KT3X', 'pattern':'b3lyp_gradient_ADMM2-KT3X_'},
                 {'abrev':'B88X', 'pattern':'b3lyp_gradient_ADMM2_'}]
     dal_ref = [{'LinK':'geomOpt-b3lyp_Vanlenthe_'}]
     path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
     path_to_dals = path_to_ref
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
-    generate_boxplot(results, mol_list, today_str)
+
+    title =  'ADMM2 (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)'
+    generate_boxplot(title, results, mol_list, today_str)
     
 
 def get_colors():
@@ -88,7 +91,7 @@ def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
     return results
 
 
-def generate_boxplot(results, mol_list, today_str):
+def generate_boxplot(titre, results, mol_list, today_str):
     ## DATA TO PLOT
     #y0 = np.random.randn(50)
     #y1 = np.random.randn(50)+1
@@ -119,7 +122,7 @@ def generate_boxplot(results, mol_list, today_str):
             data = Data(traces)
     #print traceFunc['OPTX']
     layout = Layout(
-        title='Impact on gradient using ADMM2 (6-31G*/3-21G)', # ('+today_str+')',
+        title=titre, # ('+today_str+')',
         #xaxis=XAxis(
             #title='set of molecules',
             # titlefont=Font(
