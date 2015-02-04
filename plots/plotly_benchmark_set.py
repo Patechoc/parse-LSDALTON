@@ -17,15 +17,18 @@ def main():
     #mol_list = ['Histidine','Ferrocene']
     mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
     basis_list = ['6-31Gs']
-    dal_list = [{'abrev':'OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_'},
-                {'abrev':'KT3X', 'pattern':'b3lyp_gradient_ADMM2-KT3X_'},
-                {'abrev':'B88X', 'pattern':'b3lyp_gradient_ADMM2_'}]
+    dal_list = [{'abrev':'ADMM2-OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_'},
+                {'abrev':'ADMM2-KT3X', 'pattern':'b3lyp_gradient_ADMM2-KT3X_'},
+                {'abrev':'ADMM2-B88X', 'pattern':'b3lyp_gradient_ADMM2_'},
+                {'abrev':'ADMMS-OPTX', 'pattern':'b3lyp_gradient_ADMMS-OPTX_'},
+                {'abrev':'ADMMS-KT3X', 'pattern':'b3lyp_gradient_ADMMS-KT3X_'},
+                {'abrev':'ADMMS-B88X', 'pattern':'b3lyp_gradient_ADMMS-B86X_'}]
     dal_ref = [{'LinK':'geomOpt-b3lyp_Vanlenthe_'}]
     path_to_ref = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
     path_to_dals = path_to_ref
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
 
-    title =  'ADMM2 (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)'
+    title =  'ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)'
     generate_boxplot(title, results, mol_list, today_str)
     
 
@@ -110,14 +113,14 @@ def generate_boxplot(titre, results, mol_list, today_str):
                 elemsPerMol = results[regbase][func][mol] ### elements of grad. diff
                 xFunc = np.append(xFunc,[mol for elem in elemsPerMol])
                 yFunc = np.append(yFunc,[elemsPerMol])
-            traceFunc[func] = Box(y = yFunc,    ### diffGrad elements
-                         x = xFunc,   ### elements grouped on the same molecule
-                         name=func, ### ADMM functional combined for this basis set choice
-                         marker=Marker(color=myColors[numFunc]),
-                         boxpoints='all',
-                         jitter=0.4,
-                         pointpos=-0.0
-                     )
+                traceFunc[func] = Box(y = yFunc,    ### diffGrad elements
+                                      x = xFunc,   ### elements grouped on the same molecule
+                                      name=func, ### ADMM functional combined for this basis set choice
+                                      marker=Marker(color=myColors[numFunc%len(myColors)]),
+                                      boxpoints='all',
+                                      jitter=0.4,
+                                      pointpos=-0.0
+                                  )
             traces = np.append(traces,traceFunc[func])
             data = Data(traces)
     #print traceFunc['OPTX']

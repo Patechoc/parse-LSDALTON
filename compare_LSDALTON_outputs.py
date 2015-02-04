@@ -29,7 +29,10 @@ def get_compareInfoGradients(path_to_file1="", path_to_file2=""):
     diffObj['matDiffGrad'] = diffMat
     diffObj['maxDiffGrad'] = np.amax(absDiffMat)
     diffObj['minDiffGrad'] = np.amin(absDiffMat)
-    diffObj['rmsDiffGrad'] = math.sqrt((sum( [x*x for x in absDiffMat.flatten()]))/(3.*nbAtom))
+    diffObj['meanDiffGrad'] = np.mean(diffMat)
+    diffObj['varianceDiffGrad'] = sum( [(x-diffObj['meanDiffGrad'])**2 for x in diffMat.flatten()] )/(3.*nbAtom)
+    diffObj['stdDevDiffGrad'] = math.sqrt(diffObj['varianceDiffGrad'])
+    diffObj['rmsDiffGrad'] = math.sqrt(sum( [x*x for x in absDiffMat.flatten()])/(3.*nbAtom))
     return diffObj
     
 
