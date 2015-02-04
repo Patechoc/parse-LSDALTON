@@ -2,3 +2,4 @@ oldScripts/
 venv/
 **/*.pyc
 **/*.*~
+files/difference.csv
