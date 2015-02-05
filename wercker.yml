@@ -25,4 +25,4 @@ build:
     - script:
         name: python unit test
         code: |
-          python test_read_LSDALTON_output.py
+          python -m unittest discover -v
