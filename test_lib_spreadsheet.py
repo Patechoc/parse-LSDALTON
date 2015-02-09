@@ -25,6 +25,16 @@ class csv_test(unittest.TestCase):
                                 ['1997', 'Ford', 'E350', '"ac', ' abs', ' moon"', '3000.00'],
                                 ['2010', 'BMW', 'Touran', '"MUST SELL!'],
                                 ['1996', 'Jeep', 'Grand Cherokee', '"MUST SELL!']])
+    def test_write_Object_to_csv_file(self):
+        myObj={'FAMILY NAME':'Doe', 'FIRST NAME':'John', 'AGE':'35', 'NATIONALITY':'american', 'License':'B'}
+        outFile = write_object_to_csv(myObj, csvOutputFilename, delimiterW=',', quotecharW='"')
+        diff = libCSV.compare_csv_files(self.filename1, self.filename1, ',', ',') 
+        self.assertTrue(diff == [])
+
+    def test_write_arrayOfObjects_to_csv_file(self):
+        outFile = write_object_to_csv(myObjArray, csvOutputFilename, delimiterW=',', quotecharW='"')
+        diff = libCSV.compare_csv_files(self.filename1, self.filename1, ',', ',') 
+        self.assertTrue(diff == [])
 
 
 if __name__ == '__main__':
