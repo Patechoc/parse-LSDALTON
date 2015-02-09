@@ -5,3 +5,5 @@ venv/
 **/*.pyc
 **/*.*~
 files/csv_difference.csv
+files/writeObj.csv
+files/writeObjArray.csv
