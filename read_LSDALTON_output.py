@@ -98,10 +98,11 @@ def get_infoGradient_from_gradString(gradString):
     absGrad = np.absolute(matGrad)
     nbAtom = len(absGrad)
     obj = {}
+    obj['matGrad']  = matGrad
     obj['gradient'] = gradient
-    obj['maxGrad'] = np.amax(absGrad)
-    obj['minGrad'] = np.amin(absGrad)
-    obj['rmsGrad'] = math.sqrt((sum( [x*x for x in absGrad.flatten()]))/(3.*nbAtom))
+    obj['maxGrad']  = np.amax(absGrad)
+    obj['minGrad']  = np.amin(absGrad)
+    obj['rmsGrad']  = math.sqrt((sum( [x*x for x in absGrad.flatten()]))/(3.*nbAtom))
     return obj
     
 
@@ -208,6 +209,7 @@ if __name__ == "__main__":
     #path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_Histidine_8CPU_16OMP_2014_11_13T1203.out"
     grad = get_last_molecular_gradient(path_to_file.strip())
     gradInfo = get_infoGradient_from_gradString(grad)
+    print gradInfo.keys()
     print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
     print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])
-
+    print gradInfo['matGrad']
