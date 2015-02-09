@@ -81,8 +81,6 @@ if __name__ == "__main__":
                     [  4.07596000e-05,  -9.04330000e-06,   1.24914000e-05],
                     [  3.63805000e-05,   4.97230000e-06,  -2.90822000e-05],
                     [ -2.22115000e-05,  -3.33703000e-05,  -7.52538000e-05]])
-    #statsMat = matrix(mat01)
-    #get_elemAvg(mat)
     stats = matrix(mat01).get_stats()
     print "stats\n",stats
     print stats.get_mean()
