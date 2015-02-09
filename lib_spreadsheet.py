@@ -3,7 +3,6 @@
 import sys, os, re, math
 import numpy as np
 import csv
-import pandas as pd
 import itertools
 #from glob import glob
 #import subprocess as subproc
