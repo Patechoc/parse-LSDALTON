@@ -25,4 +25,6 @@ build:
     - script:
         name: python unit test
         code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
           python -m unittest discover -v
