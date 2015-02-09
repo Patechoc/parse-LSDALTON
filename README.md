@@ -1,3 +1,5 @@
+[![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
+
 To parse input and ouput LSDALTON files 
 
 
