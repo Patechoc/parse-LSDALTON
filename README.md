@@ -1,7 +1,5 @@
-[![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
-
 # Parse-LSDALTON
-To parse input and ouput LSDALTON files 
+To parse input and ouput LSDALTON files, and build visualizations of benchmarked methods.
 
 
 Main directory structure:
@@ -26,10 +24,11 @@ The code is testing continuously (after every `git push`) using [Wercker](http:/
 ├── wercker.yml
 └── requirements.txt
 ```
+[![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
 
 You can just run the tests like so:
 ```
-$ cd my_project
+$ cd parse-lsdalton
 $ python -m unittest test_read_LSDALTON_output
 ```
 or all of them at once with:
