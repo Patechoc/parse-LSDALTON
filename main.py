@@ -3,8 +3,15 @@
 import sys, os, re
 import argparse
 import compare_LSDALTON_outputs as compLS
+import plotly_boxPlot_RMSgradDiff_benchmark_set
 
-def compare():
+
+def plot_boxPlot_RMS_gradient_difference():
+    ## Heavy plot on plotly to show gradient difference elementwise!!
+    plotly_boxPlot_RMSgradDiff_benchmark_set.run()    
+
+
+def compare_lastGradient_LSDALTONoutputs():
     #rep = "./files/lsdalton_files/"
     #listFiles = [filename for filename in os.listdir(rep) if filename.endswith(".out")]
     #print 'Files present in', rep
@@ -21,5 +28,5 @@ def compare():
 
 
 if __name__ == "__main__":
-    compare()
-
+    compare_lastGradient_LSDALTONoutputs()
+    #plot_boxPlot_RMS_gradient_difference()

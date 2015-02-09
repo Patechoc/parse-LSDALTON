@@ -10,7 +10,7 @@ from datetime import date
 from plotly.graph_objs import *
 import molecules
 
-def main():
+def run():
     today = date.today()
     today_str = today.isoformat()
 
@@ -154,4 +154,4 @@ def generate_boxplot(titre, results, mol_list, today_str):
 
 
 if __name__ == "__main__":
-    main()
+    run()
