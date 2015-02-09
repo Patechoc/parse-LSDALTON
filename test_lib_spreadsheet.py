@@ -13,6 +13,8 @@ class csv_test(unittest.TestCase):
         self.seq = list(range(10))
         self.filename1 = "./files/csvFile1.csv"
         self.filename2 = "./files/csvFile2.csv"
+        self.filename3 = "./files/writtenObj.csv"
+        self.filename4 = "./files/writtenObjArray.csv"
         self.diffFileName = './files/csv_difference.csv'
 
     def test_compare_identical_csv_files(self):
@@ -27,13 +29,17 @@ class csv_test(unittest.TestCase):
                                 ['1996', 'Jeep', 'Grand Cherokee', '"MUST SELL!']])
     def test_write_Object_to_csv_file(self):
         myObj={'FAMILY NAME':'Doe', 'FIRST NAME':'John', 'AGE':'35', 'NATIONALITY':'american', 'License':'B'}
-        outFile = write_object_to_csv(myObj, csvOutputFilename, delimiterW=',', quotecharW='"')
-        diff = libCSV.compare_csv_files(self.filename1, self.filename1, ',', ',') 
+        newFile = libCSV.write_object_to_csv(myObj, './files/writeObj.csv', delimiterW=',', quotecharW='"')
+        diff = libCSV.compare_csv_files('./files/writeObj.csv', self.filename3, ',', ',') 
         self.assertTrue(diff == [])
 
     def test_write_arrayOfObjects_to_csv_file(self):
-        outFile = write_object_to_csv(myObjArray, csvOutputFilename, delimiterW=',', quotecharW='"')
-        diff = libCSV.compare_csv_files(self.filename1, self.filename1, ',', ',') 
+        myObjArray=[{'FAMILY NAME':'Doe', 'FIRST NAME':'John', 'AGE':'35', 'NATIONALITY':'american', 'License':'B'},
+                    {'FAMILY NAME':'Merlot', 'FIRST NAME':'Patrick', 'AGE':'35', 'NATIONALITY':'french', 'License':'B'},
+                    {'FAMILY NAME':'Obama', 'FIRST NAME':'Barak', 'AGE':'62', 'NATIONALITY':'american', 'License':'B'},
+                    {'FAMILY NAME':'Hollande', 'FIRST NAME':'Francois', 'AGE':'64', 'NATIONALITY':'french', 'License':'B'}]
+        newFile = libCSV.write_arrayOfObjects_to_csv(myObjArray, './files/writeObjArray.csv', delimiterW=',', quotecharW='"')
+        diff = libCSV.compare_csv_files('./files/writeObjArray.csv', self.filename4, ',', ',') 
         self.assertTrue(diff == [])
 
 
