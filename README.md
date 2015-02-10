@@ -1,5 +1,5 @@
 # Parse-LSDALTON
-To parse input and ouput LSDALTON files, and build visualizations of benchmarked methods.
+To parse input and ouput [LSDALTON](http://daltonprogram.org/) files, and build visualizations of benchmarked methods.
 
 
 Main directory structure:
@@ -7,8 +7,9 @@ Main directory structure:
 ├── README.md
 ├── main.py
 ├── read_LSDALTON_output.py
-├── test_read_LSDALTON_output.py
 ├── compare_LSDALTON_outputs.py
+├── ...
+├── test_read_LSDALTON_output.py
 ├── test_compare_LSDALTON_outputs.py
 ├── plots/
 │   ├── plotly01.py
