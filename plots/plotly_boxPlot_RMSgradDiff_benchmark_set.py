@@ -7,14 +7,24 @@ import subprocess as subproc
 import read_LSDALTON_output as readLS
 import compare_LSDALTON_outputs as compLS
 from plotly.graph_objs import *
-import config_6-31Gs
+import configFile
 
 def run():
+    inputs = configFile.get_inputs("ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)")
+    mol_list   = inputs.mol_list
+    basis_list = inputs.basisSets
+    ref        = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK']
+    dal_ref    = [{'LinK':dal['pattern']} for dal in ref]
+    path_to_ref = ref[0]['path_to_files']
 
+    dals = [dal for dal in inputs.dal_list if dal['abrev'] != 'LinK']
+    dal_list   = []
+    dal_list.extend( [{'abrev':dal['abrev'], 'pattern':dal['pattern']} for dal in dals] )
+    print dal_list[0]
+    path_to_dals = dals[0]['path_to_files']
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
-
-
-    generate_boxplot(title, results, mol_list, today_str)
+    if inputs['doPlot'] == True:
+        generate_boxplot(title, results, mol_list, today_str)
     
 
 def get_colors():
