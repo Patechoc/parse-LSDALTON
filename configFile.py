@@ -26,8 +26,8 @@ class InputAnalysis(object):
 def get_inputs(title):
     inputs = InputAnalysis(title)
     if (title == "ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)"):
-        mol_list = ['Histidine','Ferrocene']
-        #mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
+        #mol_list = ['Histidine','Ferrocene']
+        mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
         path_to_ref = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/'
         dal_list = [{'abrev':'LinK', 'pattern':'geomOpt-b3lyp_Vanlenthe_', 'path_to_files':path_to_ref }]
 
