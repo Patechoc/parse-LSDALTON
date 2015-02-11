@@ -4,6 +4,7 @@ import sys, os, re, math
 import numpy as np
 #from glob import glob
 import subprocess as subproc
+#import LSDALTON_DAL_input
 #import parserGrammar
 #import csv
 
@@ -12,32 +13,29 @@ import subprocess as subproc
 #with open('input.txt') ad f:
     #data = [map(int, row) for row in csv.reader(f)]
 
+
 # ============================================================================ #
-# Class: DAL_input
+# Class: MOL_input
 # ============================================================================ #
-class DAL_input(object):
-    def __init__(self, molecule, inputKeywords, nb_procs = 1, nb_threads = 1, revisionGIT = None):
+class MOL_input(object):
+    def __init__(self):
+        self.inputString = ""
+        self.format      = "" # BASIS or ATOMBASIS
+        self.basis
+
+# ============================================================================ #
+# Class: LSDALTON_calculation
+# ============================================================================ #
+class LSDALTON_calculation(object):
+    def __init__(self):
 #    def __init__(self, jobs, time, pause = 60):
-        self.ismolecule = molecule
-        self.inputKeywords = inputKeywords
-        self.nb_proc = nb_proc
-        self.nb_threads = nb_threads
+        self.MOL_input   = None
+        self.DAL_input   = None
+        self.nb_procs    = nb_procs
+        self.nb_threads  = nb_threads
         self.revisionGIT = revisionGIT
 
-
-# ============================================================================ #
-# Class: LSDALTONinput
-# ============================================================================ #
-class LSDALTONinput(object):
-    def __init__(self, molecule, inputKeywords, nb_procs = 1, nb_threads = 1, revisionGIT = None):
-#    def __init__(self, jobs, time, pause = 60):
-        self.molecule = molecule
-        self.inputKeywords = inputKeywords
-        self.nb_proc = nb_proc
-        self.nb_threads = nb_threads
-        self.revisionGIT = revisionGIT
-
-
+    
 
 def get_MOL_string(filename):
     cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
@@ -55,6 +53,11 @@ def parse_MOL_string(string):
     mol_input = {}
     return mol_input
 
+def get_DAL_string(filename):
+    cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
+    print cmd
+    outString = check_output(cmd, shell=True)
+    return outString
 
 def parse_DAL_string(string):
     dal_input = {}
@@ -62,13 +65,6 @@ def parse_DAL_string(string):
     # if ADMM, which ADMM
     # is it B3LYP, BLYP, camB3LYP
     return dal_input
-
-def get_DAL_string(filename):
-    cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
-    print cmd
-    outString = check_output(cmd, shell=True)
-    return outString
-
 
 def get_infoGradient(path_to_file):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
@@ -145,59 +141,7 @@ def get_last_molecular_gradient(path_to_file=""):
 	return grad
 
 
-def get_MOL_string(filename):
-    cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
-    print cmd
-    outString = check_output(cmd, shell=True)
-    return outString
 
-
-def get_DAL_string(filename):
-    cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
-    print cmd
-    outString = check_output(cmd, shell=True)
-    return outString
-
-def parse_DAL_string(string):
-    # find out if LinK or ADMM
-    # if ADMM, which ADMM
-    # is it B3LYP, BLYP, camB3LYP
-    print string
-    
-def parse_MOL_string(string):
-    # get comment (hopefully name of the molecule)
-    # count number of atoms, give the molecular formula
-    # get number of electrons: nb_atoms*Z
-    cmd= 'grep -i "Atoms="" '+filename
-    print cmd
-    outString = check_output(cmd, shell=True)
-    return outString
-
-
-# ============================================================================ #
-# Class: DAL_input
-# ============================================================================ #
-class DAL_input(object):
-    def __init__(self, molecule, inputKeywords, nb_procs = 1, nb_threads = 1, revisionGIT = None):
-#    def __init__(self, jobs, time, pause = 60):
-        self.ismolecule = molecule
-        self.inputKeywords = inputKeywords
-        self.nb_proc = nb_proc
-        self.nb_threads = nb_threads
-        self.revisionGIT = revisionGIT
-
-
-# ============================================================================ #
-# Class: LSDALTONinput
-# ============================================================================ #
-class LSDALTONinput(object):
-    def __init__(self, molecule, inputKeywords, nb_procs = 1, nb_threads = 1, revisionGIT = None):
-#    def __init__(self, jobs, time, pause = 60):
-        self.molecule = molecule
-        self.inputKeywords = inputKeywords
-        self.nb_proc = nb_proc
-        self.nb_threads = nb_threads
-        self.revisionGIT = revisionGIT
 
 
 # ============================================================================ #

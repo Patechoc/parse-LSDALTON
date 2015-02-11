@@ -4,7 +4,7 @@ import sys, os, re
 import argparse
 import compare_LSDALTON_outputs as compLS
 import plotly_boxPlot_RMSgradDiff_benchmark_set
-
+import tabulate_stats_benchmark_set
 
 def compare_lastGradient_LSDALTONoutputs():
     #rep = "./files/lsdalton_files/"
@@ -26,4 +26,5 @@ if __name__ == "__main__":
     #compare_lastGradient_LSDALTONoutputs()
 
     ## Heavy plot on plotly to show gradient difference elementwise!!
-    plotly_boxPlot_RMSgradDiff_benchmark_set.run()    
+    ## plotly_boxPlot_RMSgradDiff_benchmark_set.run()  
+    tabulate_stats_benchmark_set.run()
