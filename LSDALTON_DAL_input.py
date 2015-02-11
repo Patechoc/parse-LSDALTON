@@ -29,8 +29,6 @@ def build_DAL(filepath, name=""):
 	return dal	
 
 
-def main():
-	print "hello LSDALTON_DAL_input"
 
 # ============================================================================ #
 # Class: DAL_input
@@ -47,7 +45,7 @@ class DAL_input(object):
 # ============================================================================ #
 class keyword(object):
     def __init__(self, name="ROOT"):
-        self.name        = name        # e.g. **GENERAL, **INTEGRAL, ... NOGCBASIS, ...
+        self.name        = str(name)        # e.g. **GENERAL, **INTEGRAL, ... NOGCBASIS, ...
         self.description = ""          # short text description of the keyword
         self.value       = None        # None if not relevant, or the value of a parameters choice (e.g. the "<Print level>" for the keyword ".BASPRINT")
         self.valueFormat = None        # None if not relevant, or format of the parameter value is needed (e.g. "GGAKey HF=0.2 Slater=0.8 Becke=0.72 LYP=0.81 VWN=0.19" for the keyword ".DFT")
@@ -57,7 +55,12 @@ class keyword(object):
         self.mandatory   = True        # Boolean: True of False
 
 	def __repr__(self):
-		return self.name+" ("+self.description+")" + "\nparent:"+self.parent
+		#return self.name+" ("+self.description+")" + "\nparent:"+self.parent
+		return str(self.name)
+
+	def __str__(self):
+		#return self.name+" ("+self.description+")" + "\nparent:"+self.parent
+		return str(self.name)
 
 	def set_keyword(self, name, description="", value="", parent="ROOT", mandatory=True, valueFormat=None, defaultValueIfnotSet=None):
 		self.name        = name        # e.g. **GENERAL, **INTEGRAL, ... NOGCBASIS, ...
@@ -69,6 +72,11 @@ class keyword(object):
 		self.children    = children    # list of keywords below this headlines/section
 		self.mandatory   = mandatory   # Boolean: True of False
 
+
+
+def main():
+	keywords = keyword()
+	print keywords.name
 
 # ============================================================================ #
 # Testing
