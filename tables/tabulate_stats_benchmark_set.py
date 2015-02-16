@@ -131,6 +131,7 @@ def generate_table(inputs, results, path_to_file):
         writer = csv.DictWriter(csvfile, fieldnames=columnHeaders)
         writer.writeheader()
         [writer.writerow(row) for row in csvRows]
+    print "Output csv table generated here: ", path_to_file
 
 if __name__ == "__main__":
     run()
