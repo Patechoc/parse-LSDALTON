@@ -2,3 +2,4 @@ argparse==1.2.1
 wsgiref==0.1.2
 numpy
 pandas
+pyparsing==2.0.1
