@@ -23,8 +23,11 @@ def compare_lastGradient_LSDALTONoutputs():
 
 
 if __name__ == "__main__":
+    ''' Testing modules'''
     #compare_lastGradient_LSDALTONoutputs()
 
-    ## Heavy plot on plotly to show gradient difference elementwise!!
-    ## plotly_boxPlot_RMSgradDiff_benchmark_set.run()  
+    ''' Heavy plot on plotly to show gradient difference elementwise!! '''
+    # plotly_boxPlot_RMSgradDiff_benchmark_set.run()  
+
+    ''' csv tables to share raw data'''
     tabulate_stats_benchmark_set.run()

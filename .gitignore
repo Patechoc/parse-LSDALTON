@@ -3,7 +3,7 @@ oldScripts/
 # venv is the virtual environment directory setup by Wrecker to deal with continuous delivery (= automatic build/tests after each git push)
 ./venv/ 
 **/*.pyc
-**/*.*~
+**/*~
 files/csv_difference.csv
 files/writeObj.csv
 files/writeObjArray.csv

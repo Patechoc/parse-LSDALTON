@@ -11,6 +11,7 @@ import configFile
 
 def run():
     inputs = configFile.get_inputs("ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)")
+    
     mol_list   = inputs.mol_list
     basis_list = [bas['pattern'] for bas in inputs.basisSets]
     ref        = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK']

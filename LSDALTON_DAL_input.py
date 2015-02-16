@@ -3,7 +3,7 @@
 import sys, os, re, math
 import numpy as np
 import subprocess as subproc
-#import parserGrammar
+import parser
 
 
 		

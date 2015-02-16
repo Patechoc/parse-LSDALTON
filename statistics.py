@@ -23,11 +23,11 @@ class matrix(object):
         return str
 
     def get_stats(self):
-        self.mean      = self.get_mean()
-        self.stdDev    = self.get_stdDev()
-        self.variance  = self.get_variance()
-        self.rms       = self.get_RMSvalue()
-        return self        
+        mean      = self.get_mean()
+        stdDev    = self.get_stdDev()
+        variance  = self.get_variance()
+        rms       = self.get_RMSvalue()
+        return {'mean':mean, 'stdDev':stdDev, 'variance':variance, 'rms':rms}        
 
     def get_mean(self):
         self.mean = np.mean(self.matrix)
