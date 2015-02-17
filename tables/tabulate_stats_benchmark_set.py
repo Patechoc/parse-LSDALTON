@@ -117,15 +117,15 @@ def generate_table(inputs, results, path_to_file):
                     headerRMS      = header + "RMS"
                     #columnHeaders.append(headerMean.strip())
                     #columnHeaders.append(headerStdDev.strip())
-                    #columnHeaders.append(headerMaxAbs.strip())
                     #columnHeaders.append(headerVariance.strip())
                     columnHeaders.append(headerRMS.strip())
+                    columnHeaders.append(headerMaxAbs.strip())
                     if results[regBasis][typeFunc][typeADMM][mol] != {}:
                         #newRow[headerMean.strip()]     = results[regBasis][typeFunc][typeADMM][mol]['mean']
                         #newRow[headerStdDev.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['stdDev']
                         #newRow[headerVariance.strip()] = results[regBasis][typeFunc][typeADMM][mol]['variance']
                         newRow[headerRMS.strip()]      = results[regBasis][typeFunc][typeADMM][mol]['rms']
-                        #newRow[headerMaxAbs.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['maxAbs']
+                        newRow[headerMaxAbs.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['maxAbs']
         #print newRow
         csvRows.append(newRow)
     with open(path_to_file, 'w') as csvfile:
