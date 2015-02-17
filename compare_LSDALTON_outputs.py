@@ -8,7 +8,7 @@ import subprocess as subproc
 #with open('input.txt') ad f:
     #data = [map(int, row) for row in csv.reader(f)]
 
-def get_compareInfoGradients(path_to_file1="", path_to_file2=""):
+def get_compareInfoGradients(path_to_file1, path_to_file2=""):
     """return the difference between 2 gradients in matrix form,
     and its max/min absolute elements and RMS norm.
     Keyword arguments:
@@ -23,7 +23,10 @@ def get_compareInfoGradients(path_to_file1="", path_to_file2=""):
     assert (len(grad1) == len(grad2)), \
         "Comparing gradients of different size: %r atoms vs %r atoms" % (len(grad1), len(grad2) )
     nbAtom = len(grad1)
-    diffMat = np.concatenate( [[grad1[atom][1]-grad2[atom][1]] for atom in range(0,len(grad1))])
+    if path_to_file2 != "":
+        diffMat = np.concatenate( [[grad1[atom][1]-grad2[atom][1]] for atom in range(0,len(grad1))])
+    else:
+        diffMat = np.concatenate( [grad1[atom][1] for atom in range(0,len(grad1))])
     absDiffMat = np.absolute(diffMat)
     diffObj = {}
     diffObj['matDiffGrad'] = diffMat
