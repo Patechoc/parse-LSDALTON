@@ -12,6 +12,8 @@ class matrix(object):
         self.mean      = None
         self.stdDev    = None
         self.variance  = None
+        self.maxAbs    = None
+        self.minAbs    = None
         self.rms       = None
 
     def __repr__(self):
@@ -19,6 +21,8 @@ class matrix(object):
         str += '\navg: {mean}'.format(mean=self.mean)
         str += '\nstd: {std}'.format(std=self.stdDev)
         str += '\nvar: {var}'.format(var=self.variance)
+        str += '\nmaxAbs: {maxAbs}'.format(maxAbs=self.maxAbs)
+        str += '\nminAbs: {minAbs}'.format(minAbs=self.minAbs)
         str += '\nRMS: {rms}'.format(rms=self.rms)
         return str
 
@@ -26,12 +30,22 @@ class matrix(object):
         mean      = self.get_mean()
         stdDev    = self.get_stdDev()
         variance  = self.get_variance()
+        maxAbs    = self.get_maxAbs()
+        minAbs    = self.get_minAbs()
         rms       = self.get_RMSvalue()
-        return {'mean':mean, 'stdDev':stdDev, 'variance':variance, 'rms':rms}        
+        return {'mean':mean, 'stdDev':stdDev, 'variance':variance, 'rms':rms, 'maxAbs':maxAbs, 'minAbs':minAbs}        
 
     def get_mean(self):
         self.mean = np.mean(self.matrix)
         return self.mean
+
+    def get_maxAbs(self):
+        self.maxAbs = np.amax(np.fabs(self.matrix))
+        return self.maxAbs
+
+    def get_minAbs(self):
+        self.minAbs = np.amin(np.fabs(self.matrix))
+        return self.minAbs
 
     def get_stdDev(self):
         # "RMS error"/"RMS deviation"  = Standard deviation

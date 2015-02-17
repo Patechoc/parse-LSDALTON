@@ -15,18 +15,20 @@ def get_compareInfoGradients(path_to_file1, path_to_file2=""):
     diffGrad -- the matrix difference as a list of x,y,z components for each atom (symbol)
     """
     obj1 = readLS.get_infoGradient(path_to_file1)
-    obj2 = readLS.get_infoGradient(path_to_file2)
-    if (obj1==None or obj2==None):
+    if (obj1==None):
         return None
     grad1 = obj1['gradient']
-    grad2 = obj2['gradient']
-    assert (len(grad1) == len(grad2)), \
-        "Comparing gradients of different size: %r atoms vs %r atoms" % (len(grad1), len(grad2) )
     nbAtom = len(grad1)
     if path_to_file2 != "":
+        obj2 = readLS.get_infoGradient(path_to_file2)
+        if (obj2==None):
+            return None
+        grad2 = obj2['gradient']
+        assert (len(grad1) == len(grad2)), \
+            "Comparing gradients of different size: %r atoms vs %r atoms" % (len(grad1), len(grad2) )
         diffMat = np.concatenate( [[grad1[atom][1]-grad2[atom][1]] for atom in range(0,len(grad1))])
     else:
-        diffMat = np.concatenate( [grad1[atom][1] for atom in range(0,len(grad1))])
+        diffMat = np.concatenate( [[grad1[atom][1]] for atom in range(0,len(grad1))])
     absDiffMat = np.absolute(diffMat)
     diffObj = {}
     diffObj['matDiffGrad'] = diffMat

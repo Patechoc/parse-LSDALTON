@@ -33,18 +33,23 @@ class matrix_statistics(unittest.TestCase):
                                   [ -2.22115000e-05,  -3.33703000e-05,  -7.52538000e-05]])
         self.stat01 = stats.matrix(self.matrix01)
         self.stat02 = stats.matrix(self.matrix02)
-        
+        print self.stat01.get_stats()
+
     def test_check_statistics_matrix(self):
         # matrix 1
         self.assertEqual(self.stat01.get_mean(), 2.5)
         self.assertAlmostEqual(self.stat01.get_stdDev(), 1.11803398875, delta=1e-9)
         self.assertEqual(self.stat01.get_variance(), 1.25)
         self.assertAlmostEqual(self.stat01.get_RMSvalue(), 2.73861278753, delta=1e-9)
+        self.assertEqual(self.stat01.get_maxAbs(), 4)
+        self.assertEqual(self.stat01.get_minAbs(), 1)
         # matrix 2        
         self.assertAlmostEqual(self.stat02.get_mean(), -3.5994e-08, delta=1e-9)
         self.assertAlmostEqual(self.stat02.get_stdDev(), 2.93708886737e-05, delta=1e-9)
         self.assertAlmostEqual(self.stat02.get_variance(), 8.62649101483e-10, delta=1e-10)
         self.assertAlmostEqual(self.stat02.get_RMSvalue(), 2.93709107302e-05, delta=1e-9)
+        self.assertAlmostEqual(self.stat02.get_maxAbs(), 7.8052699999999999e-05, delta=1e-9)
+        self.assertAlmostEqual(self.stat02.get_minAbs(), 1.4501999999999999e-06, delta=1e-9)
         
 
 if __name__ == '__main__':

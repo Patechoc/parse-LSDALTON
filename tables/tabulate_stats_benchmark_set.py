@@ -74,6 +74,7 @@ def get_data(inputs):
                     ## compare gradient of reference with ADMM
                     #print file_ref
                     diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
+                    #diffGrad = compLS.get_compareInfoGradients(file_dal)
                     #print diffGrad
                     if diffGrad != None:
                         results[regBasis][func][admm][mol] =  stats.matrix( diffGrad['matDiffGrad'] ).get_stats()

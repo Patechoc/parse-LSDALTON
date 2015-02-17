@@ -8,10 +8,14 @@ import read_LSDALTON_output as readLS
 import compare_LSDALTON_outputs as compLS
 from plotly.graph_objs import *
 import configFile
+from datetime import date
+
 
 def run():
     inputs = configFile.get_inputs("ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)")
     
+    today = date.today()
+    today_str = today.isoformat()
     mol_list   = inputs.mol_list
     basis_list = [bas['pattern'] for bas in inputs.basisSets]
     ref        = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK']
@@ -25,16 +29,17 @@ def run():
     path_to_dals = dals[0]['path_to_files']
     results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
     if inputs.doPlot == True:
-        generate_boxplot(title, results, mol_list, today_str)
+        generate_boxplot(inputs.title, results, mol_list, today_str)
     
 
 def get_colors():
-    bleu  ="rgb( 31,119,180)" ## "color":"rgb(54,144,192)",
-    orange="rgb(255,127, 14)"
-    vert  ="rgb( 44,160, 40)"
-    rouge ="rgb(214, 39, 40)"
-    violet="rgb(148,103,189)"
-    colors=[bleu, orange, vert, rouge, violet]
+    bleu   = "rgb( 31,119,180)" ## "color":"rgb(54,144,192)",
+    orange = "rgb(255,127, 14)"
+    vert   = "rgb( 44,160, 40)"
+    rouge  = "rgb(214, 39, 40)"
+    violet = "rgb(148,103,189)"
+    cian   = "rgb(  0,204,204)"
+    colors = [bleu, orange, vert, cian, rouge, violet]
     return colors
 
 
@@ -80,7 +85,7 @@ def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
                 ## compare gradient of reference with ADMM
                 #print file_ref
                 diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
-                #print diffGrad
+                print diffGrad
                 if diffGrad != None:
                     results[basis][dft_func][mol] =  np.absolute(diffGrad['matDiffGrad'].flatten())
                 else:
