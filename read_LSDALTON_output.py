@@ -24,6 +24,19 @@ class MOL_input(object):
         self.basis
 
 # ============================================================================ #
+# Class: MOL_output
+# ============================================================================ #
+class MOL_output(object):
+    def __init__(self):
+        self.outputString = ""
+        self.format      = "" # BASIS or ATOMBASIS
+        
+
+    def get_coordinates_XYZ(self):
+        '''https://github.com/charnley/rmsd'''
+        return True
+
+# ============================================================================ #
 # Class: LSDALTON_calculation
 # ============================================================================ #
 class LSDALTON_calculation(object):
