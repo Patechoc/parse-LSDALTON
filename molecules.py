@@ -38,10 +38,10 @@ def get_moleculeSet_benchmark_geomOpt():
            molecule('valinomycin',168),
            molecule('vanomycin',176),
            molecule('c180',180),
-           molecule('c240',240),
-           molecule('collagen-like-peptide',371),
-           molecule('titin',392),
-           molecule('crambin',642)]
+           molecule('c240',240)]
+           #molecule('collagen-like-peptide',371),
+           #molecule('titin',392),
+           #molecule('crambin',642)]
     return set
 
 def main():

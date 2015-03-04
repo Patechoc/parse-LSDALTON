@@ -11,10 +11,17 @@ import lib_spreadsheet as libCSV
 import csv
 
 def run():
-    inputs = configFile.get_inputs("ADMM single SCF + gradient error from LinK reference (6-31G*/3-21G and cc-pVTZ/3-21G)")
+    inputs = configFile.get_inputs("ADMM single SCF + gradient error from LinK reference (6-31G*/3-21G)")
     results = get_data(inputs)
     pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/files/tables/"
-    filename = "ADMM_gradient_error.csv"
+    filename = "ADMM_gradient_error_6-31Gs.csv"
+    if inputs.doPlot == True:
+        generate_table(inputs, results, pathOutput+filename)
+
+    inputs = configFile.get_inputs("ADMM single SCF + gradient error from LinK reference (cc-pVTZ/3-21G)")
+    results = get_data(inputs)
+    pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/files/tables/"
+    filename = "ADMM_gradient_error_cc-pVTZ.csv"
     if inputs.doPlot == True:
         generate_table(inputs, results, pathOutput+filename)
 
@@ -61,13 +68,21 @@ def get_data(inputs):
                 for molVal in mol_list:
                     mol  = molVal.strip()
                     results[regBasis][func][admm][mol] = {} 
-                    cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+regBasis+"*"+mol+"*.out"
+                    ## single gradient (LinK) calculation, without ADMM
+                    ## ex.: ls lsd*Histidine*out | grep -v ADMM
+                    cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+regBasis+"*"+mol+"*.out  | grep -v ADMM[2,S]"
                     file_ref = run_command_or_exit(cmd)
                     # if file_ref != None:
                     #     print "\t\t"+file_ref
                     
                     cmd= "ls "+ path_to_dals+"/lsd*"+dalPattern+"*"+regBasis+"*"+mol+"*.out"
-                    file_dal = run_command_or_exit(cmd)
+                    files_dal = run_command_or_exit(cmd)
+                    if files_dal != None and len((files_dal.strip()).split("\n")) != 1:
+                        file_dal = files_dal[0].strip()
+                        print "CAREFUL: this 'ls' command returns more than one file:\n",cmd
+                        raw_input("Press Enter to continue...")
+                    else:
+                        file_dal = files_dal
                     # if file_dal != None:
                     #     print "\t\t"+file_dal
 
@@ -99,16 +114,16 @@ def generate_table(inputs, results, path_to_file):
     for molVal  in mol_list:
         columnHeaders = ['Molecule']
         mol  = molVal.strip()
-        print mol
+        #print mol
         newRow = {}
         newRow['Molecule'] = mol
         for regBasisVal in basis_list:
             regBasis = regBasisVal.strip()  
-            print "\t"+regBasis
+            #print "\t"+regBasis
             for typeFunc in list_func:
-                print "\t\t" + typeFunc
+                #print "\t\t" + typeFunc
                 for typeADMM in list_ADMM:
-                    print "\t\t\t"+ typeADMM
+                    #print "\t\t\t"+ typeADMM
                     header = regBasis + "\r" + typeADMM + "(3-21G)\r" + typeFunc + "\r" 
                     headerMean     = header + "Mean"
                     headerStdDev   = header + "StdDev"

@@ -115,7 +115,7 @@ def get_infoGradient_from_gradString(gradString):
     return obj
     
 
-def get_last_molecular_gradient(path_to_file=""):
+def get_last_molecular_gradient(path_to_file =""):
     isFile = os.path.isfile(path_to_file.strip())
     if isFile == False:
         print "Path to file is not correct: ",path_to_file
@@ -124,16 +124,16 @@ def get_last_molecular_gradient(path_to_file=""):
         # try finding the last "Molcular gradient"
 	out = ""
 	try:
-		cmd= 'sed -n "/Molecular gradient/,/RMS gradient/p" '+path_to_file
-		out1 = subproc.check_output(cmd, shell=True)
-                if (out1==""):
-                    return None
-		out2=out1.rsplit('-----------------------', 1)[1]
-		out3=out2.rsplit('RMS gradient norm', 1)[0]
-		out = [line.strip() for line in out3.split('\n') if line.strip() != '']
+            cmd= 'sed -n "/Molecular gradient/,/RMS gradient/p" '+path_to_file.strip()
+            out1 = subproc.check_output(cmd, shell=True)
+            if (out1==""):
+                return None
+            out2=out1.rsplit('-----------------------', 1)[1]
+            out3=out2.rsplit('RMS gradient norm', 1)[0]
+            out = [line.strip() for line in out3.split('\n') if line.strip() != '']
 	except:
-		print "Not able to extract the molecular gradient from this file:\n", path_to_file
-		return None
+            print "Not able to extract the molecular gradient from this file:\n", path_to_file
+            return None
 	## reBuild the gradient matrix
 	# using FOR LOOP
 	#grad = []

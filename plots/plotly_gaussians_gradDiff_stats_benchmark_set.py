@@ -8,8 +8,24 @@ import read_LSDALTON_output as readLS
 import compare_LSDALTON_outputs as compLS
 from plotly.graph_objs import *
 import configFile
+import scipy.stats as stats
+import pylab as pl
+
 
 def run():
+    generate_test_plot()
+
+def generate_test_plot():
+    h = sorted([186, 176, 158, 180, 186, 168, 168, 164, 178, 170, 189, 195, 172,
+                187, 180, 186, 185, 168, 179, 178, 183, 179, 170, 175, 186, 159,
+                161, 178, 175, 185, 175, 162, 173, 172, 177, 175, 172, 177, 180])  #sorted
+    
+    fit = stats.norm.pdf(h, np.mean(h), np.std(h))  #this is a fitting indeed
+    pl.plot(h,fit,'-')
+    pl.hist(h,normed=True)      #use this to draw histogram of your data
+    pl.show() 
+    
+def run1():
     inputs = configFile.get_inputs("ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)")
     
     mol_list   = inputs.mol_list
@@ -146,7 +162,6 @@ def generate_boxplot(titre, results, mol_list, today_str):
     )
     fig = Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Gradient differences')
-
 
 
 if __name__ == "__main__":

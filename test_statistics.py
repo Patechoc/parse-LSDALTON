@@ -33,7 +33,7 @@ class matrix_statistics(unittest.TestCase):
                                   [ -2.22115000e-05,  -3.33703000e-05,  -7.52538000e-05]])
         self.stat01 = stats.matrix(self.matrix01)
         self.stat02 = stats.matrix(self.matrix02)
-        print self.stat01.get_stats()
+        #print self.stat01.get_stats()
 
     def test_check_statistics_matrix(self):
         # matrix 1
