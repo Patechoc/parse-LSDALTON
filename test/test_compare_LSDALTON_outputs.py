@@ -12,8 +12,8 @@ import numpy as np
 class compare_molecular_gradients(unittest.TestCase):
 
     def setUp(self):
-        self.path_to_file1 = "../files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
-        self.path_to_file2 = "../files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
+        self.path_to_file1 = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
+        self.path_to_file2 = "../src/files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
         self.zeroDiff = compareLS.get_compareInfoGradients(self.path_to_file1, self.path_to_file1)
         self.diffGrad = compareLS.get_compareInfoGradients(self.path_to_file1, self.path_to_file2)
 		

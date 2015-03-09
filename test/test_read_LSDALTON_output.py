@@ -36,7 +36,7 @@ class demo_test(unittest.TestCase):
 class molecular_gradient(unittest.TestCase):
 
     def setUp(self):
-        self.path_to_file = "../files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
+        self.path_to_file = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
         self.grad = readLS.get_last_molecular_gradient(self.path_to_file)
 		
     def test_extract_gradient_to_file(self):

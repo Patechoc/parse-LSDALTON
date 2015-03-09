@@ -37,8 +37,12 @@ $ python -m unittest discover -v
 (see https://docs.python.org/2/library/unittest.html for more information about unit testing)
 
 ### using [PyTest](http://pytest.org/)
+$ cd test
+$ py.test -q test_read_LSDALTON_output
 
-
+or simply
+$ cd test
+$ py.test
 
 ## Continuous delivery
 The code is testing continuously (after every `git push`) using [Wercker](http://wercker.com/) and explains why we need the following files:
