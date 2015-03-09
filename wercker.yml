@@ -23,11 +23,8 @@ build:
     # A custom script step, name value is used in the UI
     # and the code value contains the command that get executed
     - script:
-        name: python unit test with PyTest
+        name: define environment variables
         code: |
-          echo "python version $(python --version) running"
-          echo "pip version $(pip --version) running"
-          echo "PyTest version $(py.test --version) running"
           parseLSDaltonPATH=$(pwd)
           echo "parseLSDaltonPATH: $parseLSDaltonPATH"
           export PYTHONPATH=$PYTHONPATH:$parseLSDaltonPATH
@@ -35,5 +32,12 @@ build:
           export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/plots
           export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/tables
           echo "PYTHONPATH: $PYTHONPATH"
+
+    - script:
+        name: python unit test with PyTest
+        code: |
+          echo "python version $(python --version) running"
+          echo "pip version $(pip --version) running"
+          echo "PyTest version $(py.test --version) running"
           cd test
           python -m pytest
