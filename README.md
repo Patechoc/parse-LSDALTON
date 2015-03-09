@@ -7,20 +7,21 @@ Main directory structure:
 ```
 ├── README.md
 ├── main.py
-├── read_LSDALTON_output.py
-├── compare_LSDALTON_outputs.py
+├── src
+│   ├── read_LSDALTON_output.py
+│   ├── compare_LSDALTON_outputs.py
+│   └── plots/
+│       ├── plotly01.py
+│       └── plotly_HistidineFerrocene.py
+├── files/
+│    └── lsdalton_files/
+│       ├── lsdalton20140924_b3lyp_gradient...
+│       └── lsdalton20140924_geomOpt-b3lyp_...
 ├── ...
-├── plots/
-│   ├── plotly01.py
-│   └── plotly_HistidineFerrocene.py
-├── test/
-│   ├── test_read_LSDALTON_output.py
-│   ├── ...
-│   └── test_compare_LSDALTON_outputs.py
-└── files/
-    └── lsdalton_files/
-        ├── lsdalton20140924_b3lyp_gradient...
-        └── lsdalton20140924_geomOpt-b3lyp_...
+└── test/
+    ├── test_read_LSDALTON_output.py
+    ├── ...
+    └── test_compare_LSDALTON_outputs.py
 ```
 ## Testing the code
 ### using the standard Python unit testing framework ([PyUnit](https://docs.python.org/2/library/unittest.html))
