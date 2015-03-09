@@ -3,3 +3,4 @@ wsgiref==0.1.2
 numpy
 pandas
 pyparsing==2.0.1
+pytest
