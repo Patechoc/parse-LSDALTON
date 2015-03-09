@@ -35,7 +35,7 @@ $ python -m unittest discover -v
 ```
 (see https://docs.python.org/2/library/unittest.html for more information about unit testing)
 
-### using [PyTest](http://pytest.org/latest/getting-started.html)
+### using [PyTest](http://pytest.org/)
 
 
 
@@ -45,5 +45,6 @@ The code is testing continuously (after every `git push`) using [Wercker](http:/
 ├── wercker.yml
 └── requirements.txt
 ```
+wercker.yml will specify the flow of packages to install, variables to setup and commands to perform, while requirements.txt includes the list of packages to install and eventually which version you required.
 [![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
 
