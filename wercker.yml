@@ -29,4 +29,5 @@ build:
           echo "pip version $(pip --version) running"
           echo "PyTest version $(py.test --version) running"
 	  # python -m unittest discover -v
-	  cd test; python -m pytest
+	  cd test
+	  python -m pytest
