@@ -29,6 +29,7 @@ build:
           echo "parseLSDaltonPATH: $parseLSDaltonPATH"
           export PYTHONPATH=$PYTHONPATH:$parseLSDaltonPATH
           echo "PYTHONPATH: $PYTHONPATH"
+          export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/src
           export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/plots
           export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/tables
           echo "PYTHONPATH: $PYTHONPATH"
