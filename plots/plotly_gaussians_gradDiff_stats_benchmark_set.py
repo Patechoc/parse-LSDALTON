@@ -21,9 +21,164 @@ def generate_test_plot():
                 161, 178, 175, 185, 175, 162, 173, 172, 177, 175, 172, 177, 180])  #sorted
     
     fit = stats.norm.pdf(h, np.mean(h), np.std(h))  #this is a fitting indeed
-    pl.plot(h,fit,'-')
-    pl.hist(h,normed=True)      #use this to draw histogram of your data
-    pl.show() 
+    #pl.plot(h,fit,'-')
+    #pl.hist(h,normed=True)      #use this to draw histogram of your data
+    #pl.show() 
+    
+    trace1 = Scatter(
+        x=h,
+        y=fit,
+        name="errors",
+        marker=Marker(size=12),
+        line=Line(dash='dot',     # dot, longdashdot
+                  shape='spline', # linear or spline
+                  color='rgb(204, 0, 0)',
+                  width=3),
+        xsrc='cimar:167:3db457',
+        ysrc='cimar:167:98813d'
+    )
+    data = Data([trace1])
+    layout = Layout(
+        title='Click to enter Plot title',
+        titlefont=Font(
+            family='',
+            size=0,
+            color=''
+        ),
+    font=Font(
+        family='"Open sans", verdana, arial, sans-serif',
+        size=12,
+        color='#444'
+    ),
+    showlegend=False,
+        autosize=True,
+        width=1522,
+        height=579,
+        xaxis=XAxis(
+            title='Click to enter X axis title',
+            titlefont=Font(
+                family='',
+                size=0,
+                color=''
+            ),
+        range=[0.7482472399065194, 5],
+            domain=[0, 1],
+            type='linear',
+            rangemode='normal',
+            autorange=True,
+            showgrid=True,
+            zeroline=True,
+            showline=False,
+            autotick=True,
+            nticks=0,
+            ticks='',
+            showticklabels=True,
+            tick0=0,
+            dtick=0.5,
+            ticklen=5,
+            tickwidth=1,
+            tickcolor='#444',
+            tickangle='auto',
+            tickfont=Font(
+                family='',
+                size=0,
+                color=''
+            ),
+        exponentformat='B',
+            showexponent='all',
+            mirror=False,
+            gridcolor='rgb(255, 255, 255)',
+            gridwidth=1,
+            zerolinecolor='#444',
+            zerolinewidth=1,
+            linecolor='#444',
+            linewidth=1,
+            anchor='y',
+            overlaying=False,
+            position=0
+        ),
+    yaxis=YAxis(
+        title='Click to enter Y axis title',
+        titlefont=Font(
+            family='',
+            size=0,
+            color=''
+        ),
+        range=[4.333333333333333, 17.666666666666668],
+        domain=[0, 1],
+        type='linear',
+        rangemode='normal',
+        autorange=True,
+        showgrid=True,
+        zeroline=True,
+        showline=False,
+        autotick=True,
+        nticks=0,
+        ticks='',
+        showticklabels=True,
+        tick0=0,
+        dtick=2,
+        ticklen=5,
+        tickwidth=1,
+        tickcolor='#444',
+        tickangle='auto',
+        tickfont=Font(
+            family='',
+            size=0,
+            color=''
+        ),
+        exponentformat='B',
+        showexponent='all',
+        mirror=False,
+        gridcolor='rgb(255, 255, 255)',
+        gridwidth=1,
+        zerolinecolor='#444',
+        zerolinewidth=1,
+        linecolor='#444',
+        linewidth=1,
+        anchor='x',
+        overlaying=False,
+        position=0
+    ),
+    legend=Legend(
+        x=1.02,
+        y=1,
+        traceorder='normal',
+        font=Font(
+            family='',
+            size=0,
+            color=''
+        ),
+        bgcolor='#fff',
+        bordercolor='#444',
+        borderwidth=0,
+        xanchor='left',
+        yanchor='top'
+    ),
+    margin=Margin(
+        l=80,
+        r=80,
+        b=80,
+        t=100,
+        pad=0,
+        autoexpand=True
+    ),
+    paper_bgcolor='rgb(243, 243, 243)',
+        plot_bgcolor='rgb(243, 243, 243)',
+        hovermode='x',
+        dragmode='zoom',
+        separators='.,',
+        barmode='group',
+        bargap=0.2,
+        bargroupgap=0,
+        boxmode='overlay',
+        boxgap=0.3,
+        boxgroupgap=0.3,
+        hidesources=False
+    )
+    fig = Figure(data=data, layout=layout)
+    plot_url = py.plot(fig, filename='test error distributions')
+
     
 def run1():
     inputs = configFile.get_inputs("ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)")
