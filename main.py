@@ -5,7 +5,7 @@ import argparse
 import compare_LSDALTON_outputs as compLS
 import plotly_boxPlot_RMSgradDiff_benchmark_set
 import tabulate_stats_benchmark_set
-import plotly_gaussians_gradDiff_stats_benchmark_set
+#import plotly_gaussians_gradDiff_stats_benchmark_set
 
 
 if __name__ == "__main__":

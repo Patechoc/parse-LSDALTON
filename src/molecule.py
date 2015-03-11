@@ -15,8 +15,8 @@ Atomic_NUMBERS = {"H": 1,"He": 2,
                   "Fr": 87,"Ra": 88,"Ac": 89,"Ku": 104,"Ha": 105}
 
 
-class atomInfos:
-    self.bohr_in_angstrom = 0.5291772083
+class atomInfos(object):
+    bohr_in_angstrom = 0.5291772083
     def __init__(self, atomSymbol,
                  xCoord, yCoord, zCoord,
                  atomCharge=None,
@@ -45,10 +45,10 @@ class atomInfos:
                 s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}\n'.format(self.atomSymbol, self.xCoord, self.yCoord, self.zCoord)
             elif re.match("bohr", newUnitDistance, re.I) and re.match("angstrom", self.unitDistances, re.I):
                 #1 bohr=0.5291772083 Angstrom
-                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}\n'.format(self.atomSymbol, self.xCoord/self.bohr_in_angstrom, self.yCoord/self.bohr_in_angstrom, self.zCoord/self.bohr_in_angstrom)
+                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}\n'.format(self.atomSymbol, self.xCoord/bohr_in_angstrom, self.yCoord/bohr_in_angstrom, self.zCoord/bohr_in_angstrom)
             elif re.match("angstrom", newUnitDistance, re.I) and re.match("bohr", self.unitDistances, re.I):
                 #1 bohr=0.5291772083 Angstrom
-                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}\n'.format(self.atomSymbol, self.xCoord*.5291772083, self.yCoord*self.bohr_in_angstrom, self.zCoord*self.bohr_in_angstrom)
+                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}\n'.format(self.atomSymbol, self.xCoord*.5291772083, self.yCoord*bohr_in_angstrom, self.zCoord*bohr_in_angstrom)
         else:
             s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}\n'.format(self.atomSymbol, self.xCoord, self.yCoord, self.zCoord)
         return s
@@ -56,7 +56,7 @@ class atomInfos:
         print '{0}'.format(self.getContent_atomCoord())
 
 
-class groupSameAtoms:
+class groupSameAtoms(object):
     def __init__(self):
         self.atomsSymbol = None
         self.atomTypeCharge = None

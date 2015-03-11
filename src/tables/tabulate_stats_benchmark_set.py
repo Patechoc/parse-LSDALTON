@@ -13,14 +13,14 @@ import csv
 def run():
     inputs = configFile.get_inputs("ADMM single SCF + gradient error from LinK reference (6-31G*/3-21G)")
     results = get_data(inputs)
-    pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/files/tables/"
+    pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/tables/"
     filename = "ADMM_gradient_error_6-31Gs.csv"
     if inputs.doPlot == True:
         generate_table(inputs, results, pathOutput+filename)
 
     inputs = configFile.get_inputs("ADMM single SCF + gradient error from LinK reference (cc-pVTZ/3-21G)")
     results = get_data(inputs)
-    pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/files/tables/"
+    pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/tables/"
     filename = "ADMM_gradient_error_cc-pVTZ.csv"
     if inputs.doPlot == True:
         generate_table(inputs, results, pathOutput+filename)
@@ -37,6 +37,19 @@ def run_command_or_exit(cmd):
         out = None
     return out
 
+
+def get_list_functionals(dals):
+    funcs = [dal['abrev'].split('-')[1] for dal in dals]
+    #list_func = list(set([dal['abrev'].split('-')[1] for dal in dals])) ### unordered list of unique functionals
+    list_func = [ v for (i,v) in enumerate(funcs) if v not in funcs[0:i] ] ### keep order of the list with unique functionals
+    return list_func
+
+def get_list_ADMM(dals):
+    ADMMs = [dal['abrev'].split('-')[0] for dal in dals]
+    #list_ADMM = list(set([dal['abrev'].split('-')[0] for dal in dals]))  ### unordered list of unique functionals
+    list_ADMM = [ v for (i,v) in enumerate(ADMMs) if v not in ADMMs[0:i] ] ### keep order of the list with unique functionals
+    return list_ADMM
+
 def get_data(inputs):
     results = {}
     combinationAvoided = []
@@ -48,8 +61,9 @@ def get_data(inputs):
     path_to_ref = ref[0]['path_to_files']
 
     dals = [dal for dal in inputs.dal_list if dal['abrev'] != 'LinK'] ## [{abrev, path, pattern}, {abrev, path, pattern}, ...]
-    list_func = list(set([dal['abrev'].split('-')[1] for dal in dals]))
-    list_ADMM = list(set([dal['abrev'].split('-')[0] for dal in dals]))
+    list_func = get_list_functionals(dals)
+
+    list_ADMM = get_list_ADMM(dals)
 
     dal_list   = []
     dal_list.extend( [{'abrev':dal['abrev'], 'pattern':dal['pattern']} for dal in dals] )
@@ -97,7 +111,7 @@ def get_data(inputs):
                         combinationAvoided.append([regBasis, func, admm, mol])
     avoidedCases = "\n".join(["\t".join(combi) for combi in combinationAvoided])
     if avoidedCases != "":
-        print "Combinations avoided:\n"
+        print "Combinations avoided:"
         print avoidedCases
     return results
 
@@ -106,8 +120,8 @@ def generate_table(inputs, results, path_to_file):
     basis_list = [bas['pattern'] for bas in inputs.basisSets]  ### 6-31Gs   
     mol_list   = inputs.mol_list ## [molecule_name]
     dals = [dal for dal in inputs.dal_list if dal['abrev'] != 'LinK'] ## [{abrev, path, pattern}, {abrev, path, pattern}, ...]
-    list_func = list(set([dal['abrev'].split('-')[1] for dal in dals]))
-    list_ADMM = list(set([dal['abrev'].split('-')[0] for dal in dals]))
+    list_func = get_list_functionals(dals)
+    list_ADMM = get_list_ADMM(dals)
 
     csvRows = []
 
@@ -120,27 +134,48 @@ def generate_table(inputs, results, path_to_file):
         for regBasisVal in basis_list:
             regBasis = regBasisVal.strip()  
             #print "\t"+regBasis
-            for typeFunc in list_func:
-                #print "\t\t" + typeFunc
-                for typeADMM in list_ADMM:
-                    #print "\t\t\t"+ typeADMM
-                    header = regBasis + "\r" + typeADMM + "(3-21G)\r" + typeFunc + "\r" 
-                    headerMean     = header + "Mean"
-                    headerStdDev   = header + "StdDev"
-                    headerVariance = header + "Var"
-                    headerMaxAbs   = header + "Max.Abs."
-                    headerRMS      = header + "RMS"
+            for typeADMM in list_ADMM:
+                #print "\t\t\t"+ typeADMM
+                for typeFunc in list_func:
+                    #print "\t\t" + typeFunc
+                    header = "\r" + regBasis + "\r" + typeADMM + "(3-21G)\r" + typeFunc
+                    headerMean     = "Mean" + header
+                    headerStdDev   = "StdDev" + header
+                    headerVariance = "Var" + header
+                    headerMaxAbs   = "Max.Abs. (mEh)" + header
+                    headerRMS      = "RMS (mEh)" + header
                     #columnHeaders.append(headerMean.strip())
                     #columnHeaders.append(headerStdDev.strip())
                     #columnHeaders.append(headerVariance.strip())
                     columnHeaders.append(headerRMS.strip())
+                    #columnHeaders.append(headerMaxAbs.strip())
+                    if results[regBasis][typeFunc][typeADMM][mol] != {}:
+                        #newRow[headerMean.strip()]     = results[regBasis][typeFunc][typeADMM][mol]['mean']
+                        #newRow[headerStdDev.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['stdDev']
+                        #newRow[headerVariance.strip()] = results[regBasis][typeFunc][typeADMM][mol]['variance']
+                        newRow[headerRMS.strip()]      = results[regBasis][typeFunc][typeADMM][mol]['rms']*1000.
+                        #newRow[headerMaxAbs.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['maxAbs']
+            for typeADMM in list_ADMM:
+                #print "\t\t\t"+ typeADMM
+                for typeFunc in list_func:
+                    #print "\t\t" + typeFunc
+                    header = "\r" + regBasis + "\r" + typeADMM + "(3-21G)\r" + typeFunc
+                    headerMean     = "Mean" + header
+                    headerStdDev   = "StdDev" + header
+                    headerVariance = "Var" + header
+                    headerMaxAbs   = "Max.Abs. (mEh)" + header
+                    headerRMS      = "RMS (mEh)" + header
+                    #columnHeaders.append(headerMean.strip())
+                    #columnHeaders.append(headerStdDev.strip())
+                    #columnHeaders.append(headerVariance.strip())
+                    #columnHeaders.append(headerRMS.strip())
                     columnHeaders.append(headerMaxAbs.strip())
                     if results[regBasis][typeFunc][typeADMM][mol] != {}:
                         #newRow[headerMean.strip()]     = results[regBasis][typeFunc][typeADMM][mol]['mean']
                         #newRow[headerStdDev.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['stdDev']
                         #newRow[headerVariance.strip()] = results[regBasis][typeFunc][typeADMM][mol]['variance']
-                        newRow[headerRMS.strip()]      = results[regBasis][typeFunc][typeADMM][mol]['rms']
-                        newRow[headerMaxAbs.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['maxAbs']
+                        #newRow[headerRMS.strip()]      = results[regBasis][typeFunc][typeADMM][mol]['rms']
+                        newRow[headerMaxAbs.strip()]   = results[regBasis][typeFunc][typeADMM][mol]['maxAbs']*1000.
         #print newRow
         csvRows.append(newRow)
     with open(path_to_file, 'w') as csvfile:
