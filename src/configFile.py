@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-import molecules
+import molecule_sets
 from datetime import date
 
 
@@ -28,7 +28,7 @@ def get_inputs(title):
     inputs = InputAnalysis(title)
     if (title == "ADMM2/ADMMS (6-31G*/3-21G) single gradient deviation from geom. opt. ref. (6-31G*)"):
         mol_list = ['Histidine','Ferrocene']
-        #mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
+        #mol_list = [mol.shortname for mol in molecule_sets.get_moleculeSet_benchmark_geomOpt()]
         path_to_ref = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/'
         dal_list = [{'abrev':'LinK', 'pattern':'geomOpt-b3lyp_Vanlenthe_', 'path_to_files':path_to_ref }]
 
@@ -48,7 +48,7 @@ def get_inputs(title):
     elif (title == "ADMM single SCF + gradient error from LinK reference (6-31G*/3-21G)"):
         print "Title found: ",title
         #mol_list = ['Histidine','Ferrocene']
-        mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
+        mol_list = [mol.shortname for mol in molecule_sets.get_moleculeSet_benchmark_geomOpt()]
         path_to_ref = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/'
         dal_list = [{'abrev':'LinK', 'pattern':'b3lyp_gradient_', 'path_to_files':path_to_ref }]
         path_to_dals = path_to_ref
@@ -67,7 +67,7 @@ def get_inputs(title):
     elif (title == "ADMM single SCF + gradient error from LinK reference (cc-pVTZ/3-21G)"):
         print "Title found: ",title
         #mol_list = ['Histidine','Ferrocene']
-        mol_list = [mol.shortname for mol in molecules.get_moleculeSet_benchmark_geomOpt()]
+        mol_list = [mol.shortname for mol in molecule_sets.get_moleculeSet_benchmark_geomOpt()]
         path_to_ref = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ/'
         dal_list = [{'abrev':'LinK', 'pattern':'b3lyp_gradient_', 'path_to_files':path_to_ref }]
 
