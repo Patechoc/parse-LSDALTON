@@ -14,71 +14,83 @@ import subprocess as subproc
     #data = [map(int, row) for row in csv.reader(f)]
 
 
-# ============================================================================ #
-# Class: MOL_input
-# ============================================================================ #
-class MOL_input(object):
-    def __init__(self):
-        self.inputString = ""
-        self.format      = "" # BASIS or ATOMBASIS
-        self.basis
+# # ============================================================================ #
+# # Class: MOL_input
+# # ============================================================================ #
+# class MOL_input(object):
+#     def __init__(self):
+#         self.inputString = ""
+#         self.format      = "" # BASIS or ATOMBASIS
+#         self.basis
 
-# ============================================================================ #
-# Class: MOL_output
-# ============================================================================ #
-class MOL_output(object):
-    def __init__(self):
-        self.outputString = ""
-        self.format      = "" # BASIS or ATOMBASIS
+# # ============================================================================ #
+# # Class: MOL_output
+# # ============================================================================ #
+# class MOL_output(object):
+#     def __init__(self):
+#         self.outputString = ""
+#         self.format      = "" # BASIS or ATOMBASIS
         
 
-    def get_coordinates_XYZ(self):
-        '''https://github.com/charnley/rmsd'''
-        return True
+#     def get_coordinates_XYZ(self):
+#         '''https://github.com/charnley/rmsd'''
+#         return True
 
-# ============================================================================ #
-# Class: LSDALTON_calculation
-# ============================================================================ #
-class LSDALTON_calculation(object):
-    def __init__(self):
-#    def __init__(self, jobs, time, pause = 60):
-        self.MOL_input   = None
-        self.DAL_input   = None
-        self.nb_procs    = nb_procs
-        self.nb_threads  = nb_threads
-        self.revisionGIT = revisionGIT
+# # ============================================================================ #
+# # Class: LSDALTON_calculation
+# # ============================================================================ #
+# class LSDALTON_calculation(object):
+#     def __init__(self):
+# #    def __init__(self, jobs, time, pause = 60):
+#         self.MOL_input   = None
+#         self.DAL_input   = None
+#         self.nb_procs    = nb_procs
+#         self.nb_threads  = nb_threads
+#         self.revisionGIT = revisionGIT
 
     
 
-def get_MOL_string(filename):
-    cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
+# def get_MOL_string(filename):
+#     cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
+#     print cmd
+#     outString = subproc.check_output(cmd, shell=True)
+#     return outString
+
+# def parse_MOL_string(string):
+#     # get comment (hopefully name of the molecule)
+#     # count number of atoms, give the molecular formula
+#     # get number of electrons: nb_atoms*Z
+#     cmd= 'grep -i "Atoms="" '+filename
+#     print cmd
+#     out = subproc.check_output(cmd, shell=True)
+#     mol_input = {}
+#     return mol_input
+
+# def get_DAL_string(filename):
+#     cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
+#     print cmd
+#     outString = subproc.check_output(cmd, shell=True)
+#     return outString
+
+# def parse_DAL_string(string):
+#     dal_input = {}
+#     # find out if LinK or ADMM
+#     # if ADMM, which ADMM
+#     # is it B3LYP, BLYP, camB3LYP
+#     return dal_input
+
+
+def get_energy_contribution_nuclearRepulsion(path_to_file):
+    """ returns an array of nuclear repulsion contribution,
+    one for each new geometry in the case of a geometry optimization,
+    or only one for a single energy calculation"""
+    cmd= 'grep "Nuclear repulsion:" '+ path_to_file
     print cmd
-    outString = check_output(cmd, shell=True)
-    return outString
-
-def parse_MOL_string(string):
-    # get comment (hopefully name of the molecule)
-    # count number of atoms, give the molecular formula
-    # get number of electrons: nb_atoms*Z
-    cmd= 'grep -i "Atoms="" '+filename
-    print cmd
-    out = check_output(cmd, shell=True)
-    mol_input = {}
-    return mol_input
-
-def get_DAL_string(filename):
-    cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
-    print cmd
-    outString = check_output(cmd, shell=True)
-    return outString
-
-def parse_DAL_string(string):
-    dal_input = {}
-    # find out if LinK or ADMM
-    # if ADMM, which ADMM
-    # is it B3LYP, BLYP, camB3LYP
-    return dal_input
-
+    out = subproc.check_output(cmd, shell=True)
+    print out
+    return out
+    
+    
 def get_infoGradient(path_to_file):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
     Keyword arguments:
@@ -170,3 +182,5 @@ if __name__ == "__main__":
     print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
     print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])
     print gradInfo['matGrad']
+
+    get_energy_contribution_nuclearRepulsion(path_to_file)
