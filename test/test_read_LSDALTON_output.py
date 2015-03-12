@@ -40,6 +40,11 @@ class energy_contributions(unittest.TestCase):
         self.nuclear_repulsions = readLS.get_energy_contribution_nuclearRepulsion(self.path_to_file)
     def test_nuclearRepulsion_geomOpt(self):
         [self.assertEqual(elems[0], elems[1]) for elems in zip(self.nuclear_repulsions, self.list_nucRep)]
+    def test_firstNuclearRepulsion(self):
+        self.assertEqual(self.list_nucRep[0], readLS.get_energy_contribution_firstNuclearRepulsion(self.path_to_file)) 
+    def test_lastNuclearRepulsion(self):
+        self.assertEqual(self.list_nucRep[-1], readLS.get_energy_contribution_lastNuclearRepulsion(self.path_to_file)) 
+
 
 class molecular_gradient(unittest.TestCase):
     def setUp(self):

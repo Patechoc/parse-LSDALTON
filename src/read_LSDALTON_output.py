@@ -90,6 +90,11 @@ def get_energy_contribution_nuclearRepulsion(path_to_file):
     out = subproc.check_output(cmd, shell=True)
     return out.strip().split('\n')
     
+def get_energy_contribution_firstNuclearRepulsion(path_to_file):
+    return get_energy_contribution_nuclearRepulsion(path_to_file)[0]
+
+def get_energy_contribution_lastNuclearRepulsion(path_to_file):
+    return get_energy_contribution_nuclearRepulsion(path_to_file)[-1]
     
 def get_infoGradient(path_to_file):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
