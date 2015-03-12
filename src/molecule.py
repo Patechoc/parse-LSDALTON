@@ -105,6 +105,7 @@ class molecule(object):
     def __str__(self):
         return self.shortname + " (" + str(self.nbAtomsInMolecule) + " atoms)"
 
+
 def main():
     print "hello molecule!"
     # create an atom
@@ -114,5 +115,7 @@ def main():
     # create a molecule
     myMolecule = molecule("Patrickyne", name="Patrickyne Merlotusine", comments="Highly toxic large protein", nbAtomsInMolecule=5000)
     print myMolecule
+
+
 if __name__ == "__main__":
     main()

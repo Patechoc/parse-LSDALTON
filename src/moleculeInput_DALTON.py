@@ -3,23 +3,20 @@
 import sys, os
 import re
 import numpy as np
-import molecule
+import molecule as mol
 
 
-
-class moleculeInput_DALTON(molecule):
-    def __init__(self, moleculeInfo, comments="", 
+class moleculeInput_DALTON(mol.molecule):
+    def __init__(self, shortname, name="", comments="", 
                  regBasis=None, auxBasis=None, cabsBasis=None, jkBasis=None, admmBasis=None,
                  usingSymmetry="Nosymmetry",
                  unitDistances=None):
-        assert isinstance(moleculeInfo,molecule), 'Trying to add something which is not a moleculeInfo object to a moleculeInput object'
-        self.moleculeInfo = moleculeInfo
+        mol.molecule.__init__(self, shortname, name="", comments="", nbAtomsInMolecule=-1):
         self.regBasis = regBasis
         self.auxBasis = auxBasis
         self.admmBasis = admmBasis
         self.cabsBasis = cabsBasis
         self.jkBasis = jkBasis
-        self.comments = comments
         self.usingSymmetry = usingSymmetry
 
     def getContent_DALTON_Molecule(self):
