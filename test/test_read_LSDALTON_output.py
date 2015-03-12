@@ -33,8 +33,15 @@ class demo_test(unittest.TestCase):
             self.assertTrue(element in self.seq)
 
 
-class molecular_gradient(unittest.TestCase):
+class energy_contributions(unittest.TestCase):
+    def setUp(self):
+        self.path_to_file = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
+        self.list_nucRep = ['601.971967502122', '601.979053253774', '601.992494863707', '601.986070908488', '602.029206129620', '602.000169297309']
+        self.nuclear_repulsions = readLS.get_energy_contribution_nuclearRepulsion(self.path_to_file)
+    def test_nuclearRepulsion_geomOpt(self):
+        [self.assertEqual(elems[0], elems[1]) for elems in zip(self.nuclear_repulsions, self.list_nucRep)]
 
+class molecular_gradient(unittest.TestCase):
     def setUp(self):
         self.path_to_file = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
         self.grad = readLS.get_last_molecular_gradient(self.path_to_file)

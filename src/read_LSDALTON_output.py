@@ -81,14 +81,14 @@ import subprocess as subproc
 
 
 def get_energy_contribution_nuclearRepulsion(path_to_file):
-    """ returns an array of nuclear repulsion contribution,
-    one for each new geometry in the case of a geometry optimization,
-    or only one for a single energy calculation"""
-    cmd= 'grep "Nuclear repulsion:" '+ path_to_file
+    """ returns an array
+    of several nuclear repulsion contribution, one for each new
+    geometry in the case of a geometry optimization,
+    or of only one element for a single energy calculation"""
+    cmd= 'grep "Nuclear repulsion:" '+ path_to_file + " | awk '{print $3}'"
     print cmd
     out = subproc.check_output(cmd, shell=True)
-    print out
-    return out
+    return out.strip().split('\n')
     
     
 def get_infoGradient(path_to_file):
@@ -183,4 +183,4 @@ if __name__ == "__main__":
     print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])
     print gradInfo['matGrad']
 
-    get_energy_contribution_nuclearRepulsion(path_to_file)
+   
