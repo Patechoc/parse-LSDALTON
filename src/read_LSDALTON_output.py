@@ -85,16 +85,16 @@ def get_energy_contribution_nuclearRepulsion(path_to_file):
     of several nuclear repulsion contribution, one for each new
     geometry in the case of a geometry optimization,
     or of only one element for a single energy calculation"""
-    cmd= 'grep "Nuclear repulsion:" '+ path_to_file + " | awk '{print $3}'"
-    print cmd
+    cmd= "grep 'Nuclear repulsion:' "+ path_to_file.strip() + " | awk '{print $3}' "
+    #print cmd
     out = subproc.check_output(cmd, shell=True)
     return out.strip().split('\n')
     
 def get_energy_contribution_firstNuclearRepulsion(path_to_file):
-    return get_energy_contribution_nuclearRepulsion(path_to_file)[0]
+    return float(get_energy_contribution_nuclearRepulsion(path_to_file)[0])
 
 def get_energy_contribution_lastNuclearRepulsion(path_to_file):
-    return get_energy_contribution_nuclearRepulsion(path_to_file)[-1]
+    return float(get_energy_contribution_nuclearRepulsion(path_to_file)[-1])
     
 def get_infoGradient(path_to_file):
     """return a matrix form of the gradient, its max/min absolute elements and RMS norm.
@@ -189,3 +189,6 @@ if __name__ == "__main__":
     print gradInfo['matGrad']
 
    
+    path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs//lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_Histidine_8CPU_16OMP_2014_11_13T1203.out"
+    print get_energy_contribution_firstNuclearRepulsion(path_to_file)    
+    print get_energy_contribution_lastNuclearRepulsion(path_to_file)    
