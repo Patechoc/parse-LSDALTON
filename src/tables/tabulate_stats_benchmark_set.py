@@ -101,24 +101,19 @@ def get_data(inputs):
                     # if file_dal != None:
                     #     print "\t\t"+file_dal
 
-                    ## make sure that reference and ADMM calculation have matching geometries
-                    ## here the LinK reference (geom.opt) converged geometry is the input for 
-                    ## the ADMM single gradient calculations, so ...
-                    #assert readLS.get_energy_contribution_lastNuclearRepulsion(file_ref) == readLS.get_energy_contribution_firstNuclearRepulsion(file_dal), \
-                    #    "%s has different nuclear repulsion than %s" % (file_ref, file_dal)
-                    print "last nucRep geomOpt", readLS.get_energy_contribution_lastNuclearRepulsion(file_ref)
-                    print "first nucRep ADMM.SCF", readLS.get_energy_contribution_firstNuclearRepulsion(file_dal)
-                    error_message = 'Nuclear repulsion contribution not matching, check you are comparing same initial/converged geometries:\r' + file_ref + "\rfile_dal:\r" + file_dal
-                    #npt.assert_almost_equal(readLS.get_energy_contribution_lastNuclearRepulsion(file_ref), readLS.get_energy_contribution_firstNuclearRepulsion(file_dal), decimal=8,
-                    #                        err_msg=error_message, verbose=True)
-                    npt.assert_approx_equal(readLS.get_energy_contribution_lastNuclearRepulsion(file_ref), readLS.get_energy_contribution_firstNuclearRepulsion(file_dal), significant=9,
-                                            err_msg=error_message, verbose=True)
+                    
                     ## compare gradient of reference with ADMM
                     #print file_ref
                     diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
                     #diffGrad = compLS.get_compareInfoGradients(file_dal)
                     #print diffGrad
                     if diffGrad != None:
+                        ## make sure that reference and ADMM calculation have matching geometries
+                        ## here the LinK reference (geom.opt) converged geometry is the input for 
+                        ## the ADMM single gradient calculations, so ...
+                        error_message = 'Nuclear repulsion contribution not matching, check you are comparing same initial/converged geometries:\r' + file_ref + "\rfile_dal:\r" + file_dal
+                        npt.assert_approx_equal(readLS.get_energy_contribution_lastNuclearRepulsion(file_ref), readLS.get_energy_contribution_firstNuclearRepulsion(file_dal), significant=9,
+                                                err_msg=error_message, verbose=True)
                         results[regBasis][func][admm][mol] =  stats.matrix( diffGrad['matDiffGrad'] ).get_stats()
                     else:
                         combinationAvoided.append([regBasis, func, admm, mol])
