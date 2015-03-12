@@ -1,32 +1,32 @@
 #!/usr/bin/env python
-import molecule
+import molecule as mol
 import sys, os
 import numpy as np
 
 def get_moleculeSet_benchmark_geomOpt():
-    set = [molecule.molecule('Histidine', nbAtomsInMolecule=20),
-           molecule.molecule('Ferrocene', nbAtomsInMolecule=21),
-           molecule.molecule('AT-basepair', nbAtomsInMolecule=30),
-           molecule.molecule('Penicillin', nbAtomsInMolecule=42),
-           molecule.molecule('Cu-complex', nbAtomsInMolecule=47),
-           molecule.molecule('Dibenzo-Crown18.6', nbAtomsInMolecule=50),
-           molecule.molecule('Tetracycline', nbAtomsInMolecule=56),
-           molecule.molecule('Beclomethasone', nbAtomsInMolecule=57),
-           molecule.molecule('c60_Ih', nbAtomsInMolecule=60),
-           molecule.molecule('Cholesterole', nbAtomsInMolecule=74),
-           molecule.molecule('CO-Heme', nbAtomsInMolecule=86),
-           molecule.molecule('c90_D5h', nbAtomsInMolecule=90),
-           molecule.molecule('CCCNa', nbAtomsInMolecule=90),
-           molecule.molecule('c100_D5d', nbAtomsInMolecule=100),
-           molecule.molecule('taxol', nbAtomsInMolecule= 113),
-           molecule.molecule('AGAGNaCl', nbAtomsInMolecule=150),
-           molecule.molecule('valinomycin', nbAtomsInMolecule=168),
-           molecule.molecule('vanomycin', nbAtomsInMolecule=176),
-           molecule.molecule('c180', nbAtomsInMolecule=180),
-           molecule.molecule('c240', nbAtomsInMolecule=240)]
-           #molecule('collagen-like-peptide',371),
-           #molecule('titin',392),
-           #molecule('crambin',642)]
+    set = [mol.molecule('Histidine', nbAtomsInMolecule=20),
+           mol.molecule('Ferrocene', nbAtomsInMolecule=21),
+           mol.molecule('AT-basepair', nbAtomsInMolecule=30),
+           mol.molecule('Penicillin', nbAtomsInMolecule=42),
+           mol.molecule('Cu-complex', nbAtomsInMolecule=47),
+           mol.molecule('Dibenzo-Crown18.6', nbAtomsInMolecule=50),
+           mol.molecule('Tetracycline', nbAtomsInMolecule=56),
+           mol.molecule('Beclomethasone', nbAtomsInMolecule=57),
+           mol.molecule('c60_Ih', nbAtomsInMolecule=60),
+           mol.molecule('Cholesterole', nbAtomsInMolecule=74),
+           mol.molecule('CO-Heme', nbAtomsInMolecule=86),
+           mol.molecule('c90_D5h', nbAtomsInMolecule=90),
+           mol.molecule('CCCNa', nbAtomsInMolecule=90),
+           mol.molecule('c100_D5d', nbAtomsInMolecule=100),
+           mol.molecule('taxol', nbAtomsInMolecule= 113),
+           mol.molecule('AGAGNaCl', nbAtomsInMolecule=150),
+           mol.molecule('valinomycin', nbAtomsInMolecule=168),
+           mol.molecule('vanomycin', nbAtomsInMolecule=176),
+           mol.molecule('c180', nbAtomsInMolecule=180),
+           mol.molecule('c240', nbAtomsInMolecule=240)]
+           #mol.molecule('collagen-like-peptide',371),
+           #mol.molecule('titin',392),
+           #mol.molecule('crambin',642)]
     return set
 
 def main():

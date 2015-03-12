@@ -3,7 +3,7 @@
 import sys, os
 import re
 import numpy as np
-
+import numpy.testing as npt
 
 
 Atomic_NUMBERS = {"H": 1,"He": 2,
@@ -17,19 +17,16 @@ Atomic_NUMBERS = {"H": 1,"He": 2,
 
 class atomInfos(object):
     bohr_in_angstrom = 0.5291772083
-    def __init__(self, atomSymbol,
-                 xCoord, yCoord, zCoord,
-                 atomCharge=None,
-                 unitDistances=None):
+    def __init__(self, atomSymbol, atomCharge=None):
         self.atomSymbol = atomSymbol
         if atomCharge is None: 
             self.atomCharge = float(Atomic_NUMBERS[atomSymbol])
         else:
             self.atomCharge = float(atomCharge)
-        self.unitDistances = unitDistances
-        self.xCoord = float(xCoord)
-        self.yCoord = float(yCoord)
-        self.zCoord = float(zCoord)
+        self.unitDistances = None
+        self.xCoord = -1.
+        self.yCoord = -1.
+        self.zCoord = -1.
     def setSymbol(self, symbol):
         self.atomSymbol = symbol
     def setCharge(self, charge):
@@ -56,23 +53,24 @@ class atomInfos(object):
         print '{0}'.format(self.getContent_atomCoord())
 
 
-class groupSameAtoms(object):
-    def __init__(self):
-        self.atomsSymbol = None
-        self.atomTypeCharge = None
+class groupSameAtoms(atomInfos):
+    def __init__(atomSymbol, atomCharge=None):
+        atomInfos.__init__(self, atomSymbol, atomCharge=None)
         self.nbAtomsInGroup = 0
         self.listAtomsCoord = []
     def addAtomInfo(self,atom):
         assert isinstance(atom,atomInfos), 'Trying to add something which is not an atomInfos object to a groupSameAtoms object'
-        self.atomsSymbol = atom.atomSymbol
-        self.atomTypeCharge = atom.atomCharge
+        npt.assertEqual(self.atomsSymbol == atom.atomSymbol,
+                        err_msg="Adding an atom to a group with not the same symbol")
+        npt.assertEqual(self.atomCharge == atom.atomCharge,
+                        err_msg="Adding an atom to a group with not the same charge")
         self.nbAtomsInGroup += 1
         self.listAtomsCoord.append(atom)
-    def setAtomTypeCharge(self, charge):
-        self.atomTypeCharge = float(charge)
+    def setAtomCharge(self, charge):
+        self.atomCharge = float(charge)
     def getContent_DALTON_groupSameAtoms(self):
         s = ''
-        s += 'Charge={0} Atoms={1:d}\n'.format(self.atomTypeCharge, self.nbAtomsInGroup)
+        s += 'Charge={0} Atoms={1:d}\n'.format(self.atomCharge, self.nbAtomsInGroup)
         for a in self.listAtomsCoord:
             s += a.getContent_atomCoord()
         return s
@@ -81,13 +79,13 @@ class groupSameAtoms(object):
 
 
 class molecule(object):
-    def __init__(self, shortname, name="", comments="", nbAtomsInMolecule=-1, unitDistances=None):
+    def __init__(self, shortname, name="", comments="", nbAtomsInMolecule=-1):
         self.name = name
         self.shortname = shortname
         if (name.strip() == ""):
             self.name = shortname
         self.nbAtomsInMolecule = int(nbAtomsInMolecule)
-        self.unitDistances = unitDistances
+        self.unitDistances = None
         self.comments = comments
         self.listAtoms          = []
         self.listGroupSameAtoms = []
@@ -105,10 +103,16 @@ class molecule(object):
         if not atom.unitDistances is None: # assuming that all atoms with unitDistance defined have actually the same :)
             self.setUnitDistances(atom.unitDistances)
     def __str__(self):
-        return self.shortname
+        return self.shortname + " (" + str(self.nbAtomsInMolecule) + " atoms)"
 
 def main():
     print "hello molecule!"
-
+    # create an atom
+    atomSymbol = 'O'
+    atom = atomInfos(atomSymbol)
+    print "Charge of "+ atomSymbol + " is: ",atom.atomCharge
+    # create a molecule
+    myMolecule = molecule("Patrickyne", name="Patrickyne Merlotusine", comments="Highly toxic large protein", nbAtomsInMolecule=5000)
+    print myMolecule
 if __name__ == "__main__":
     main()
