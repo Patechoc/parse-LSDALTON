@@ -66,10 +66,13 @@ class read_molecule_input_from_output(unittest.TestCase):
         O         -4.99044067     -1.45108413      4.42837147"""
 
     def test_extracting_moleculeString_from_output(self):
-        str_mol1 = readLS.get_MOL_string(self.path_to_file1)
-        print str_mol1.strip()
+        str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
         stripped_molstr = "\n".join([line.strip() for line in self.moleculeString1.split('\n')])
         self.assertEqual(str_mol1.strip(), stripped_molstr.strip())        
+    def test_parsing_moleculeString(self):
+        str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
+        parsedInfo = readLS.parse_MOL_string(str_mol1)
+
 
 class energy_contributions(unittest.TestCase):
     def setUp(self):

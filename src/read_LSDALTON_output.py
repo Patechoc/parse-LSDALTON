@@ -3,6 +3,8 @@
 import sys, os, re, math
 import numpy as np
 import subprocess as subproc
+from parser import *
+
 
 # http://pandas.pydata.org/
 
@@ -46,23 +48,73 @@ import subprocess as subproc
 
     
 
-def get_MOL_string(filename):
+def get_input_MOL_string(filename):
     cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
-    print cmd
     outString = subproc.check_output(cmd, shell=True)
     ## strip each line from the extraced string
     output = "\n".join([line.strip() for line in outString.split('\n')])
     return output
 
-def parse_MOL_string(string):
-    # get comment (hopefully name of the molecule)
-    # count number of atoms, give the molecular formula
-    # get number of electrons: nb_atoms*Z
-    cmd= 'grep -i "Atoms="" '+filename
-    print cmd
-    out = subproc.check_output(cmd, shell=True)
-    mol_input = {}
-    return mol_input
+def parse_MOL_string(moleculeString):
+    daltonFormat = moleculeString.split("\n")[0].strip()
+    if daltonFormat == "BASIS":
+        parse_MOL_string_BASIS(moleculeString)
+    elif daltonFormat == "ATOMBASIS":
+        sys.exit("parsing of the 'ATOMBASIS' format not supported yet")
+    else:
+        sys.exit("DALTON molecule format not recognized: neither 'BASIS' nor 'ATOMBASIS'")
+
+def parse_MOL_string_BASIS(moleculeString):
+    mol_infos = {}
+    get_infos =  Literal("BASIS").setResultsName("DaltonFormat") + EOL + StrangeName.setResultsName("regBase") + Optional(Literal("Aux=") + StrangeName.setResultsName("auxBase")) + Optional(Literal("ADMM=") + StrangeName.setResultsName("ADMMBase")) + EOL +  all.setResultsName("comment1") +  all.setResultsName("comment2") + Literal("Atomtypes=").suppress() + integer.setResultsName("nbAtomsTypes") + Optional(Literal("Charge=").suppress() + StrangeName.setResultsName("charge")) + all.setResultsName("unitDistances_and_symmmetry")
+        
+    coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
+    AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
+
+    #AtomCoordinates.ignore(get_infos)
+    get_AtomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
+    get_sameAtomsCoord = AtomCoordinates.setResultsName("atomCoordinates")
+    get_AtomsInfos = get_AtomTypeInfos + OneOrMore(get_sameAtomsCoord)
+    logEntry = get_infos | get_AtomTypeInfos | get_sameAtomsCoord
+    atomsEntry = get_AtomTypeInfos | get_sameAtomsCoord
+
+    groupEntry = get_AtomTypeInfos.setResultsName("groupInfo") + OneOrMore(get_sameAtomsCoord).setResultsName("listSameAtoms")
+
+    # --- EXTRACT THE DATA
+    mol_infos['regBase']      = None
+    mol_infos['auxBase']      = None
+    mol_infos['ADMMBase']      = None
+    mol_infos['moleculeName'] = None
+    mol_infos['comments']     = ""
+    mol_infos['nbAtomsTypes'] = None
+    mol_infos['moleculeCharge'] = None
+    mol_infos['unitDistances_and_symmmetry']  = None
+    mol_infos['unitDistance']  = None
+    mol_infos['symmetry']  = None
+    print len(get_infos.searchString(moleculeString))
+    if len(get_infos.searchString(moleculeString)) == 0:
+        sys.exit("ERROR: Not able to extract meaningful information from this molecule string:\n"+moleculeString)
+    for tokens in get_infos.searchString(moleculeString):
+        #print tokens.dump()
+        if tokens.regBase:        mol_infos['regBase'] = tokens.regBase
+        if tokens.auxBase:        mol_infos['auxBase'] = tokens.auxBase
+        if tokens.ADMMBase:        mol_infos['ADMMBase'] = tokens.ADMMBase
+        if tokens.moleculeName:   mol_infos['moleculeName'] = tokens.moleculeName
+        if tokens.comment1 or tokens.comment2:       mol_infos['comments'] = tokens.comment1 + "\n" + tokens.comment2
+        if tokens.nbAtomsTypes:   mol_infos['nbAtomsTypes'] = int(tokens.nbAtomsTypes)
+        if tokens.charge:   mol_infos['moleculeCharge'] = float(tokens.charge)
+        if tokens.unitDistances_and_symmmetry:
+            mol_infos['unitDistances_and_symmmetry']  = tokens.unitDistances_and_symmmetry
+            findAnyWords  = re.compile(ur'(\w+)')
+            bohr_angstrom = re.compile(ur'(?i)(bohr|angstrom)')
+            test_str = unicode(tokens.unitDistances_and_symmmetry)
+            regexMatches = re.findall(findAnyWords, test_str)
+            found_symmetry = [word for word in regexMatches if 'symm' in word]
+            found_unitDistance = [word for word in regexMatches if len(re.findall(bohr_angstrom, word))]
+            if len(found_symmetry) != 0: mol_infos['symmetry'] = found_symmetry[0].lower()
+            if len(found_unitDistance) != 0: mol_infos['unitDistance'] = found_unitDistance[0].lower()
+            print mol_infos
+    return mol_infos
 
 # def get_DAL_string(filename):
 #     cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
@@ -179,14 +231,18 @@ if __name__ == "__main__":
     path_to_file = "./files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
     #path_to_file = "./files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
     #path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_Histidine_8CPU_16OMP_2014_11_13T1203.out"
-    grad = get_last_molecular_gradient(path_to_file.strip())
-    gradInfo = get_infoGradient_from_gradString(grad)
-    print gradInfo.keys()
-    print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
-    print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])
-    print gradInfo['matGrad']
+    # grad = get_last_molecular_gradient(path_to_file.strip())
+    # gradInfo = get_infoGradient_from_gradString(grad)
+    # print gradInfo.keys()
+    # print "\nExtracting gradient from:\n  %r\n" % (path_to_file)
+    # print "gradient informations:\n  RMS norm: %e\n  Max Abs:  %e\n  Min Abs:  %e" % (gradInfo['rmsGrad'],gradInfo['maxGrad'],gradInfo['minGrad'])
+    # print gradInfo['matGrad']
 
    
-    path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs//lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_Histidine_8CPU_16OMP_2014_11_13T1203.out"
-    print get_energy_contribution_firstNuclearRepulsion(path_to_file)    
-    print get_energy_contribution_lastNuclearRepulsion(path_to_file)    
+    path_to_file = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
+    # print get_energy_contribution_firstNuclearRepulsion(path_to_file)    
+    # print get_energy_contribution_lastNuclearRepulsion(path_to_file)    
+
+    str_mol1 = get_input_MOL_string(path_to_file)
+    parsedInfo = parse_MOL_string(str_mol1)
+    print parsedInfo
