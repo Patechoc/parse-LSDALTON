@@ -2,11 +2,7 @@
 
 import sys, os, re, math
 import numpy as np
-#from glob import glob
 import subprocess as subproc
-#import LSDALTON_DAL_input
-#import parserGrammar
-#import csv
 
 # http://pandas.pydata.org/
 
@@ -50,21 +46,23 @@ import subprocess as subproc
 
     
 
-# def get_MOL_string(filename):
-#     cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
-#     print cmd
-#     outString = subproc.check_output(cmd, shell=True)
-#     return outString
+def get_MOL_string(filename):
+    cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
+    print cmd
+    outString = subproc.check_output(cmd, shell=True)
+    ## strip each line from the extraced string
+    output = "\n".join([line.strip() for line in outString.split('\n')])
+    return output
 
-# def parse_MOL_string(string):
-#     # get comment (hopefully name of the molecule)
-#     # count number of atoms, give the molecular formula
-#     # get number of electrons: nb_atoms*Z
-#     cmd= 'grep -i "Atoms="" '+filename
-#     print cmd
-#     out = subproc.check_output(cmd, shell=True)
-#     mol_input = {}
-#     return mol_input
+def parse_MOL_string(string):
+    # get comment (hopefully name of the molecule)
+    # count number of atoms, give the molecular formula
+    # get number of electrons: nb_atoms*Z
+    cmd= 'grep -i "Atoms="" '+filename
+    print cmd
+    out = subproc.check_output(cmd, shell=True)
+    mol_input = {}
+    return mol_input
 
 # def get_DAL_string(filename):
 #     cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"

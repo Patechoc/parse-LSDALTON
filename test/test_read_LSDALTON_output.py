@@ -32,6 +32,44 @@ class demo_test(unittest.TestCase):
         for element in random.sample(self.seq, 5):
             self.assertTrue(element in self.seq)
 
+class read_molecule_input_from_output(unittest.TestCase):
+    def setUp(self):
+        self.path_to_file1 = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
+        self.moleculeString1 = """  BASIS                                   
+        6-31G Aux=df-def2 ADMM=3-21G            
+        geometry optimized with ADMM2 using 6-31
+        Output is in Bohr                       
+        Atomtypes=4    Charge=0   Nosymmetry                        
+        Charge=1.00   Atoms=9                                       
+        H         -2.17356347      1.90522337      0.25455721       
+        H         -3.75123607     -0.45217796      5.47452789       
+        H         -2.01838203      3.45689709      4.42293912       
+        H          0.57566832      1.67201802      4.68768673       
+        H         -0.23802027     -2.23988209     -0.80154881       
+        H          0.63072116     -2.70463484      2.37334503       
+        H          5.35514085     -0.69790796      3.77725447       
+        H          6.58755095      3.88494216     -2.59138922       
+        H          2.17043033      1.91921391     -3.03488365       
+        Charge=6.00   Atoms=6                                       
+        C         -4.24934301     -1.10402006      1.98975136       
+        C          4.96884265      0.25477395      2.01772251       
+        C          5.72157696      2.63568946     -1.23773826       
+        C         -1.83317562      0.50674782      1.74863024       
+        C          0.37525319     -1.25493030      0.91450618       
+        C          2.82257191      0.09684848      0.53706767       
+        Charge=7.00   Atoms=3                                       
+        N         -1.28625882      1.69450024      4.21200748       
+        N          6.76332980      1.83602818      0.90136254       
+        N          3.32602362      1.64162689     -1.54496487       
+        Charge=8.00   Atoms=2                                       
+        O         -5.33156510     -2.03936977      0.15402194       
+        O         -4.99044067     -1.45108413      4.42837147"""
+
+    def test_extracting_moleculeString_from_output(self):
+        str_mol1 = readLS.get_MOL_string(self.path_to_file1)
+        print str_mol1.strip()
+        stripped_molstr = "\n".join([line.strip() for line in self.moleculeString1.split('\n')])
+        self.assertEqual(str_mol1.strip(), stripped_molstr.strip())        
 
 class energy_contributions(unittest.TestCase):
     def setUp(self):
