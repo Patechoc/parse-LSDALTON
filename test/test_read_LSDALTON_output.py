@@ -35,6 +35,7 @@ class demo_test(unittest.TestCase):
 class read_molecule_input_from_output(unittest.TestCase):
     def setUp(self):
         self.path_to_file1 = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
+        self.str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
         self.moleculeString1 = """  BASIS                                   
         6-31G Aux=df-def2 ADMM=3-21G            
         geometry optimized with ADMM2 using 6-31
@@ -66,12 +67,12 @@ class read_molecule_input_from_output(unittest.TestCase):
         O         -4.99044067     -1.45108413      4.42837147"""
 
     def test_extracting_moleculeString_from_output(self):
-        str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
         stripped_molstr = "\n".join([line.strip() for line in self.moleculeString1.split('\n')])
-        self.assertEqual(str_mol1.strip(), stripped_molstr.strip())        
-    def test_parsing_moleculeString(self):
-        str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
-        parsedInfo = readLS.parse_MOL_string(str_mol1)
+        self.assertEqual(self.str_mol1.strip(), stripped_molstr.strip())        
+    def test_extracting_header_moleculeString(self):
+        mol_infos = readLS.parse_MOL_string(self.str_mol1)
+        infos_stored = {'moleculeName': None, 'symmetry': u'nosymmetry', 'moleculeCharge': 0.0, 'nbAtomsTypes': 4, 'unitDistance': None, 'ADMMBase': '3-21G', 'comments': 'geometry optimized with ADMM2 using 6-31\nOutput is in Bohr', 'auxBase': 'df-def2', 'unitDistances_and_symmmetry': 'Nosymmetry', 'regBase': '6-31G'}
+        [self.assertEqual(mol_infos[key], infos_stored[key]) for key in infos_stored.keys()]
 
 
 class energy_contributions(unittest.TestCase):

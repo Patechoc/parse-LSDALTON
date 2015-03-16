@@ -57,28 +57,30 @@ def get_input_MOL_string(filename):
 
 def parse_MOL_string(moleculeString):
     daltonFormat = moleculeString.split("\n")[0].strip()
+    objOut = None
     if daltonFormat == "BASIS":
-        parse_MOL_string_BASIS(moleculeString)
+        objOut = parse_MOL_string_BASIS(moleculeString)
     elif daltonFormat == "ATOMBASIS":
         sys.exit("parsing of the 'ATOMBASIS' format not supported yet")
     else:
         sys.exit("DALTON molecule format not recognized: neither 'BASIS' nor 'ATOMBASIS'")
+    return objOut
 
 def parse_MOL_string_BASIS(moleculeString):
     mol_infos = {}
     get_infos =  Literal("BASIS").setResultsName("DaltonFormat") + EOL + StrangeName.setResultsName("regBase") + Optional(Literal("Aux=") + StrangeName.setResultsName("auxBase")) + Optional(Literal("ADMM=") + StrangeName.setResultsName("ADMMBase")) + EOL +  all.setResultsName("comment1") +  all.setResultsName("comment2") + Literal("Atomtypes=").suppress() + integer.setResultsName("nbAtomsTypes") + Optional(Literal("Charge=").suppress() + StrangeName.setResultsName("charge")) + all.setResultsName("unitDistances_and_symmmetry")
         
-    coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
-    AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
+    # coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
+    # AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
 
-    #AtomCoordinates.ignore(get_infos)
-    get_AtomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
-    get_sameAtomsCoord = AtomCoordinates.setResultsName("atomCoordinates")
-    get_AtomsInfos = get_AtomTypeInfos + OneOrMore(get_sameAtomsCoord)
-    logEntry = get_infos | get_AtomTypeInfos | get_sameAtomsCoord
-    atomsEntry = get_AtomTypeInfos | get_sameAtomsCoord
+    # #AtomCoordinates.ignore(get_infos)
+    # get_AtomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
+    # get_sameAtomsCoord = AtomCoordinates.setResultsName("atomCoordinates")
+    # get_AtomsInfos = get_AtomTypeInfos + OneOrMore(get_sameAtomsCoord)
+    # logEntry = get_infos | get_AtomTypeInfos | get_sameAtomsCoord
+    # atomsEntry = get_AtomTypeInfos | get_sameAtomsCoord
 
-    groupEntry = get_AtomTypeInfos.setResultsName("groupInfo") + OneOrMore(get_sameAtomsCoord).setResultsName("listSameAtoms")
+    # groupEntry = get_AtomTypeInfos.setResultsName("groupInfo") + OneOrMore(get_sameAtomsCoord).setResultsName("listSameAtoms")
 
     # --- EXTRACT THE DATA
     mol_infos['regBase']      = None
@@ -91,7 +93,6 @@ def parse_MOL_string_BASIS(moleculeString):
     mol_infos['unitDistances_and_symmmetry']  = None
     mol_infos['unitDistance']  = None
     mol_infos['symmetry']  = None
-    print len(get_infos.searchString(moleculeString))
     if len(get_infos.searchString(moleculeString)) == 0:
         sys.exit("ERROR: Not able to extract meaningful information from this molecule string:\n"+moleculeString)
     for tokens in get_infos.searchString(moleculeString):
@@ -113,7 +114,6 @@ def parse_MOL_string_BASIS(moleculeString):
             found_unitDistance = [word for word in regexMatches if len(re.findall(bohr_angstrom, word))]
             if len(found_symmetry) != 0: mol_infos['symmetry'] = found_symmetry[0].lower()
             if len(found_unitDistance) != 0: mol_infos['unitDistance'] = found_unitDistance[0].lower()
-            print mol_infos
     return mol_infos
 
 # def get_DAL_string(filename):
@@ -240,9 +240,10 @@ if __name__ == "__main__":
 
    
     path_to_file = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/lsdalton_files/lsdalton20140924_b3lyp_gradient_ADMM2_6-31Gs_df-def2_3-21G_Histidine_8CPU_16OMP_2014_11_17T1502.out"
+    path_to_file = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
     # print get_energy_contribution_firstNuclearRepulsion(path_to_file)    
     # print get_energy_contribution_lastNuclearRepulsion(path_to_file)    
-
+    print path_to_file
     str_mol1 = get_input_MOL_string(path_to_file)
-    parsedInfo = parse_MOL_string(str_mol1)
-    print parsedInfo
+    obj = parse_MOL_string(str_mol1)
+
