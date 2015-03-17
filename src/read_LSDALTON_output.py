@@ -71,11 +71,31 @@ def parse_input_MOL_string(moleculeString):
         sys.exit("DALTON molecule format not recognized: neither 'BASIS' nor 'ATOMBASIS'")
     return objOut
 
+def parse_optimized_MOL_string(moleculeString):
+    mol_infos = []
+    # remove first 3 lines
+    molStr = "\n".join(moleculeString.split("\n")[3:])
+    coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
+    xcoord = Literal("x").suppress() + StrangeName
+    ycoord = Literal("y").suppress() + StrangeName
+    zcoord = Literal("z").suppress() + StrangeName
+    AtomCoordinates = (element.setResultsName("atomAbrev") + xcoord.setResultsName("xcoord") + EOL + ycoord.setResultsName("ycoord") + EOL+ zcoord.setResultsName("zcoord") + EOL)
+    matches = AtomCoordinates.searchString(moleculeString)
+    for tokens in matches:
+        atomInfos = {}
+        atomInfos["atomSymbol"]  = str(tokens.atomAbrev)
+        atomInfos["xCoord"]      = float(tokens.xcoord[0])
+        atomInfos["yCoord"]      = float(tokens.ycoord[0])
+        atomInfos["zCoord"]      = float(tokens.zcoord[0])
+        atomInfos['unitDistance']  = 'Bohr'
+        mol_infos.append(atomInfos)
+    return mol_infos
+
 
 def parse_input_MOL_string_BASIS(moleculeString):
     mol_infos = {}
     get_infos =  Literal("BASIS").setResultsName("DaltonFormat") + EOL + StrangeName.setResultsName("regBase") + Optional(Literal("Aux=") + StrangeName.setResultsName("auxBase")) + Optional(Literal("ADMM=") + StrangeName.setResultsName("ADMMBase")) + EOL +  all.setResultsName("comment1") +  all.setResultsName("comment2") + Literal("Atomtypes=").suppress() + integer.setResultsName("nbAtomsTypes") + Optional(Literal("Charge=").suppress() + StrangeName.setResultsName("charge")) + all.setResultsName("unitDistances_and_symmmetry")
-        
+
     # --- EXTRACT THE DATA
     mol_infos['regBase']      = None
     mol_infos['auxBase']      = None
@@ -116,32 +136,25 @@ def parse_input_MOL_string_atomCoord(moleculeString):
     AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
     sameAtomCoordinates =  OneOrMore(AtomCoordinates.setResultsName("sameAtomCoord")).setResultsName("OneMoresameAtomCoord") 
     allAtoms = atomTypeInfos + sameAtomCoordinates
-    #logEntry = get_infos | get_AtomTypeInfos | get_sameAtomsCoord
-    #atomsEntry = get_AtomTypeInfos | get_sameAtomsCoord
-
-    #groupEntry = get_AtomTypeInfos.setResultsName("groupInfo") #+ OneOrMore(get_sameAtomsCoord).setResultsName("listSameAtoms")
+    matches = atomTypeInfos | AtomCoordinates
     molecule = []
-    for tokens in allAtoms.searchString(moleculeString):
-        print '\n\n\n'
-        print tokens.dump()
-        #groupOfAtoms = {}
-        #groupOfAtoms['chargeAtom'] = float(tokens.groupInfo.chargeAtom)
-        #groupOfAtoms['nbSameAtoms'] = int(tokens.groupInfo.nbAtoms)
-        #groupOfAtoms['atomAbrev'] = tokens.atomAbrev
-        #groupOfAtoms['atomCoord'] = tokens.listSameAtoms.
-        #molecule.append(groupOfAtoms)
-        #print molecule
-#    print molecule
-    #     for a in range(0,nbSameAtoms):
-    #         atomSymbol  = tokens[0+a*4+2]
-    #         xCoord      = tokens[1+a*4+2]
-    #         yCoord      = tokens[2+a*4+2]
-    #         zCoord      = tokens[3+a*4+2]
-    #         atom = atomInfos(atomSymbol,xCoord,yCoord,zCoord,charge)
-    #         groupOfAtoms.addAtomInfo(atom)
-    #     MyMolecule.addGroupSameAtomInfo(groupOfAtoms)
-    # MyMoleculeInput = moleculeInput(MyMolecule,comments,hasSymmetry,regBase,auxBase)
-    return True
+    nbSameAtoms = -1
+    chargeAtom = None
+    for tokens in matches.searchString(moleculeString):
+        #print tokens.dump()
+        if tokens.chargeAtom != "": # new group
+            chargeAtom = float(tokens.chargeAtom)
+            nbSameAtoms = int(tokens.nbAtoms)
+        else:
+            atomInfos = {}
+            atomInfos["atomSymbol"]  = str(tokens.atomAbrev)
+            atomInfos["chargeAtom"]  = chargeAtom
+            atomInfos["xCoord"]      = float(tokens.xCoord)
+            atomInfos["yCoord"]      = float(tokens.yCoord)
+            atomInfos["zCoord"]      = float(tokens.zCoord)
+            molecule.append(atomInfos)
+    print molecule
+    return molecule
 
 
 
@@ -276,7 +289,8 @@ if __name__ == "__main__":
     print path_to_file
     str_mol1 = get_input_MOL_string(path_to_file)
     #obj = parse_input_MOL_string(str_mol1)
-    #obj = parse_input_MOL_string_atomCoord(str_mol1)
+    obj = parse_input_MOL_string_atomCoord(str_mol1)
 
-    str_molOpt1 =  get_optmized_MOL_string(path_to_file)
-    print str_molOpt1
+    #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
+    #parse_optimized_MOL_string(str_molOpt1)
+

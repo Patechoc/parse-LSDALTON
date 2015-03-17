@@ -96,7 +96,7 @@ class read_molecule_from_output(unittest.TestCase):
         trunc_stripped_optMolstr = "\n".join([line.strip() for line in (self.str_optimMol1.split('\n'))[0:18]])
         self.assertEqual(trunc_stripped_optMolstr.strip(), stripped_optMolstr.strip())
 
-        
+
 class energy_contributions(unittest.TestCase):
     def setUp(self):
         self.path_to_file = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
