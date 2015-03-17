@@ -32,49 +32,71 @@ class demo_test(unittest.TestCase):
         for element in random.sample(self.seq, 5):
             self.assertTrue(element in self.seq)
 
-class read_molecule_input_from_output(unittest.TestCase):
+class read_molecule_from_output(unittest.TestCase):
     def setUp(self):
         self.path_to_file1 = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
-        self.str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
-        self.moleculeString1 = """  BASIS                                   
-        6-31G Aux=df-def2 ADMM=3-21G            
-        geometry optimized with ADMM2 using 6-31
-        Output is in Bohr                       
-        Atomtypes=4    Charge=0   Nosymmetry                        
-        Charge=1.00   Atoms=9                                       
-        H         -2.17356347      1.90522337      0.25455721       
-        H         -3.75123607     -0.45217796      5.47452789       
-        H         -2.01838203      3.45689709      4.42293912       
-        H          0.57566832      1.67201802      4.68768673       
-        H         -0.23802027     -2.23988209     -0.80154881       
-        H          0.63072116     -2.70463484      2.37334503       
-        H          5.35514085     -0.69790796      3.77725447       
-        H          6.58755095      3.88494216     -2.59138922       
-        H          2.17043033      1.91921391     -3.03488365       
-        Charge=6.00   Atoms=6                                       
-        C         -4.24934301     -1.10402006      1.98975136       
-        C          4.96884265      0.25477395      2.01772251       
-        C          5.72157696      2.63568946     -1.23773826       
-        C         -1.83317562      0.50674782      1.74863024       
-        C          0.37525319     -1.25493030      0.91450618       
-        C          2.82257191      0.09684848      0.53706767       
-        Charge=7.00   Atoms=3                                       
-        N         -1.28625882      1.69450024      4.21200748       
-        N          6.76332980      1.83602818      0.90136254       
-        N          3.32602362      1.64162689     -1.54496487       
-        Charge=8.00   Atoms=2                                       
-        O         -5.33156510     -2.03936977      0.15402194       
-        O         -4.99044067     -1.45108413      4.42837147"""
+        self.optimMolString1 = """tal number of coordinates: 60
+        itten in atomic units
 
-    def test_extracting_moleculeString_from_output(self):
+        H        x     -2.1713420293
+        y      1.9031814205
+        z      0.2568444106
+
+        H        x     -3.7698488285
+        y     -0.4557504707
+        z      5.4799532374
+
+        H        x     -2.0156236057
+        y      3.4574535980
+        z      4.4225477280
+
+        H        x      0.5785218614
+        y      1.6743437213
+        z      4.6874876939"""
+        self.str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
+        self.moleculeString1 = """  BASIS
+        6-31G Aux=df-def2 ADMM=3-21G
+        geometry optimized with ADMM2 using 6-31
+        Output is in Bohr
+        Atomtypes=4    Charge=0   Nosymmetry
+        Charge=1.00   Atoms=9
+        H         -2.17356347      1.90522337      0.25455721
+        H         -3.75123607     -0.45217796      5.47452789
+        H         -2.01838203      3.45689709      4.42293912
+        H          0.57566832      1.67201802      4.68768673
+        H         -0.23802027     -2.23988209     -0.80154881
+        H          0.63072116     -2.70463484      2.37334503
+        H          5.35514085     -0.69790796      3.77725447
+        H          6.58755095      3.88494216     -2.59138922
+        H          2.17043033      1.91921391     -3.03488365
+        Charge=6.00   Atoms=6
+        C         -4.24934301     -1.10402006      1.98975136
+        C          4.96884265      0.25477395      2.01772251
+        C          5.72157696      2.63568946     -1.23773826
+        C         -1.83317562      0.50674782      1.74863024
+        C          0.37525319     -1.25493030      0.91450618
+        C          2.82257191      0.09684848      0.53706767
+        Charge=7.00   Atoms=3
+        N         -1.28625882      1.69450024      4.21200748
+        N          6.76332980      1.83602818      0.90136254
+        N          3.32602362      1.64162689     -1.54496487
+        Charge=8.00   Atoms=2
+        O         -5.33156510     -2.03936977      0.15402194
+        O         -4.99044067     -1.45108413      4.42837147"""
+        self.str_optimMol1 = readLS.get_optmized_MOL_string(self.path_to_file1)
+    def test_extracting_input_moleculeString_from_output(self):
         stripped_molstr = "\n".join([line.strip() for line in self.moleculeString1.split('\n')])
         self.assertEqual(self.str_mol1.strip(), stripped_molstr.strip())        
-    def test_extracting_header_moleculeString(self):
-        mol_infos = readLS.parse_MOL_string(self.str_mol1)
+    def test_extracting_header_input_moleculeString(self):
+        mol_infos = readLS.parse_input_MOL_string(self.str_mol1)
         infos_stored = {'moleculeName': None, 'symmetry': u'nosymmetry', 'moleculeCharge': 0.0, 'nbAtomsTypes': 4, 'unitDistance': None, 'ADMMBase': '3-21G', 'comments': 'geometry optimized with ADMM2 using 6-31\nOutput is in Bohr', 'auxBase': 'df-def2', 'unitDistances_and_symmmetry': 'Nosymmetry', 'regBase': '6-31G'}
         [self.assertEqual(mol_infos[key], infos_stored[key]) for key in infos_stored.keys()]
+    def test_extracting_partOf_optimized_moleculeString_from_output(self):
+        stripped_optMolstr = "\n".join([line.strip() for line in self.optimMolString1.split('\n')])
+        trunc_stripped_optMolstr = "\n".join([line.strip() for line in (self.str_optimMol1.split('\n'))[0:18]])
+        self.assertEqual(trunc_stripped_optMolstr.strip(), stripped_optMolstr.strip())
 
-
+        
 class energy_contributions(unittest.TestCase):
     def setUp(self):
         self.path_to_file = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"

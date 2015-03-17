@@ -8,9 +8,6 @@ from parser import *
 
 # http://pandas.pydata.org/
 
-#with open('input.txt') ad f:
-    #data = [map(int, row) for row in csv.reader(f)]
-
 
 # # ============================================================================ #
 # # Class: MOL_input
@@ -46,42 +43,39 @@ from parser import *
 #         self.nb_threads  = nb_threads
 #         self.revisionGIT = revisionGIT
 
-    
+
+
 
 def get_input_MOL_string(filename):
-    cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" '+filename + "| awk 'NR>3' | head -n -2"
+    cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" ' + filename + "| awk 'NR>3' | head -n -2"
     outString = subproc.check_output(cmd, shell=True)
     ## strip each line from the extraced string
     output = "\n".join([line.strip() for line in outString.split('\n')])
     return output
 
-def parse_MOL_string(moleculeString):
+def get_optmized_MOL_string(filename):
+    cmd='sed -n "/Final geometry (au)/","/Optimization information/p" ' + filename + "| awk 'NR>3' | head -n -2"
+    outString = subproc.check_output(cmd, shell=True)
+    ## strip each line from the extraced string
+    output = "\n".join([(line.strip()[2:]).strip() for line in outString.split('\n')])
+    return output
+
+def parse_input_MOL_string(moleculeString):
     daltonFormat = moleculeString.split("\n")[0].strip()
     objOut = None
     if daltonFormat == "BASIS":
-        objOut = parse_MOL_string_BASIS(moleculeString)
+        objOut = parse_input_MOL_string_BASIS(moleculeString)
     elif daltonFormat == "ATOMBASIS":
         sys.exit("parsing of the 'ATOMBASIS' format not supported yet")
     else:
         sys.exit("DALTON molecule format not recognized: neither 'BASIS' nor 'ATOMBASIS'")
     return objOut
 
-def parse_MOL_string_BASIS(moleculeString):
+
+def parse_input_MOL_string_BASIS(moleculeString):
     mol_infos = {}
     get_infos =  Literal("BASIS").setResultsName("DaltonFormat") + EOL + StrangeName.setResultsName("regBase") + Optional(Literal("Aux=") + StrangeName.setResultsName("auxBase")) + Optional(Literal("ADMM=") + StrangeName.setResultsName("ADMMBase")) + EOL +  all.setResultsName("comment1") +  all.setResultsName("comment2") + Literal("Atomtypes=").suppress() + integer.setResultsName("nbAtomsTypes") + Optional(Literal("Charge=").suppress() + StrangeName.setResultsName("charge")) + all.setResultsName("unitDistances_and_symmmetry")
         
-    # coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
-    # AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
-
-    # #AtomCoordinates.ignore(get_infos)
-    # get_AtomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
-    # get_sameAtomsCoord = AtomCoordinates.setResultsName("atomCoordinates")
-    # get_AtomsInfos = get_AtomTypeInfos + OneOrMore(get_sameAtomsCoord)
-    # logEntry = get_infos | get_AtomTypeInfos | get_sameAtomsCoord
-    # atomsEntry = get_AtomTypeInfos | get_sameAtomsCoord
-
-    # groupEntry = get_AtomTypeInfos.setResultsName("groupInfo") + OneOrMore(get_sameAtomsCoord).setResultsName("listSameAtoms")
-
     # --- EXTRACT THE DATA
     mol_infos['regBase']      = None
     mol_infos['auxBase']      = None
@@ -115,6 +109,42 @@ def parse_MOL_string_BASIS(moleculeString):
             if len(found_symmetry) != 0: mol_infos['symmetry'] = found_symmetry[0].lower()
             if len(found_unitDistance) != 0: mol_infos['unitDistance'] = found_unitDistance[0].lower()
     return mol_infos
+
+def parse_input_MOL_string_atomCoord(moleculeString):
+    atomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
+    coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
+    AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
+    sameAtomCoordinates =  OneOrMore(AtomCoordinates.setResultsName("sameAtomCoord")).setResultsName("OneMoresameAtomCoord") 
+    allAtoms = atomTypeInfos + sameAtomCoordinates
+    #logEntry = get_infos | get_AtomTypeInfos | get_sameAtomsCoord
+    #atomsEntry = get_AtomTypeInfos | get_sameAtomsCoord
+
+    #groupEntry = get_AtomTypeInfos.setResultsName("groupInfo") #+ OneOrMore(get_sameAtomsCoord).setResultsName("listSameAtoms")
+    molecule = []
+    for tokens in allAtoms.searchString(moleculeString):
+        print '\n\n\n'
+        print tokens.dump()
+        #groupOfAtoms = {}
+        #groupOfAtoms['chargeAtom'] = float(tokens.groupInfo.chargeAtom)
+        #groupOfAtoms['nbSameAtoms'] = int(tokens.groupInfo.nbAtoms)
+        #groupOfAtoms['atomAbrev'] = tokens.atomAbrev
+        #groupOfAtoms['atomCoord'] = tokens.listSameAtoms.
+        #molecule.append(groupOfAtoms)
+        #print molecule
+#    print molecule
+    #     for a in range(0,nbSameAtoms):
+    #         atomSymbol  = tokens[0+a*4+2]
+    #         xCoord      = tokens[1+a*4+2]
+    #         yCoord      = tokens[2+a*4+2]
+    #         zCoord      = tokens[3+a*4+2]
+    #         atom = atomInfos(atomSymbol,xCoord,yCoord,zCoord,charge)
+    #         groupOfAtoms.addAtomInfo(atom)
+    #     MyMolecule.addGroupSameAtomInfo(groupOfAtoms)
+    # MyMoleculeInput = moleculeInput(MyMolecule,comments,hasSymmetry,regBase,auxBase)
+    return True
+
+
+
 
 # def get_DAL_string(filename):
 #     cmd= 'sed -n "/PRINTING THE LSDALTON.INP FILE/,/END OF INPUT/p" '+filename + "| awk 'NR>3'"
@@ -245,5 +275,8 @@ if __name__ == "__main__":
     # print get_energy_contribution_lastNuclearRepulsion(path_to_file)    
     print path_to_file
     str_mol1 = get_input_MOL_string(path_to_file)
-    obj = parse_MOL_string(str_mol1)
+    #obj = parse_input_MOL_string(str_mol1)
+    #obj = parse_input_MOL_string_atomCoord(str_mol1)
 
+    str_molOpt1 =  get_optmized_MOL_string(path_to_file)
+    print str_molOpt1
