@@ -4,6 +4,8 @@ import sys, os, re, math
 import numpy as np
 import subprocess as subproc
 from parser import *
+import molecule as mol
+import Inputs_DALTON as dalton
 
 
 # http://pandas.pydata.org/
@@ -43,8 +45,8 @@ from parser import *
 #         self.nb_threads  = nb_threads
 #         self.revisionGIT = revisionGIT
 
-
-
+def getShortFilename(path_to_file):
+    return os.path.basename(path_to_file).split('.')[0]
 
 def get_input_MOL_string(filename):
     cmd= 'sed -n "/PRINTING THE MOLECULE.INP FILE/","/PRINTING THE LSDALTON.INP FILE/p" ' + filename + "| awk 'NR>3' | head -n -2"
@@ -60,19 +62,87 @@ def get_optmized_MOL_string(filename):
     output = "\n".join([(line.strip()[2:]).strip() for line in outString.split('\n')])
     return output
 
-def parse_input_MOL_string(moleculeString):
-    daltonFormat = moleculeString.split("\n")[0].strip()
-    objOut = None
+
+def parse_molecule_input(path_to_file):
+    molString = get_input_MOL_string(path_to_file)
+    #print molString
+    daltonFormat = molString.split("\n")[0].strip()
     if daltonFormat == "BASIS":
-        objOut = parse_input_MOL_string_BASIS(moleculeString)
+        inputDALTON = parse_input_MOL_string_BASIS(molString) ## get DALTON info about basis, mol. charge, ..
+        inputDALTON.name = getShortFilename(path_to_file)
+        inputDALTON.shortname = inputDALTON.name
+        listAtoms  = parse_input_MOL_string_atomCoord(molString)  ## get coordinates of atoms
+        [inputDALTON.addAtomInfo(atom) for atom in listAtoms]
+        inputDALTON.listAtoms = listAtoms
     elif daltonFormat == "ATOMBASIS":
         sys.exit("parsing of the 'ATOMBASIS' format not supported yet")
     else:
         sys.exit("DALTON molecule format not recognized: neither 'BASIS' nor 'ATOMBASIS'")
-    return objOut
+    return inputDALTON
 
-def parse_optimized_MOL_string(moleculeString):
-    mol_infos = []
+
+def parse_input_MOL_string_BASIS(moleculeString):
+    #print moleculeString
+    inputDALTON = dalton.moleculeInput()
+    get_infos =  Literal("BASIS").setResultsName("DaltonFormat") + EOL \
+                 + StrangeName.setResultsName("regBase") \
+                 + Optional(Literal("Aux=") + StrangeName.setResultsName("auxBase"))\
+                 + Optional(Literal("ADMM=") + StrangeName.setResultsName("ADMMBase"))\
+                 + EOL +  all.setResultsName("comment1") +  all.setResultsName("comment2") \
+                 + Literal("Atomtypes=").suppress() + integer.setResultsName("nbAtomsTypes") \
+                 + Optional(Literal("Charge=").suppress() + StrangeName.setResultsName("charge")) \
+                 + all.setResultsName("unitDistances_and_symmmetry")
+    # --- EXTRACT THE DATA
+    if len(get_infos.searchString(moleculeString)) == 0:
+        sys.exit("ERROR: Not able to extract meaningful information from this molecule string:\n"+moleculeString)
+    for tokens in get_infos.searchString(moleculeString):
+        #print tokens.dump()
+        if tokens.regBase:        inputDALTON.regBasis = tokens.regBase
+        if tokens.auxBase:        inputDALTON.auxBasis = tokens.auxBase
+        if tokens.ADMMBase:       inputDALTON.admmBasis = tokens.ADMMBase
+        if tokens.comment1 or tokens.comment2:       inputDALTON.comments = (tokens.comment1).strip() + " // " + (tokens.comment2).strip()
+        if tokens.charge:   inputDALTON.charge = float(tokens.charge)
+        if tokens.unitDistances_and_symmmetry:
+            findAnyWords  = re.compile(ur'(\w+)')
+            bohr_angstrom = re.compile(ur'(?i)(bohr|angstrom)')
+            test_str = unicode(tokens.unitDistances_and_symmmetry)
+            regexMatches = re.findall(findAnyWords, test_str)
+            found_symmetry = [word for word in regexMatches if 'symm' in word]
+            found_unitDistance = [word for word in regexMatches if len(re.findall(bohr_angstrom, word))]
+            if len(found_symmetry) != 0: inputDALTON.usingSymmetry = found_symmetry[0].lower()
+            if len(found_unitDistance) != 0:
+                inputDALTON.unitDistance = found_unitDistance[0].lower()
+            else:
+                inputDALTON.unitDistance = 'Bohr'
+    return inputDALTON
+
+def parse_input_MOL_string_atomCoord(moleculeString):
+    atomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
+    coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
+    AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
+    sameAtomCoordinates =  OneOrMore(AtomCoordinates.setResultsName("sameAtomCoord")).setResultsName("OneMoresameAtomCoord") 
+    allAtoms = atomTypeInfos + sameAtomCoordinates
+    matches = atomTypeInfos | AtomCoordinates
+    listAtoms = []
+    nbSameAtoms = -1
+    chargeAtom = None
+    for tokens in matches.searchString(moleculeString):
+        #print tokens.dump()
+        if tokens.chargeAtom != "": # new group
+            chargeAtom = float(tokens.chargeAtom)
+            nbSameAtoms = int(tokens.nbAtoms)
+        else:
+            atom = mol.atomInfos(atomSymbol=str(tokens.atomAbrev), atomCharge=chargeAtom)
+            atom.xCoord = float(tokens.xCoord)
+            atom.yCoord = float(tokens.yCoord)
+            atom.zCoord = float(tokens.zCoord)
+            listAtoms.append(atom)
+    #print listAtoms
+    return listAtoms
+
+def parse_optimized_MOL_string_atomCoord(moleculeString):
+    outputGeometryDALTON = dalton.moleculeInput()
+    listAtoms = []
     # remove first 3 lines
     molStr = "\n".join(moleculeString.split("\n")[3:])
     coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
@@ -82,81 +152,30 @@ def parse_optimized_MOL_string(moleculeString):
     AtomCoordinates = (element.setResultsName("atomAbrev") + xcoord.setResultsName("xcoord") + EOL + ycoord.setResultsName("ycoord") + EOL+ zcoord.setResultsName("zcoord") + EOL)
     matches = AtomCoordinates.searchString(moleculeString)
     for tokens in matches:
-        atomInfos = {}
-        atomInfos["atomSymbol"]  = str(tokens.atomAbrev)
-        atomInfos["xCoord"]      = float(tokens.xcoord[0])
-        atomInfos["yCoord"]      = float(tokens.ycoord[0])
-        atomInfos["zCoord"]      = float(tokens.zcoord[0])
-        atomInfos['unitDistance']  = 'Bohr'
-        mol_infos.append(atomInfos)
-    return mol_infos
+        atom = mol.atomInfos(atomSymbol=str(tokens.atomAbrev))
+        atom.xCoord = float(tokens.xcoord[0])
+        atom.yCoord = float(tokens.ycoord[0])
+        atom.zCoord = float(tokens.zcoord[0])
+        atom.unitDistance = 'Bohr'
+        listAtoms.append(atom)
+    [outputGeometryDALTON.addAtomInfo(atom) for atom in listAtoms]
+    return outputGeometryDALTON
 
 
-def parse_input_MOL_string_BASIS(moleculeString):
-    mol_infos = {}
-    get_infos =  Literal("BASIS").setResultsName("DaltonFormat") + EOL + StrangeName.setResultsName("regBase") + Optional(Literal("Aux=") + StrangeName.setResultsName("auxBase")) + Optional(Literal("ADMM=") + StrangeName.setResultsName("ADMMBase")) + EOL +  all.setResultsName("comment1") +  all.setResultsName("comment2") + Literal("Atomtypes=").suppress() + integer.setResultsName("nbAtomsTypes") + Optional(Literal("Charge=").suppress() + StrangeName.setResultsName("charge")) + all.setResultsName("unitDistances_and_symmmetry")
-
-    # --- EXTRACT THE DATA
-    mol_infos['regBase']      = None
-    mol_infos['auxBase']      = None
-    mol_infos['ADMMBase']      = None
-    mol_infos['moleculeName'] = None
-    mol_infos['comments']     = ""
-    mol_infos['nbAtomsTypes'] = None
-    mol_infos['moleculeCharge'] = None
-    mol_infos['unitDistances_and_symmmetry']  = None
-    mol_infos['unitDistance']  = None
-    mol_infos['symmetry']  = None
-    if len(get_infos.searchString(moleculeString)) == 0:
-        sys.exit("ERROR: Not able to extract meaningful information from this molecule string:\n"+moleculeString)
-    for tokens in get_infos.searchString(moleculeString):
-        #print tokens.dump()
-        if tokens.regBase:        mol_infos['regBase'] = tokens.regBase
-        if tokens.auxBase:        mol_infos['auxBase'] = tokens.auxBase
-        if tokens.ADMMBase:        mol_infos['ADMMBase'] = tokens.ADMMBase
-        if tokens.moleculeName:   mol_infos['moleculeName'] = tokens.moleculeName
-        if tokens.comment1 or tokens.comment2:       mol_infos['comments'] = tokens.comment1 + "\n" + tokens.comment2
-        if tokens.nbAtomsTypes:   mol_infos['nbAtomsTypes'] = int(tokens.nbAtomsTypes)
-        if tokens.charge:   mol_infos['moleculeCharge'] = float(tokens.charge)
-        if tokens.unitDistances_and_symmmetry:
-            mol_infos['unitDistances_and_symmmetry']  = tokens.unitDistances_and_symmmetry
-            findAnyWords  = re.compile(ur'(\w+)')
-            bohr_angstrom = re.compile(ur'(?i)(bohr|angstrom)')
-            test_str = unicode(tokens.unitDistances_and_symmmetry)
-            regexMatches = re.findall(findAnyWords, test_str)
-            found_symmetry = [word for word in regexMatches if 'symm' in word]
-            found_unitDistance = [word for word in regexMatches if len(re.findall(bohr_angstrom, word))]
-            if len(found_symmetry) != 0: mol_infos['symmetry'] = found_symmetry[0].lower()
-            if len(found_unitDistance) != 0: mol_infos['unitDistance'] = found_unitDistance[0].lower()
-    return mol_infos
-
-def parse_input_MOL_string_atomCoord(moleculeString):
-    atomTypeInfos  =  Literal("Charge=").suppress() + StrangeName.setResultsName("chargeAtom") + Literal("Atoms=").suppress() + integer.setResultsName("nbAtoms") + EOL
-    coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
-    AtomCoordinates = element.setResultsName("atomAbrev") + coordinate.setResultsName("xCoord") + coordinate.setResultsName("yCoord") + coordinate.setResultsName("zCoord") + EOL
-    sameAtomCoordinates =  OneOrMore(AtomCoordinates.setResultsName("sameAtomCoord")).setResultsName("OneMoresameAtomCoord") 
-    allAtoms = atomTypeInfos + sameAtomCoordinates
-    matches = atomTypeInfos | AtomCoordinates
-    molecule = []
-    nbSameAtoms = -1
-    chargeAtom = None
-    for tokens in matches.searchString(moleculeString):
-        #print tokens.dump()
-        if tokens.chargeAtom != "": # new group
-            chargeAtom = float(tokens.chargeAtom)
-            nbSameAtoms = int(tokens.nbAtoms)
-        else:
-            atomInfos = {}
-            atomInfos["atomSymbol"]  = str(tokens.atomAbrev)
-            atomInfos["chargeAtom"]  = chargeAtom
-            atomInfos["xCoord"]      = float(tokens.xCoord)
-            atomInfos["yCoord"]      = float(tokens.yCoord)
-            atomInfos["zCoord"]      = float(tokens.zCoord)
-            molecule.append(atomInfos)
-    print molecule
-    return molecule
-
-
+def parse_molecule_optimized(path_to_file):
+    moleculeInputString = get_input_MOL_string(path_to_file)
+    daltonFormat = moleculeInputString.split("\n")[0].strip()
+    if daltonFormat == "BASIS":
+        outputGeometryDALTON = parse_input_MOL_string_BASIS(moleculeInputString) ## get DALTON info about basis, mol. charge, ..
+        outputGeometryDALTON.name = getShortFilename(path_to_file)
+        outputGeometryDALTON.shortname = outputGeometryDALTON.name
+    moleculeOptimizedString = get_optmized_MOL_string(path_to_file)
+    if moleculeOptimizedString.strip() != "":
+        optimizedGeometry = parse_optimized_MOL_string_atomCoord(moleculeOptimizedString)
+        [outputGeometryDALTON.addAtomInfo(atom) for atom in optimizedGeometry.listAtoms]
+    else:
+        return None
+    return outputGeometryDALTON
 
 
 # def get_DAL_string(filename):
@@ -286,11 +305,20 @@ if __name__ == "__main__":
     path_to_file = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
     # print get_energy_contribution_firstNuclearRepulsion(path_to_file)    
     # print get_energy_contribution_lastNuclearRepulsion(path_to_file)    
-    print path_to_file
+    #print path_to_file
     str_mol1 = get_input_MOL_string(path_to_file)
     #obj = parse_input_MOL_string(str_mol1)
     obj = parse_input_MOL_string_atomCoord(str_mol1)
 
     #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
-    #parse_optimized_MOL_string(str_molOpt1)
+    #parse_optimized_MOL_string_atomCoord(str_molOpt1)
 
+
+    molInputDalton = parse_molecule_input(path_to_file)
+    #print molInputDalton
+    #print molInputDalton.nbAtomsInMolecule
+
+    #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
+    #print str_molOpt1
+    molOptimized = parse_molecule_optimized(path_to_file)
+    print molOptimized
