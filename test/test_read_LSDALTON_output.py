@@ -88,9 +88,14 @@ class read_molecule_from_output(unittest.TestCase):
         stripped_molstr = "\n".join([line.strip() for line in self.moleculeString1.split('\n')])
         self.assertEqual(self.str_mol1.strip(), stripped_molstr.strip())        
     def test_extracting_header_input_moleculeString(self):
-        mol_infos = readLS.parse_input_MOL_string(self.str_mol1)
-        infos_stored = {'moleculeName': None, 'symmetry': u'nosymmetry', 'moleculeCharge': 0.0, 'nbAtomsTypes': 4, 'unitDistance': None, 'ADMMBase': '3-21G', 'comments': 'geometry optimized with ADMM2 using 6-31\nOutput is in Bohr', 'auxBase': 'df-def2', 'unitDistances_and_symmmetry': 'Nosymmetry', 'regBase': '6-31G'}
-        [self.assertEqual(mol_infos[key], infos_stored[key]) for key in infos_stored.keys()]
+        molInput = readLS.parse_input_MOL_string_BASIS(self.str_mol1)
+        infos_stored = """BASIS
+6-31G Aux=df-def2 ADMM=3-21G CABS=CABSbasis JK=JKbasis
+
+geometry optimized with ADMM2 using 6-31 // Output is in Bohr
+Atomtypes=0 Bohr nosymmetry"""
+        self.assertEqual(str(molInput).strip(), infos_stored.strip())
+
     def test_extracting_partOf_optimized_moleculeString_from_output(self):
         stripped_optMolstr = "\n".join([line.strip() for line in self.optimMolString1.split('\n')])
         trunc_stripped_optMolstr = "\n".join([line.strip() for line in (self.str_optimMol1.split('\n'))[0:18]])

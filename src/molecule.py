@@ -97,6 +97,7 @@ class molecule(object):
         self.listAtoms.append(atom)
         if not atom.unitDistance is None: # assuming that all atoms with unitDistance defined have actually the same :)
             self.setunitDistance(atom.unitDistance)
+
     def __str__(self):
         return self.moleculeAsString()
 
