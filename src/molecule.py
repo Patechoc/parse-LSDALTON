@@ -16,8 +16,8 @@ Atomic_NUMBERS = {"H": 1,"He": 2,
 
 
 class atomInfos(object):
-    bohr_in_angstrom = 0.5291772083
     def __init__(self, atomSymbol="", atomCharge=None):
+        self.bohr_in_angstrom = 0.5291772083
         self.atomSymbol = atomSymbol
         if atomCharge is None: 
             self.atomCharge = float(Atomic_NUMBERS[atomSymbol])
@@ -42,10 +42,9 @@ class atomInfos(object):
                 s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord, self.yCoord, self.zCoord)
             elif re.match("bohr", newUnitDistance, re.I) and re.match("angstrom", self.unitDistance, re.I):
                 #1 bohr=0.5291772083 Angstrom
-                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord/bohr_in_angstrom, self.yCoord/bohr_in_angstrom, self.zCoord/bohr_in_angstrom)
+                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord/self.bohr_in_angstrom, self.yCoord/self.bohr_in_angstrom, self.zCoord/self.bohr_in_angstrom)
             elif re.match("angstrom", newUnitDistance, re.I) and re.match("bohr", self.unitDistance, re.I):
-                #1 bohr=0.5291772083 Angstrom
-                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord*.5291772083, self.yCoord*bohr_in_angstrom, self.zCoord*bohr_in_angstrom)
+                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord*self.bohr_in_angstrom, self.yCoord*self.bohr_in_angstrom, self.zCoord*self.bohr_in_angstrom)
         else:
             s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord, self.yCoord, self.zCoord)
         return s
@@ -88,7 +87,7 @@ class molecule(object):
         self.unitDistance = None
         self.charge= None
         self.comments = comments
-        self.listAtoms          = []
+        self.listAtoms = []
     def setunitDistance(self,unitDistance):
         self.unitDistance = unitDistance
     def addAtomInfo(self,atom):
@@ -111,6 +110,12 @@ class molecule(object):
         strMol = strMol + "".join(['   {0}\n'.format(atom.getContent_atomCoord()) for atom in self.listAtoms])
         return strMol
 
+    def getContent_format_XYZ(self):
+        s = ""
+        s += str(self.nbAtomsInMolecule) + "\n"
+        s += self.name  + " (in Angstrom)\n"
+        s += "\n".join(['{0}'.format(atom.getContent_atomCoord(newUnitDistance="angstrom")) for atom in self.listAtoms])
+        return s
 
 def main():
     print "hello molecule!"

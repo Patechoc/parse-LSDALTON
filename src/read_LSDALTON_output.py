@@ -170,6 +170,7 @@ def parse_molecule_optimized(path_to_file):
         outputGeometryDALTON.name = getShortFilename(path_to_file)
         outputGeometryDALTON.shortname = outputGeometryDALTON.name
     moleculeOptimizedString = get_optmized_MOL_string(path_to_file)
+    #print moleculeOptimizedString
     if moleculeOptimizedString.strip() != "":
         optimizedGeometry = parse_optimized_MOL_string_atomCoord(moleculeOptimizedString)
         [outputGeometryDALTON.addAtomInfo(atom) for atom in optimizedGeometry.listAtoms]
@@ -309,7 +310,7 @@ if __name__ == "__main__":
     str_mol1 = get_input_MOL_string(path_to_file)
     #obj = parse_input_MOL_string(str_mol1)
     obj = parse_input_MOL_string_atomCoord(str_mol1)
-    print parse_input_MOL_string_BASIS(str_mol1)
+    #print parse_input_MOL_string_BASIS(str_mol1)
 
     #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
     #parse_optimized_MOL_string_atomCoord(str_molOpt1)
@@ -322,4 +323,4 @@ if __name__ == "__main__":
     #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
     #print str_molOpt1
     molOptimized = parse_molecule_optimized(path_to_file)
-    #print molOptimized
+    print molOptimized.getContent_format_XYZ()
