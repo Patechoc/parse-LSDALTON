@@ -4,6 +4,10 @@ oldScripts/
 venv/ 
 **/*.pyc
 **/*~
-files/csv_difference.csv
-files/writeObj.csv
-files/writeObjArray.csv
+src/files/csv_difference.csv
+src/files/writeObj.csv
+src/files/writeObjArray.csv
+log
+.idea/
+.wercker
+test/path
