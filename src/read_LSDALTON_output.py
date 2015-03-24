@@ -318,13 +318,13 @@ if __name__ == "__main__":
     #parse_optimized_MOL_string_atomCoord(str_molOpt1)
 
 
-    #molInputDalton = parse_molecule_input(path_to_file)
+    molInputDalton = parse_molecule_input(path_to_file)
     #print molInputDalton
-    #print molInputDalton.getContent_format_XYZ()
+    print molInputDalton.getContent_format_XYZ()
     #print molInputDalton.nbAtomsInMolecule
 
     #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
     #print str_molOpt1
-    molOptimized = parse_molecule_optimized(path_to_file)
-    print molOptimized #.getContent_format_XYZ()
-    print molOptimized.getContent_format_XYZ()
+    #molOptimized = parse_molecule_optimized(path_to_file)
+    #print molOptimized #.getContent_format_XYZ()
+    #print molOptimized.getContent_format_XYZ()
