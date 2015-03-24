@@ -11,3 +11,4 @@ log
 .idea/
 .wercker
 test/path
+lib/RMSD
