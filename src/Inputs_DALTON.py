@@ -138,7 +138,7 @@ class groupSameAtoms:
 #        s += 'Charge={0:g} Atoms={1:d}\n'.format(self.atomTypeCharge, self.nbAtomsInGroup)
         s += 'Charge={0} Atoms={1:d}\n'.format(self.atomTypeCharge, self.nbAtomsInGroup)
         for a in self.listAtomsCoord:
-            s += a.getContent_atomCoord() + "\n"
+            s += a.get_content_atomCoord() + "\n"
         return s
     def print_DALTON_groupSameAtoms(self):
         print '{0}'.format(self.getContent_DALTON_groupSameAtoms())

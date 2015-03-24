@@ -72,8 +72,10 @@ def parse_molecule_input(path_to_file):
         inputDALTON.name = getShortFilename(path_to_file)
         inputDALTON.shortname = inputDALTON.name
         listAtoms  = parse_input_MOL_string_atomCoord(molString)  ## get coordinates of atoms
-        [inputDALTON.addAtomInfo(atom) for atom in listAtoms]
-        inputDALTON.listAtoms = listAtoms
+        ## apply to the atoms the unit distance detected in the header part of the molecule string
+        for atom in listAtoms:
+            atom.unitDistance= inputDALTON.unitDistance
+            inputDALTON.addAtomInfo(atom)
     elif daltonFormat == "ATOMBASIS":
         sys.exit("parsing of the 'ATOMBASIS' format not supported yet")
     else:
@@ -316,11 +318,13 @@ if __name__ == "__main__":
     #parse_optimized_MOL_string_atomCoord(str_molOpt1)
 
 
-    molInputDalton = parse_molecule_input(path_to_file)
+    #molInputDalton = parse_molecule_input(path_to_file)
     #print molInputDalton
+    #print molInputDalton.getContent_format_XYZ()
     #print molInputDalton.nbAtomsInMolecule
 
     #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
     #print str_molOpt1
     molOptimized = parse_molecule_optimized(path_to_file)
+    print molOptimized #.getContent_format_XYZ()
     print molOptimized.getContent_format_XYZ()

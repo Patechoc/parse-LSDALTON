@@ -27,6 +27,8 @@ class atomInfos(object):
         self.xCoord = None
         self.yCoord = None
         self.zCoord = None
+    def __str__(self):
+        return self.get_content_atomCoord()
     def setSymbol(self, symbol):
         self.atomSymbol = symbol
     def setCharge(self, charge):
@@ -35,22 +37,28 @@ class atomInfos(object):
         self.xCoord = float(x)
         self.yCoord = float(y)
         self.zCoord = float(z)
-    def getContent_atomCoord(self, newUnitDistance=None):
-        s = ''
+    def get_content_atomCoord(self, printUnit=True, newUnitDistance=None):
+        assert self.unitDistance != None, "The unit distance of an atom should be known to be printed"
+        s = ""
         if newUnitDistance != None:
-            if  re.match(newUnitDistance, self.unitDistance, re.I):
-                s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord, self.yCoord, self.zCoord)
+            # atom coordinates already have the expected unit distance
+            if  re.match(newUnitDistance, str(self.unitDistance), re.I):
+                s += get_content_atomCoord(self, printUnit)
+            # atom coordinates are in Angstrom and expected to be shown in Bohr
             elif re.match("bohr", newUnitDistance, re.I) and re.match("angstrom", self.unitDistance, re.I):
                 #1 bohr=0.5291772083 Angstrom
                 s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord/self.bohr_in_angstrom, self.yCoord/self.bohr_in_angstrom, self.zCoord/self.bohr_in_angstrom)
-            elif re.match("angstrom", newUnitDistance, re.I) and re.match("bohr", self.unitDistance, re.I):
+            # atom coordinates are in Bohr and expected to be shown in Angstrom
+            elif re.match("angstrom", newUnitDistance, re.I) and re.match("bohr", str(self.unitDistance), re.I):
                 s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord*self.bohr_in_angstrom, self.yCoord*self.bohr_in_angstrom, self.zCoord*self.bohr_in_angstrom)
         else:
             s += '{0:s}     {1: 7.14f}     {2: 7.14f}     {3: 7.14f}'.format(self.atomSymbol, self.xCoord, self.yCoord, self.zCoord)
+        if printUnit:
+            s += ' (in {0:s})'.format(str(self.unitDistance))
         return s
-    def print_atomCoord(self):
-        print '{0}'.format(self.getContent_atomCoord())
 
+    def print_atomCoord(self):
+        print self.get_content_atomCoord()
 
 class groupSameAtoms(atomInfos):
     def __init__(atomSymbol, atomCharge=None):
@@ -89,13 +97,21 @@ class molecule(object):
         self.comments = comments
         self.listAtoms = []
     def setunitDistance(self,unitDistance):
-        self.unitDistance = unitDistance
+        self.unitDistance = str(unitDistance)
     def addAtomInfo(self,atom):
-        self.nbAtomsInMolecule += 1
+        #print "atomInfos: "+str(atom)
+        assert (atom.atomSymbol != ""), "Trying to add an atom without symbol to a molecule"
+        assert (atom.unitDistance != None), "Trying to add an atom without unit distance to a molecule"
+        if self.nbAtomsInMolecule == 0 and self.unitDistance == None:
+            self.unitDistance = atom.unitDistance
+        elif self.nbAtomsInMolecule > 0:
+            assert (str(atom.unitDistance).strip() == str(self.unitDistance).strip()),\
+                'Trying to add an atom with different unitDistance than the molecule it is added to:\natom_unit={0:s} molecule_unit={1:s}'.format(str(atom.unitDistance).strip(), str(self.unitDistance).strip())
         assert isinstance(atom,atomInfos), 'Trying to add something which is not an atomInfos object to a molecule object'
+        self.nbAtomsInMolecule += 1
         self.listAtoms.append(atom)
-        if not atom.unitDistance is None: # assuming that all atoms with unitDistance defined have actually the same :)
-            self.setunitDistance(atom.unitDistance)
+        return self
+
 
     def __str__(self):
         return self.moleculeAsString()
@@ -114,7 +130,7 @@ class molecule(object):
         s = ""
         s += str(self.nbAtomsInMolecule) + "\n"
         s += self.name  + " (in Angstrom)\n"
-        s += "\n".join(['{0}'.format(atom.getContent_atomCoord(newUnitDistance="angstrom")) for atom in self.listAtoms])
+        s += "\n".join(['{0}'.format(atom.get_content_atomCoord(printUnit=False, newUnitDistance="angstrom")) for atom in self.listAtoms])
         return s
 
 def main():
