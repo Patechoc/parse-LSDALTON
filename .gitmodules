@@ -1,0 +1,3 @@
+[submodule "lib/RMSD"]
+	path = lib/RMSD
+	url = https://github.com/charnley/rmsd.git

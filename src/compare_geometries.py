@@ -8,6 +8,7 @@ import subprocess as subproc
 def get_RMS_deviation(path_to_file1, path_to_file2):
     """
     Return the root-mean-square deviation between 2 geometries given in XYZ format.
+    https://github.com/charnley/rmsd
     """
     RMSdev = None
 
