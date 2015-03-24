@@ -38,8 +38,7 @@ class LSDALTON_DAL_input_test(unittest.TestCase):
     def test_parse_from_string(self):
       str = self.str
       keywords = LSdal.get_keywords(str)
-      print keywords
-
+      #print keywords
       #headlines = LSdal.get_headlines(keywords)
       self.assertEqual(keywords.name,"ROOT") 
 

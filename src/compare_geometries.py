@@ -41,3 +41,5 @@ if __name__ == "__main__":
     path_to_file2 = "./files/Histidine_optimized.xyz"
     RMSdev = get_RMS_deviation(path_to_file1, path_to_file2)
     print RMSdev
+    RMSdev = get_RMS_deviation(path_to_file1, path_to_file1)
+    print RMSdev
