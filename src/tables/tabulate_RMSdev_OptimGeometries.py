@@ -33,7 +33,7 @@ def run():
 
 def run_command_or_exit(cmd):
     try:
-        out = subproc.check_output(cmd, shell=True)
+        out = subproc.check_output(cmd, shell=True).strip()
     except subproc.CalledProcessError, e:
 #        print type(inst)     # the exception instance
 #        print inst.args      # arguments stored in .args
@@ -61,11 +61,13 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
     basis_list = [bas['pattern'] for bas in inputs.basisSets if bas['pattern']!='cc-pVTZ']  ### 6-31Gs
     basis_list_REF = [bas['pattern'] for bas in inputs.basisSets if bas['pattern']=='cc-pVTZ']  ### cc-pVTZ
     ref        = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK/cc-pVTZ'] ### {abrev, path, pattern}
-    dal_ref    = [{'LinK/cc-pVTZ':dal['pattern']} for dal in ref] ## [{'LinK/cc-pVTZ':pattern}]
+    dal_ref    = [{'ref':dal['pattern']} for dal in ref] ## [{'LinK/cc-pVTZ':pattern}]
+    dalPatternRef = dal_ref[0]['ref']
     path_to_ref = ref[0]['path_to_files']
 
     dals = [dal for dal in inputs.dal_list if dal['abrev'] != 'LinK/cc-pVTZ'] ## [{abrev, path, pattern}, {abrev, path, pattern}, ...]
     for dal in dals:
+        path_to_dal = dal['path_to_files']
         dalAbrev = dal['abrev']
         print dalAbrev
         dalPattern = dal['pattern']
@@ -76,18 +78,42 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
             results[dalAbrev][mol] = {}
             ## geom. optim.(LinK) calculation, without ADMM
             ## ex.: ls lsd*geomOpt-b3lyp_Vanlenthe*Histidine*out | grep -v ADMM
-            cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK/cc-pVTZ']+"*"+mol+"*.out  | grep -v ADMM[2,S]"
+            cmd= "ls "+ path_to_ref+"/lsd*"+dalPatternRef+"*"+mol+"*.out  | grep -v ADMM[2,S]"
             file_ref = run_command_or_exit(cmd).strip()
-            molXYZ_ref_input    = readLS.parse_molecule_input(file_ref) #.getContent_format_XYZ()
-            molXYZ_ref_optimized= readLS.parse_molecule_optimized(file_ref) #.getContent_format_XYZ()
-            name_molXYZ_input = dalPattern+"_"+mol+"_input.xyz"
-            name_molXYZ_optim = dalPattern+"_"+mol+"_optimized.xyz"
-            print name_molXYZ_input
-            print name_molXYZ_optim
+            #print file_ref
+            ## converting reference
+            molXYZ_ref_input    = readLS.parse_molecule_input(file_ref).getContent_format_XYZ()
+            molXYZ_ref_optimized= readLS.parse_molecule_optimized(file_ref).getContent_format_XYZ()
+            name_molXYZ_input = dalPatternRef +"_"+mol+"_input.xyz"
+            name_molXYZ_optim = dalPatternRef +"_"+mol+"_optimized.xyz"
+            results[dalAbrev][mol]['ref'] = {}
+            results[dalAbrev][mol]['ref']['input']     = name_molXYZ_input
+            results[dalAbrev][mol]['ref']['optimized'] = name_molXYZ_optim
+            print "\t\t"+name_molXYZ_input
+            print "\t\t"+name_molXYZ_optim
             with open(path_to_XYZ+"/"+name_molXYZ_input, "w") as text_file:
                 text_file.write("{0}".format(molXYZ_ref_input))
             with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
                 text_file.write("{0}".format(molXYZ_ref_optimized))
+            ## converting other calc. than reference
+            cmd= "ls "+ path_to_dal+"/lsd*"+dalPattern+"*"+mol+"*.out  | grep -v ADMM[2,S]"
+            files_dal = run_command_or_exit(cmd)
+            #print files_dal
+            molXYZ_calc_input    = readLS.parse_molecule_input(files_dal).getContent_format_XYZ()
+            molXYZ_calc_optimized= readLS.parse_molecule_optimized(files_dal).getContent_format_XYZ()
+            name_molXYZ_input = dalPattern+"_"+mol+"_input.xyz"
+            name_molXYZ_optim = dalPattern+"_"+mol+"_optimized.xyz"
+            results[dalAbrev][mol]['calc'] = {}
+            results[dalAbrev][mol]['calc']['input']     = name_molXYZ_input
+            results[dalAbrev][mol]['calc']['optimized'] = name_molXYZ_optim
+            print "\t\t"+name_molXYZ_input
+            print "\t\t"+name_molXYZ_optim
+            with open(path_to_XYZ+"/"+name_molXYZ_input, "w") as text_file:
+                text_file.write("{0}".format(molXYZ_calc_input))
+            with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
+                text_file.write("{0}".format(molXYZ_calc_optimized))
+            #print results
+    return results
 
 def get_data(inputs):
     results = {}
