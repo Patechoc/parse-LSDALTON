@@ -17,7 +17,7 @@ Atomic_NUMBERS = {"H": 1,"He": 2,
 
 class atomInfos(object):
     def __init__(self, atomSymbol="", atomCharge=None):
-        self.bohr_in_angstrom = 0.5291772083
+        self.bohr_in_angstrom = 0.52917721092   #0.5291772083
         self.atomSymbol = atomSymbol
         if atomCharge is None: 
             self.atomCharge = float(Atomic_NUMBERS[atomSymbol])

@@ -78,18 +78,39 @@ def get_inputs(title):
         dal_list = [{'abrev':'LinK', 'pattern':'geomOpt-b3lyp_Vanlenthe', 'path_to_files':path_to_ref }]  ### geometry optimized LinK calc.
 
         path_to_dals = path_to_ref
-        dals = [{'abrev':'ADMM2-KT3X', 'pattern':'b3lyp_gradient_ADMM2-KT3X_', 'path_to_files':path_to_ref},
-                {'abrev':'ADMM2-OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_', 'path_to_files':path_to_ref},
-                {'abrev':'ADMM2-B88X', 'pattern':'b3lyp_gradient_ADMM2-B8',      'path_to_files':path_to_ref},
-                {'abrev':'ADMM2-PBEX', 'pattern':'b3lyp_gradient_ADMM2-PBEX_', 'path_to_files':path_to_ref},
-                {'abrev':'ADMMS-KT3X', 'pattern':'b3lyp_gradient_ADMMS-KT3X_', 'path_to_files':path_to_ref},
-                {'abrev':'ADMMS-OPTX', 'pattern':'b3lyp_gradient_ADMMS-OPTX_', 'path_to_files':path_to_ref},
-                {'abrev':'ADMMS-B88X', 'pattern':'b3lyp_gradient_ADMMS-B8', 'path_to_files':path_to_ref},
-                {'abrev':'ADMMS-PBEX', 'pattern':'b3lyp_gradient_ADMMS-PBEX_', 'path_to_files':path_to_ref}]
+        dals = [{'abrev':'ADMM2-KT3X', 'pattern':'b3lyp_gradient_ADMM2-KT3X_', 'path_to_files':path_to_dals},
+                {'abrev':'ADMM2-OPTX', 'pattern':'b3lyp_gradient_ADMM2-OPTX_', 'path_to_files':path_to_dals},
+                {'abrev':'ADMM2-B88X', 'pattern':'b3lyp_gradient_ADMM2-B8',      'path_to_files':path_to_dals},
+                {'abrev':'ADMM2-PBEX', 'pattern':'b3lyp_gradient_ADMM2-PBEX_', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-KT3X', 'pattern':'b3lyp_gradient_ADMMS-KT3X_', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-OPTX', 'pattern':'b3lyp_gradient_ADMMS-OPTX_', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-B88X', 'pattern':'b3lyp_gradient_ADMMS-B8', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-PBEX', 'pattern':'b3lyp_gradient_ADMMS-PBEX_', 'path_to_files':path_to_dals}]
         dal_list.extend(dals)
         basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'}]
         doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)    
+
+
+
+    elif (title == "RMS deviation between optimized geometries (LinK/6-31G* vs LinK/cc-pVTZ)"):
+        print "Title found: ",title
+        #mol_list = ['Histidine','Ferrocene']
+        #mol_list = [mol.shortname for mol in molecule_sets.get_moleculeSet_benchmark_geomOpt()]
+        mol_list = ['taxol','valinomycin']
+        path_to_ref = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ'
+        dal_list = [{'abrev':'LinK/cc-pVTZ', 'pattern':'geomOpt-b3lyp_Vanlenthe_cc-pVTZ', 'path_to_files':path_to_ref }]  ### geometry optimized LinK calc.
+
+        path_to_dals = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs'
+        dals = [{'abrev':'LinK/6-31G*', 'pattern':'geomOpt-b3lyp_Vanlenthe_6-31Gs', 'path_to_files':path_to_dals}]
+        dal_list.extend(dals)
+        basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'},
+                     {'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
+        doPlot = False
+        inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
+
+
+
     else:
         print "Title for the configuration setup not recognized!!!!"
         sys.exit()

@@ -59,7 +59,7 @@ def get_optmized_MOL_string(filename):
     cmd='sed -n "/Final geometry (au)/","/Optimization information/p" ' + filename + "| awk 'NR>3' | head -n -2"
     outString = subproc.check_output(cmd, shell=True)
     ## strip each line from the extraced string
-    output = "\n".join([(line.strip()[2:]).strip() for line in outString.split('\n')])
+    output = "\n".join([(line.strip()).strip() for line in outString.split('\n')])
     return output
 
 
@@ -148,16 +148,17 @@ def parse_optimized_MOL_string_atomCoord(moleculeString):
     # remove first 3 lines
     molStr = "\n".join(moleculeString.split("\n")[3:])
     coordinate = Combine((Optional(Literal("-"))+Optional(integer)+Literal(".")+integer))
-    xcoord = Literal("x").suppress() + StrangeName
-    ycoord = Literal("y").suppress() + StrangeName
-    zcoord = Literal("z").suppress() + StrangeName
-    AtomCoordinates = (element.setResultsName("atomAbrev") + xcoord.setResultsName("xcoord") + EOL + ycoord.setResultsName("ycoord") + EOL+ zcoord.setResultsName("zcoord") + EOL)
+    xcoord = StrangeName.suppress() + element.setResultsName("atomAbrev") + Literal("x").suppress() + StrangeName.setResultsName("value")
+    ycoord = StrangeName.suppress() + Literal("y").suppress() + StrangeName.setResultsName("value")
+    zcoord = StrangeName.suppress() + Literal("z").suppress() + StrangeName.setResultsName("value")
+    AtomCoordinates = ( xcoord.setResultsName("xcoord") + EOL + ycoord.setResultsName("ycoord") + EOL+ zcoord.setResultsName("zcoord") + EOL)
     matches = AtomCoordinates.searchString(moleculeString)
     for tokens in matches:
+        #print tokens.dump()
         atom = mol.atomInfos(atomSymbol=str(tokens.atomAbrev))
-        atom.xCoord = float(tokens.xcoord[0])
-        atom.yCoord = float(tokens.ycoord[0])
-        atom.zCoord = float(tokens.zcoord[0])
+        atom.xCoord = float(tokens.xcoord.value)
+        atom.yCoord = float(tokens.ycoord.value)
+        atom.zCoord = float(tokens.zcoord.value)
         atom.unitDistance = 'Bohr'
         listAtoms.append(atom)
     [outputGeometryDALTON.addAtomInfo(atom) for atom in listAtoms]
@@ -175,6 +176,7 @@ def parse_molecule_optimized(path_to_file):
     #print moleculeOptimizedString
     if moleculeOptimizedString.strip() != "":
         optimizedGeometry = parse_optimized_MOL_string_atomCoord(moleculeOptimizedString)
+        #print optimizedGeometry
         [outputGeometryDALTON.addAtomInfo(atom) for atom in optimizedGeometry.listAtoms]
     else:
         return None
@@ -328,3 +330,9 @@ if __name__ == "__main__":
     #molOptimized = parse_molecule_optimized(path_to_file)
     #print molOptimized #.getContent_format_XYZ()
     #print molOptimized.getContent_format_XYZ()
+
+
+    path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_taxol_8CPU_16OMP_2014_11_13T1203.out"
+    molOptimized = parse_molecule_optimized(path_to_file)
+    print molOptimized #.getContent_format_XYZ()
+    print molOptimized.getContent_format_XYZ()

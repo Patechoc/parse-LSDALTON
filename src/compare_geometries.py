@@ -8,14 +8,14 @@ import imp
 #import calculate_rmsd as rmsd
 rmsd = imp.load_source("RMSD", "../lib/RMSD/calculate_rmsd")
 
-def get_RMS_deviation(mol1, mol2):
+def get_RMS_deviation(molObj1, molObj2):
     """
     Return the root-mean-square deviation between 2 geometries given in XYZ format.
     https://github.com/charnley/rmsd
     """
     RMSdev = {}
-    atomsP, P = rmsd.get_coordinates(mol1)
-    atomsQ, Q = rmsd.get_coordinates(mol2)
+    atomsP, P = rmsd.get_coordinates(molObj1)
+    atomsQ, Q = rmsd.get_coordinates(molObj2)
 
     # Calculate 'dumb' RMSD
     normal_rmsd = rmsd.rmsd(P, Q)
