@@ -109,7 +109,29 @@ def get_inputs(title):
         doPlot = False
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
+    elif (title == "RMS deviation of ADMM optimized geometries (compared to LinK/6-31G* and LinK/cc-pVTZ optimized geometries)"):
+        print "Title found: ",title
+        #mol_list = ['Histidine','Ferrocene']
+        #mol_list = [mol.shortname for mol in molecule_sets.get_moleculeSet_benchmark_geomOpt()]
+        mol_list = ['taxol','valinomycin']
+        path_to_ref = ['/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ',
+                       '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs']
+        dal_list = [{'abrev':'LinK', 'pattern':'geomOpt-b3lyp_Vanlenthe', 'path_to_files':path_to_ref }]  ### geometry optimized LinK calc.
 
+        path_to_dals = '/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/ADMM_geometry_optimization'
+        dals = [{'abrev':'ADMM2-KT3X', 'pattern':'geomOpt-b3lyp_ADMM2-KT3X', 'path_to_files':path_to_dals},
+                {'abrev':'ADMM2-OPTX', 'pattern':'geomOpt-b3lyp_ADMM2-OPTX', 'path_to_files':path_to_dals},
+                {'abrev':'ADMM2-B88X', 'pattern':'geomOpt-b3lyp_ADMM2-B8',      'path_to_files':path_to_dals},
+                {'abrev':'ADMM2-PBEX', 'pattern':'geomOpt-b3lyp_ADMM2-PBEX', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-KT3X', 'pattern':'geomOpt-b3lyp_ADMMS-KT3X', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-OPTX', 'pattern':'geomOpt-b3lyp_ADMMS-OPTX', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-B88X', 'pattern':'geomOpt-b3lyp_ADMMS-B8', 'path_to_files':path_to_dals},
+                {'abrev':'ADMMS-PBEX', 'pattern':'geomOpt-b3lyp_ADMMS-PBEX', 'path_to_files':path_to_dals}]
+        dal_list.extend(dals)
+        basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'},
+                     {'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
+        doPlot = False
+        inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
     else:
         print "Title for the configuration setup not recognized!!!!"

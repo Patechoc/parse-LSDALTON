@@ -12,21 +12,21 @@ import lib_spreadsheet as libCSV
 import csv
 
 def run():
-    inputs = configFile.get_inputs("RMS deviation between optimized geometries (LinK/6-31G* vs LinK/cc-pVTZ)")
-    path_to_XYZ = inputs.dal_list[0]['path_to_files']+"/tmp_XYZ"
+    # inputs = configFile.get_inputs("RMS deviation between optimized geometries (LinK/6-31G* vs LinK/cc-pVTZ)")
+    # path_to_XYZ = inputs.dal_list[0]['path_to_files'] +"/tmp_XYZ"
+    # if not os.path.exists(path_to_XYZ):
+    #     os.makedirs(path_to_XYZ)
+    # convert_geometries_to_XYZ_format(inputs, path_to_XYZ)
+
+    inputs = configFile.get_inputs("RMS deviation of ADMM optimized geometries (compared to LinK/6-31G* and LinK/cc-pVTZ optimized geometries)")
+    path_to_XYZ = inputs.dal_list[-1]['path_to_files'] +"/tmp_XYZ"
     if not os.path.exists(path_to_XYZ):
         os.makedirs(path_to_XYZ)
-    convert_geometries_to_XYZ_format(inputs, path_to_XYZ)
-    # results = get_data(inputs)
+    convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ)
+
+    RMSdev= get_data(inputs, path_to_XYZ)
     # pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/tables/"
     # filename = "ADMM_gradient_error_6-31Gs.csv"
-    # if inputs.doPlot == True:
-    #     generate_table(inputs, results, pathOutput+filename)
-
-    # inputs = configFile.get_inputs("ADMM single SCF + gradient error from LinK reference (cc-pVTZ/3-21G)")
-    # results = get_data(inputs)
-    # pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/tables/"
-    # filename = "ADMM_gradient_error_cc-pVTZ.csv"
     # if inputs.doPlot == True:
     #     generate_table(inputs, results, pathOutput+filename)
 
@@ -56,7 +56,7 @@ def get_list_ADMM(dals):
     return list_ADMM
 
 def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
-    results = {}
+    xyz_filenames = {}
     mol_list   = inputs.mol_list ## [molecule_name]
     basis_list = [bas['pattern'] for bas in inputs.basisSets if bas['pattern']!='cc-pVTZ']  ### 6-31Gs
     basis_list_REF = [bas['pattern'] for bas in inputs.basisSets if bas['pattern']=='cc-pVTZ']  ### cc-pVTZ
@@ -71,11 +71,11 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
         dalAbrev = dal['abrev']
         print dalAbrev
         dalPattern = dal['pattern']
-        results[dalAbrev] = {}
+        xyz_filenames[dalAbrev] = {}
         for molVal in mol_list:
             mol  = molVal.strip()
             print "\t"+mol
-            results[dalAbrev][mol] = {}
+            xyz_filenames[dalAbrev][mol] = {}
             ## geom. optim.(LinK) calculation, without ADMM
             ## ex.: ls lsd*geomOpt-b3lyp_Vanlenthe*Histidine*out | grep -v ADMM
             cmd= "ls "+ path_to_ref+"/lsd*"+dalPatternRef+"*"+mol+"*.out  | grep -v ADMM[2,S]"
@@ -86,9 +86,9 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
             molXYZ_ref_optimized= readLS.parse_molecule_optimized(file_ref).getContent_format_XYZ()
             name_molXYZ_input = dalPatternRef +"_"+mol+"_input.xyz"
             name_molXYZ_optim = dalPatternRef +"_"+mol+"_optimized.xyz"
-            results[dalAbrev][mol]['ref'] = {}
-            results[dalAbrev][mol]['ref']['input']     = name_molXYZ_input
-            results[dalAbrev][mol]['ref']['optimized'] = name_molXYZ_optim
+            xyz_filenames[dalAbrev][mol]['ref'] = {}
+            xyz_filenames[dalAbrev][mol]['ref']['input']     = name_molXYZ_input
+            xyz_filenames[dalAbrev][mol]['ref']['optimized'] = name_molXYZ_optim
             print "\t\t"+name_molXYZ_input
             print "\t\t"+name_molXYZ_optim
             with open(path_to_XYZ+"/"+name_molXYZ_input, "w") as text_file:
@@ -103,19 +103,87 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
             molXYZ_calc_optimized= readLS.parse_molecule_optimized(files_dal).getContent_format_XYZ()
             name_molXYZ_input = dalPattern+"_"+mol+"_input.xyz"
             name_molXYZ_optim = dalPattern+"_"+mol+"_optimized.xyz"
-            results[dalAbrev][mol]['calc'] = {}
-            results[dalAbrev][mol]['calc']['input']     = name_molXYZ_input
-            results[dalAbrev][mol]['calc']['optimized'] = name_molXYZ_optim
+            xyz_filenames[dalAbrev][mol]['calc'] = {}
+            xyz_filenames[dalAbrev][mol]['calc']['input']     = name_molXYZ_input
+            xyz_filenames[dalAbrev][mol]['calc']['optimized'] = name_molXYZ_optim
             print "\t\t"+name_molXYZ_input
             print "\t\t"+name_molXYZ_optim
             with open(path_to_XYZ+"/"+name_molXYZ_input, "w") as text_file:
                 text_file.write("{0}".format(molXYZ_calc_input))
             with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
                 text_file.write("{0}".format(molXYZ_calc_optimized))
-            #print results
-    return results
+            #print xyz_filenames
+    return xyz_filenames
 
-def get_data(inputs):
+
+def convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ):
+    xyz_filenames = {}
+    mol_list   = inputs.mol_list ## [molecule_name]
+    basis_list = [bas['pattern'] for bas in inputs.basisSets ]  ### both 6-31Gs and cc-pVTZ
+    ref        = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK'] ### {abrev, path, pattern}
+    dal_ref    = [{'ref':dal['pattern']} for dal in ref] ## [{'LinK/cc-pVTZ':pattern}]
+    dalPatternRef = dal_ref[0]['ref']
+    path_to_ref = ref[0]['path_to_files'] # attention: is an array!
+
+    dals = [dal for dal in inputs.dal_list if dal['abrev'] != 'LinK'] ## [{abrev, path, pattern}, {abrev, path, pattern}, ...]
+    for regBasisVal in basis_list:
+        regBasis = regBasisVal.strip()
+        print regBasis
+        xyz_filenames[regBasis] = {}
+        for dal in dals:
+            path_to_dal = dal['path_to_files']
+            dalAbrev = dal['abrev']
+            print "\t"+dalAbrev
+            dalPattern = dal['pattern']
+            xyz_filenames[regBasis][dalAbrev] = {}
+            for molVal in mol_list:
+                mol  = molVal.strip()
+                print "\t\t"+mol
+                xyz_filenames[regBasis][dalAbrev][mol] = {}
+                ## geom. optim.(LinK) calculation, without ADMM
+                ## ex.: ls lsd*geomOpt-b3lyp_Vanlenthe*Histidine*out | grep -v ADMM
+                cmds = ["find "+path+" -name lsd*"+dalPatternRef+"*"+regBasis+"*"+mol+"*.out" for path in path_to_ref]
+                file_ref = [name for name in [run_command_or_exit(cmd).strip() for cmd in cmds] if name !=""][0]
+                #print "\t\t\t"+file_ref
+                #print file_ref
+                ## converting reference
+                molXYZ_ref_input    = readLS.parse_molecule_input(file_ref).getContent_format_XYZ()
+                molXYZ_ref_optimized= readLS.parse_molecule_optimized(file_ref).getContent_format_XYZ()
+                name_molXYZ_input = dalPatternRef +"_"+ regBasis +"_"+ mol+"_input.xyz"
+                name_molXYZ_optim = dalPatternRef +"_"+ regBasis +"_"+ mol+"_optimized.xyz"
+                xyz_filenames[regBasis][dalAbrev][mol]['ref'] = {}
+                xyz_filenames[regBasis][dalAbrev][mol]['ref']['input']     = name_molXYZ_input
+                xyz_filenames[regBasis][dalAbrev][mol]['ref']['optimized'] = name_molXYZ_optim
+                print "\t\t\t"+name_molXYZ_input
+                print "\t\t\t"+name_molXYZ_optim
+                with open(path_to_XYZ+"/"+name_molXYZ_input, "w") as text_file:
+                    text_file.write("{0}".format(molXYZ_ref_input))
+                with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
+                    text_file.write("{0}".format(molXYZ_ref_optimized))
+                ## converting other calc. than reference
+                cmd= "find "+ path_to_dal+" -name lsd*"+dalPattern+"*"+regBasis+"*"+mol+"*.out "
+                #print cmd
+                files_dal = run_command_or_exit(cmd)
+                #print "\t\t\t"+files_dal
+                molXYZ_calc_input    = readLS.parse_molecule_input(files_dal).getContent_format_XYZ()
+                molXYZ_calc_optimized= readLS.parse_molecule_optimized(files_dal).getContent_format_XYZ()
+                name_molXYZ_input = dalPattern+"_" + regBasis +"_"+ mol+"_input.xyz"
+                name_molXYZ_optim = dalPattern+"_" + regBasis +"_"+ mol+"_optimized.xyz"
+                xyz_filenames[regBasis][dalAbrev][mol]['calc'] = {}
+                xyz_filenames[regBasis][dalAbrev][mol]['calc']['input']     = name_molXYZ_input
+                xyz_filenames[regBasis][dalAbrev][mol]['calc']['optimized'] = name_molXYZ_optim
+                print "\t\t\t"+name_molXYZ_input
+                print "\t\t\t"+name_molXYZ_optim
+                with open(path_to_XYZ+"/"+name_molXYZ_input, "w") as text_file:
+                    text_file.write("{0}".format(molXYZ_calc_input))
+                with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
+                    text_file.write("{0}".format(molXYZ_calc_optimized))
+                #print xyz_filenames
+    return xyz_filenames
+
+## get RMSdev for pair {reference, calc.} (ex. {ref=taxol/LinK/VTZ, calc.=taxol/LinK/6-31G*})
+def get_data(inputs, path_to_XYZ):
+    xyz_filenames = convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ)
     results = {}
     combinationAvoided = []
     mol_list   = inputs.mol_list ## [molecule_name]
