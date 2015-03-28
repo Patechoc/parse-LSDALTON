@@ -10,6 +10,7 @@ import configFile
 import statistics as stats
 import lib_spreadsheet as libCSV
 import csv
+import openbabel as babel
 
 def run():
     # inputs = configFile.get_inputs("RMS deviation between optimized geometries (LinK/6-31G* vs LinK/cc-pVTZ)")
@@ -20,11 +21,19 @@ def run():
 
     inputs = configFile.get_inputs("RMS deviation of ADMM optimized geometries (compared to LinK/6-31G* and LinK/cc-pVTZ optimized geometries)")
     path_to_XYZ = inputs.dal_list[-1]['path_to_files'] +"/tmp_XYZ"
+    path_to_Zmat = inputs.dal_list[-1]['path_to_files'] +"/tmp_Zmat"
+    path_to_PDB = inputs.dal_list[-1]['path_to_files'] +"/tmp_PDB"
     if not os.path.exists(path_to_XYZ):
         os.makedirs(path_to_XYZ)
-    convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ)
+    if not os.path.exists(path_to_Zmat):
+        os.makedirs(path_to_Zmat)
+    if not os.path.exists(path_to_PDB):
+        os.makedirs(path_to_PDB)
+    convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB)
+    print "XYZ geometries stored in: ", path_to_XYZ
+    print "Z-matrix geometries stored in: ", path_to_Zmat
 
-    RMSdev= get_data(inputs, path_to_XYZ)
+    #RMSdev= get_data(inputs, path_to_XYZ)
     # pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/tables/"
     # filename = "ADMM_gradient_error_6-31Gs.csv"
     # if inputs.doPlot == True:
@@ -116,7 +125,7 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
     return xyz_filenames
 
 
-def convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ):
+def convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB):
     xyz_filenames = {}
     mol_list   = inputs.mol_list ## [molecule_name]
     basis_list = [bas['pattern'] for bas in inputs.basisSets ]  ### both 6-31Gs and cc-pVTZ
@@ -149,8 +158,9 @@ def convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ):
                 ## converting reference
                 molXYZ_ref_input    = readLS.parse_molecule_input(file_ref).getContent_format_XYZ()
                 molXYZ_ref_optimized= readLS.parse_molecule_optimized(file_ref).getContent_format_XYZ()
-                name_molXYZ_input = dalPatternRef +"_"+ regBasis +"_"+ mol+"_input.xyz"
-                name_molXYZ_optim = dalPatternRef +"_"+ regBasis +"_"+ mol+"_optimized.xyz"
+                name_mol = dalPatternRef +"_"+ regBasis +"_"+ mol
+                name_molXYZ_input = name_mol + "_input.xyz"
+                name_molXYZ_optim = name_mol + "_optimized.xyz"
                 xyz_filenames[regBasis][dalAbrev][mol]['ref'] = {}
                 xyz_filenames[regBasis][dalAbrev][mol]['ref']['input']     = name_molXYZ_input
                 xyz_filenames[regBasis][dalAbrev][mol]['ref']['optimized'] = name_molXYZ_optim
@@ -160,15 +170,23 @@ def convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ):
                     text_file.write("{0}".format(molXYZ_ref_input))
                 with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
                     text_file.write("{0}".format(molXYZ_ref_optimized))
-                ## converting other calc. than reference
+
+                ## convert each XYZ file to Zmatrix
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_input, path_to_Zmat +"/"+ name_mol+"_input.gzmat")
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_optim, path_to_Zmat +"/"+ name_mol+"_optimized.gzmat")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_input, path_to_PDB +"/"+ name_mol+"_input.pdb")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_optim, path_to_PDB +"/"+ name_mol+"_optimized.pdb")
+
+                ## converting other calc. than reference to XYZ format
                 cmd= "find "+ path_to_dal+" -name lsd*"+dalPattern+"*"+regBasis+"*"+mol+"*.out "
                 #print cmd
                 files_dal = run_command_or_exit(cmd)
                 #print "\t\t\t"+files_dal
                 molXYZ_calc_input    = readLS.parse_molecule_input(files_dal).getContent_format_XYZ()
                 molXYZ_calc_optimized= readLS.parse_molecule_optimized(files_dal).getContent_format_XYZ()
-                name_molXYZ_input = dalPattern+"_" + regBasis +"_"+ mol+"_input.xyz"
-                name_molXYZ_optim = dalPattern+"_" + regBasis +"_"+ mol+"_optimized.xyz"
+                name_mol = dalPattern+"_" + regBasis +"_"+ mol
+                name_molXYZ_input = name_mol + "_input.xyz"
+                name_molXYZ_optim = name_mol + "_optimized.xyz"
                 xyz_filenames[regBasis][dalAbrev][mol]['calc'] = {}
                 xyz_filenames[regBasis][dalAbrev][mol]['calc']['input']     = name_molXYZ_input
                 xyz_filenames[regBasis][dalAbrev][mol]['calc']['optimized'] = name_molXYZ_optim
@@ -179,11 +197,17 @@ def convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ):
                 with open(path_to_XYZ+"/"+name_molXYZ_optim, "w") as text_file:
                     text_file.write("{0}".format(molXYZ_calc_optimized))
                 #print xyz_filenames
+
+                ## convert each XYZ file to Zmatrix
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_input, path_to_Zmat +"/"+ name_mol+"_input.gzmat")
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_optim, path_to_Zmat +"/"+ name_mol+"_optimized.gzmat")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_input, path_to_PDB +"/"+ name_mol+"_input.pdb")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_optim, path_to_PDB +"/"+ name_mol+"_optimized.pdb")
     return xyz_filenames
 
 ## get RMSdev for pair {reference, calc.} (ex. {ref=taxol/LinK/VTZ, calc.=taxol/LinK/6-31G*})
 def get_data(inputs, path_to_XYZ):
-    xyz_filenames = convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ)
+    #xyz_filenames = convert_geometries_to_XYZ_format_ADMM(inputs, path_to_XYZ)
     results = {}
     combinationAvoided = []
     mol_list   = inputs.mol_list ## [molecule_name]
@@ -256,6 +280,23 @@ def get_data(inputs, path_to_XYZ):
     return results
 
 
+def convert_XYZ_to_GZmat(xyz_pathname, gzmat_pathname):
+    ## http://openbabel.org/docs/current/UseTheLibrary/PythonDoc.html
+    conv = babel.OBConversion()
+    conv.OpenInAndOutFiles(xyz_pathname, gzmat_pathname)
+    conv.SetInAndOutFormats("xyz", "gzmat")
+    conv.Convert()
+    conv.CloseOutFile()
+
+def convert_XYZ_to_PDB(xyz_pathname, pdb_pathname):
+    ## http://openbabel.org/docs/current/UseTheLibrary/PythonDoc.html
+    conv = babel.OBConversion()
+    conv.OpenInAndOutFiles(xyz_pathname, pdb_pathname)
+    conv.SetInAndOutFormats("xyz", "pdb")
+    conv.Convert()
+    conv.CloseOutFile()
+
+
 def generate_table(inputs, results, path_to_file):
     basis_list = [bas['pattern'] for bas in inputs.basisSets]  ### 6-31Gs   
     mol_list   = inputs.mol_list ## [molecule_name]
@@ -326,3 +367,6 @@ def generate_table(inputs, results, path_to_file):
 
 if __name__ == "__main__":
     run()
+    # xyz_pathname= "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/ADMM_geometry_optimization/tmp_XYZ/geomOpt-b3lyp_Vanlenthe_cc-pVTZ_taxol_input.xyz"
+    # gzmat_pathname = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/ADMM_geometry_optimization/tmp_XYZ/geomOpt-b3lyp_Vanlenthe_cc-pVTZ_taxol_input.gzmat"
+    # convert_XYZ_to_GZmat(xyz_pathname, gzmat_pathname)
