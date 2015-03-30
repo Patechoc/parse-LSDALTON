@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import subprocess as subproc
 from setuptools import setup, find_packages
 
 '''
@@ -23,7 +24,7 @@ setup(
 
     packages = find_packages(),
 
-    cmdclass={"build": build_with_submodules},
+    cmdclass = {"build": build_with_submodules},
     #scripts = ['scripts/updateRMSD.py'],
 
     install_requires=[
@@ -45,7 +46,14 @@ setup(
 
 class build_with_submodules(build):
     def run(self):
-        if path.exists('.git'):
-            check_call(['git', 'submodule', 'init'])
-            check_call(['git', 'submodule', 'update'])
+        if os.path.exists('.git'):
+            #subproc.check_call(['git', 'submodule', 'init'])
+            #subproc.check_call(['git', 'submodule', 'update'])
+            update_submodules(self, "./")
         build.run(self)
+
+    def update_submodules(self, location):
+        if not os.path.exists(os.path.join(location, '.gitmodules')):
+            return
+        call_subprocess([self.cmd, 'submodule', 'update', '--init', '--recursive', '-q'],
+                        cwd=location)
