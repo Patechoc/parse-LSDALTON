@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os
+import os, sys
 import subprocess as subproc
 from setuptools import setup, find_packages
 from setuptools.command.install import install
@@ -12,6 +12,15 @@ nice blog post advising on "Developing Reusable Things or How Not to Repeat Your
 "abstract dependencies in your setup.py and concrete dependencies in your requirements.txt"
 https://caremad.io/2013/07/setup-vs-requirement/
 '''
+
+class CustomInstallCommand(install):
+    """Customized setuptools install command"""
+    def run(self):
+        update_submodules(self)
+        install.run(self)
+    def update_submodules(self):
+        subproc.call([sys.executable, './scripts/updateRMSD.py'])
+
 
 setup(
     name="parseLSDALTON",
@@ -27,7 +36,7 @@ setup(
 
     #cmdclass = {"build": build_with_submodules},
     #scripts = ['scripts/updateRMSD.py'],
-    cmdclass={
+    cmdclass = {
         'install': CustomInstallCommand,
     },
 
@@ -46,31 +55,3 @@ setup(
     #],
     # ...
 )
-
-
-
-# class build_with_submodules(build):
-#     def run(self):
-#         if os.path.exists('.git'):
-#             #subproc.check_call(['git', 'submodule', 'init'])
-#             #subproc.check_call(['git', 'submodule', 'update'])
-#             update_submodules(self, "./")
-#         build.run(self)
-
-#     def update_submodules(self, location):
-#         if not os.path.exists(os.path.join(location, '.gitmodules')):
-#             return
-#         call_subprocess([self.cmd, 'submodule', 'update', '--init', '--recursive', '-q'],
-#                         cwd=location)
-
-
-class CustomInstallCommand(install):
-    """Customized setuptools install command"""
-    def run(self):
-        update_submodules(self, "./"):
-        install.run(self)
-    def update_submodules(self, location):
-        if not os.path.exists(os.path.join(location, '.gitmodules')):
-            return
-        subproc.check_call([self.cmd, 'submodule', 'update', '--init', '--recursive', '-q'],
-                           cwd=location)
