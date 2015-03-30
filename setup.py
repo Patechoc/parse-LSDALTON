@@ -16,11 +16,8 @@ https://caremad.io/2013/07/setup-vs-requirement/
 class CustomInstallCommand(install):
     """Customized setuptools install command"""
     def run(self):
-        update_submodules(self)
-        install.run(self)
-    def update_submodules(self):
         subproc.call([sys.executable, './scripts/updateRMSD.py'])
-
+        install.run(self)
 
 setup(
     name="parseLSDALTON",
