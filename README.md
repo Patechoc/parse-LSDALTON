@@ -1,14 +1,14 @@
 # Parse-LSDALTON
 To parse input and ouput [LSDALTON](http://daltonprogram.org/) files, and build visualizations of benchmarked methods.
 
-## local 'virtual' installation using [setuptools](https://pythonhosted.org/setuptools/setuptools.html)
+## Local installation using [setuptools](https://pythonhosted.org/setuptools/setuptools.html) in a virtual environment
 ```
 git clone https://github.com/Patechoc/parse-LSDALTON.git
 cd parseLSDALTON
 sudo easy_install pip
-virtualenv coolParsing
-source coolParsing/bin/activate
-sudo ./coolParsing/bin/pip install -r requirements.txt
+virtualenv myPackage
+source myPackage/bin/activate
+sudo ./myPackage/bin/pip install -r requirements.txt
 deactivate
 ```
 
