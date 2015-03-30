@@ -23,16 +23,20 @@ def run():
     path_to_XYZ = inputs.dal_list[-1]['path_to_files'] +"/tmp_XYZ"
     path_to_Zmat = inputs.dal_list[-1]['path_to_files'] +"/tmp_Zmat"
     path_to_PDB = inputs.dal_list[-1]['path_to_files'] +"/tmp_PDB"
+    path_to_MOL2 = inputs.dal_list[-1]['path_to_files'] +"/tmp_MOL2"
     if not os.path.exists(path_to_XYZ):
         os.makedirs(path_to_XYZ)
     if not os.path.exists(path_to_Zmat):
         os.makedirs(path_to_Zmat)
     if not os.path.exists(path_to_PDB):
         os.makedirs(path_to_PDB)
-    convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB)
+    if not os.path.exists(path_to_MOL2):
+        os.makedirs(path_to_MOL2)
+    convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB, path_to_MOL2)
     print "XYZ geometries stored in: ", path_to_XYZ
     print "Z-matrix geometries stored in: ", path_to_Zmat
-
+    print "PDB geometries stored in: ", path_to_PDB
+    print "MOL2 geometries stored in: ", path_to_MOL2
     #RMSdev= get_data(inputs, path_to_XYZ)
     # pathOutput = "/home/ctcc2/Documents/CODE-DEV/parse-LSDALTON/src/files/tables/"
     # filename = "ADMM_gradient_error_6-31Gs.csv"
@@ -125,7 +129,7 @@ def convert_geometries_to_XYZ_format(inputs, path_to_XYZ):
     return xyz_filenames
 
 
-def convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB):
+def convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB, path_to_MOL2):
     xyz_filenames = {}
     mol_list   = inputs.mol_list ## [molecule_name]
     basis_list = [bas['pattern'] for bas in inputs.basisSets ]  ### both 6-31Gs and cc-pVTZ
@@ -172,10 +176,12 @@ def convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB):
                     text_file.write("{0}".format(molXYZ_ref_optimized))
 
                 ## convert each XYZ file to Zmatrix
-                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_input, path_to_Zmat +"/"+ name_mol+"_input.gzmat")
-                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_optim, path_to_Zmat +"/"+ name_mol+"_optimized.gzmat")
-                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_input, path_to_PDB +"/"+ name_mol+"_input.pdb")
-                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_optim, path_to_PDB +"/"+ name_mol+"_optimized.pdb")
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+ name_molXYZ_input, path_to_Zmat +"/"+ name_mol+"_input.gzmat")
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+ name_molXYZ_optim, path_to_Zmat +"/"+ name_mol+"_optimized.gzmat")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_input, path_to_PDB  +"/"+ name_mol+"_input.pdb")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_optim, path_to_PDB  +"/"+ name_mol+"_optimized.pdb")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_input, path_to_MOL2 +"/"+ name_mol+"_input.mol2")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_optim, path_to_MOL2 +"/"+ name_mol+"_optimized.mol2")
 
                 ## converting other calc. than reference to XYZ format
                 cmd= "find "+ path_to_dal+" -name lsd*"+dalPattern+"*"+regBasis+"*"+mol+"*.out "
@@ -199,10 +205,12 @@ def convert_geometries(inputs, path_to_XYZ, path_to_Zmat, path_to_PDB):
                 #print xyz_filenames
 
                 ## convert each XYZ file to Zmatrix
-                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_input, path_to_Zmat +"/"+ name_mol+"_input.gzmat")
-                convert_XYZ_to_GZmat(path_to_XYZ+"/"+name_molXYZ_optim, path_to_Zmat +"/"+ name_mol+"_optimized.gzmat")
-                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_input, path_to_PDB +"/"+ name_mol+"_input.pdb")
-                convert_XYZ_to_PDB(path_to_XYZ+"/"+name_molXYZ_optim, path_to_PDB +"/"+ name_mol+"_optimized.pdb")
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+ name_molXYZ_input, path_to_Zmat +"/"+ name_mol+"_input.gzmat")
+                convert_XYZ_to_GZmat(path_to_XYZ+"/"+ name_molXYZ_optim, path_to_Zmat +"/"+ name_mol+"_optimized.gzmat")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_input, path_to_PDB  +"/"+ name_mol+"_input.pdb")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_optim, path_to_PDB  +"/"+ name_mol+"_optimized.pdb")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_input, path_to_MOL2 +"/"+ name_mol+"_input.mol2")
+                convert_XYZ_to_PDB(path_to_XYZ+"/"  + name_molXYZ_optim, path_to_MOL2 +"/"+ name_mol+"_optimized.mol2")
     return xyz_filenames
 
 ## get RMSdev for pair {reference, calc.} (ex. {ref=taxol/LinK/VTZ, calc.=taxol/LinK/6-31G*})

@@ -1,6 +1,12 @@
-argparse==1.2.1
-wsgiref==0.1.2
-numpy==1.8.2
-pandas==0.13.1
-pyparsing==2.0.1
-pytest==2.6.4
+--index-url https://pypi.python.org/simple/
+
+-e .
+
+
+# argparse==1.2.1
+# wsgiref==0.1.2
+# numpy==1.8.2
+# pandas==0.13.1
+# pyparsing==2.0.1
+# pytest==2.6.4
+#-e git+https://github.com/Patechoc/parse-LSDALTON.git#egg=toto

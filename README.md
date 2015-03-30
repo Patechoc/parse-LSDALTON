@@ -1,6 +1,17 @@
 # Parse-LSDALTON
 To parse input and ouput [LSDALTON](http://daltonprogram.org/) files, and build visualizations of benchmarked methods.
 
+## local 'virtual' installation using [setuptools](https://pythonhosted.org/setuptools/setuptools.html)
+```
+git clone https://github.com/Patechoc/parse-LSDALTON.git
+cd parseLSDALTON
+sudo easy_install pip
+virtualenv coolParsing
+source coolParsing/bin/activate
+sudo ./coolParsing/bin/pip install -r requirements.txt
+deactivate
+```
+
 ## Code structure
 
 Main directory structure:
@@ -23,6 +34,13 @@ Main directory structure:
     ├── ...
     └── test_compare_LSDALTON_outputs.py
 ```
+
+## Dependencies
+This code is using other module/libraries.
+- RMS Deviation between 2 geometries: https://github.com/charnley/rmsd
+- Conversion from cartesian to various formats (.pdb, .gzmat, .mol2): Openbabel 
+
+
 ## Testing the code
 ### using the standard Python unit testing framework ([PyUnit](https://docs.python.org/2/library/unittest.html))
 You can just run the tests like so:
