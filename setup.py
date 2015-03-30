@@ -3,6 +3,7 @@
 import os
 import subprocess as subproc
 from setuptools import setup, find_packages
+from setuptools.command.install import install
 
 '''
 virtualenv and pip: http://www.dabapps.com/blog/introduction-to-pip-and-virtualenv-python/
@@ -24,8 +25,12 @@ setup(
 
     packages = find_packages(),
 
-    cmdclass = {"build": build_with_submodules},
+    #cmdclass = {"build": build_with_submodules},
     #scripts = ['scripts/updateRMSD.py'],
+    cmdclass={
+        'install': CustomInstallCommand,
+    },
+
 
     install_requires=[
         "argparse",
@@ -44,16 +49,28 @@ setup(
 
 
 
-class build_with_submodules(build):
-    def run(self):
-        if os.path.exists('.git'):
-            #subproc.check_call(['git', 'submodule', 'init'])
-            #subproc.check_call(['git', 'submodule', 'update'])
-            update_submodules(self, "./")
-        build.run(self)
+# class build_with_submodules(build):
+#     def run(self):
+#         if os.path.exists('.git'):
+#             #subproc.check_call(['git', 'submodule', 'init'])
+#             #subproc.check_call(['git', 'submodule', 'update'])
+#             update_submodules(self, "./")
+#         build.run(self)
 
+#     def update_submodules(self, location):
+#         if not os.path.exists(os.path.join(location, '.gitmodules')):
+#             return
+#         call_subprocess([self.cmd, 'submodule', 'update', '--init', '--recursive', '-q'],
+#                         cwd=location)
+
+
+class CustomInstallCommand(install):
+    """Customized setuptools install command"""
+    def run(self):
+        update_submodules(self, "./"):
+        install.run(self)
     def update_submodules(self, location):
         if not os.path.exists(os.path.join(location, '.gitmodules')):
             return
-        call_subprocess([self.cmd, 'submodule', 'update', '--init', '--recursive', '-q'],
-                        cwd=location)
+        subproc.check_call([self.cmd, 'submodule', 'update', '--init', '--recursive', '-q'],
+                           cwd=location)
