@@ -23,7 +23,7 @@ setup(
 
     packages = find_packages(),
 
-    scripts = ['scripts/updateRMSD'],
+    scripts = ['scripts/updateRMSD.py'],
 
     install_requires=[
         "argparse",
