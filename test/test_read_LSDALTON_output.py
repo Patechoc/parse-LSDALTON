@@ -35,24 +35,24 @@ class demo_test(unittest.TestCase):
 class read_molecule_from_output(unittest.TestCase):
     def setUp(self):
         self.path_to_file1 = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
-        self.optimMolString1 = """tal number of coordinates: 60
-        itten in atomic units
+        self.optimMolString1 = """Total number of coordinates: 60
+Written in atomic units
 
-        H        x     -2.1713420293
-        y      1.9031814205
-        z      0.2568444106
+1   H        x     -2.1713420293
+2            y      1.9031814205
+3            z      0.2568444106
 
-        H        x     -3.7698488285
-        y     -0.4557504707
-        z      5.4799532374
+4   H        x     -3.7698488285
+5            y     -0.4557504707
+6            z      5.4799532374
 
-        H        x     -2.0156236057
-        y      3.4574535980
-        z      4.4225477280
+7   H        x     -2.0156236057
+8            y      3.4574535980
+9            z      4.4225477280
 
-        H        x      0.5785218614
-        y      1.6743437213
-        z      4.6874876939"""
+10   H        x      0.5785218614
+11            y      1.6743437213
+12            z      4.6874876939"""
         self.str_mol1 = readLS.get_input_MOL_string(self.path_to_file1)
         self.moleculeString1 = """  BASIS
         6-31G Aux=df-def2 ADMM=3-21G
@@ -85,26 +85,26 @@ class read_molecule_from_output(unittest.TestCase):
         O         -4.99044067     -1.45108413      4.42837147"""
         self.xyzFormat = """20
 lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007 (in Angstrom)
-H     -1.14902471332943      1.00712023098862      0.13591620816877
-H     -1.99491807877866     -0.24117276176644      2.89986635578188
-H     -1.06662207264791      1.82960564281643      2.34031146027655
-H      0.30614058355617      0.88602453617217      2.48051165179861
-H     -0.12748455878107     -1.18631801341930     -0.42200736830855
-H      0.33590918869435     -1.43117173867306      1.25744790059564
-H      2.83606289990766     -0.37106494576807      1.99674765933953
-H      3.48463424069596      2.05765029096117     -1.37181243893832
-H      1.14863091785471      1.01574781834498     -1.60593641137974
-C     -2.24810837525150     -0.58352224399409      1.05302316149422
-C      2.63102713882836      0.13428360747356      1.06613047675826
-C      3.02693381274811      1.39564658024140     -0.65561792915948
-C     -0.96887358386731      0.26787831581160      0.92794236599846
-C      0.19844811513605     -0.66422149912031      0.48533561352453
-C      1.49423218608971      0.05048815004851      0.28293527485411
-N     -0.67900595386139      0.89724997805987      2.22898932368553
-N      3.57939992810719      0.97162866594325      0.47571927252474
-N      1.75985825580935      0.86910491315057     -0.81740130110534
-O     -2.81628989262937     -1.07972561038044      0.07968358117985
-O     -2.64668003898623     -0.76603191500358      2.34072514768128"""
+H     -1.14902471901835      1.00712023597495      0.13591620884170
+H     -1.99491808865566     -0.24117276296050      2.89986637013936
+H     -1.06662207792884      1.82960565187496      2.34031147186362
+H      0.30614058507190      0.88602454055895      2.48051166407982
+H     -0.12748455941225     -1.18631801929286     -0.42200737039794
+H      0.33590919035746     -1.43117174575891      1.25744790682137
+H      2.83606291394924     -0.37106494760525      1.99674766922559
+H      3.48463425794868      2.05765030114877     -1.37181244573028
+H      1.14863092354168      1.01574782337403     -1.60593641933086
+C     -2.24810838638207     -0.58352224688315      1.05302316670782
+C      2.63102715185479      0.13428360813840      1.06613048203676
+C      3.02693382773471      1.39564658715136     -0.65561793240550
+C     -0.96887358866428      0.26787831713789      0.92794237059277
+C      0.19844811611858     -0.66422150240892      0.48533561592746
+C      1.49423219348777      0.05048815029848      0.28293527625494
+N     -0.67900595722321      0.89724998250223      2.22898933472144
+N      3.57939994582909      0.97162867075386      0.47571927488006
+N      1.75985826452255      0.86910491745358     -0.81740130515236
+O     -2.81628990657306     -1.07972561572625      0.07968358157437
+O     -2.64668005209016     -0.76603191879626      2.34072515927041"""
         self.str_optimMol1 = readLS.get_optmized_MOL_string(self.path_to_file1)
         self.molOptimized = readLS.parse_molecule_optimized(self.path_to_file1)
     def test_extracting_input_moleculeString_from_output(self):
@@ -122,8 +122,8 @@ Atomtypes=0 Bohr nosymmetry"""
         xyz = self.molOptimized.getContent_format_XYZ()
         self.assertEqual(self.xyzFormat.strip(), xyz.strip())
     def test_extracting_partOf_optimized_moleculeString_from_output(self):
-        stripped_optMolstr = "\n".join([line.strip() for line in self.optimMolString1.split('\n')])
-        trunc_stripped_optMolstr = "\n".join([line.strip() for line in (self.str_optimMol1.split('\n'))[0:18]])
+        stripped_optMolstr = "\n".join([line.strip() for line in self.optimMolString1.split('\n')]) ### 
+        trunc_stripped_optMolstr = "\n".join([line.strip() for line in (self.str_optimMol1.split('\n'))[0:18]]) ### readLS.get_optmized_MOL_stringreadLS(file1)
         self.assertEqual(trunc_stripped_optMolstr.strip(), stripped_optMolstr.strip())
 
 

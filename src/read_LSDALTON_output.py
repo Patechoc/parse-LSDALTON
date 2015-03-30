@@ -316,7 +316,8 @@ if __name__ == "__main__":
     obj = parse_input_MOL_string_atomCoord(str_mol1)
     #print parse_input_MOL_string_BASIS(str_mol1)
 
-    #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
+    str_molOpt1 =  get_optmized_MOL_string(path_to_file)
+    #print str_molOpt1
     #parse_optimized_MOL_string_atomCoord(str_molOpt1)
 
 
@@ -327,12 +328,12 @@ if __name__ == "__main__":
 
     #str_molOpt1 =  get_optmized_MOL_string(path_to_file)
     #print str_molOpt1
-    #molOptimized = parse_molecule_optimized(path_to_file)
+    molOptimized = parse_molecule_optimized(path_to_file)
     #print molOptimized #.getContent_format_XYZ()
     #print molOptimized.getContent_format_XYZ()
 
 
-    path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_taxol_8CPU_16OMP_2014_11_13T1203.out"
-    molOptimized = parse_molecule_optimized(path_to_file)
-    print molOptimized #.getContent_format_XYZ()
+    #path_to_file = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31Gs_df-def2_taxol_8CPU_16OMP_2014_11_13T1203.out"
+    #molOptimized = parse_molecule_optimized(path_to_file)
     print molOptimized.getContent_format_XYZ()
+    #print molOptimized.getContent_format_XYZ()
