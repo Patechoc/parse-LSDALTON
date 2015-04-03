@@ -13,11 +13,7 @@ nice blog post advising on "Developing Reusable Things or How Not to Repeat Your
 https://caremad.io/2013/07/setup-vs-requirement/
 '''
 
-class CustomInstallCommand(install):
-    """Customized setuptools install command"""
-    def run(self):
-        subproc.call([sys.executable, './scripts/updateRMSD.py'])
-        install.run(self)
+os.system("git submodule init; git submodule update")
 
 setup(
     name="parseLSDALTON",
@@ -30,13 +26,6 @@ setup(
     license = 'MIT',
 
     packages = find_packages(),
-
-    #cmdclass = {"build": build_with_submodules},
-    #scripts = ['scripts/updateRMSD.py'],
-    cmdclass = {
-        'install': CustomInstallCommand,
-    },
-
 
     install_requires=[
         "argparse",
