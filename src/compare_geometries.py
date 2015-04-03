@@ -4,9 +4,10 @@ import sys, os, re, math
 import numpy as np
 import subprocess as subproc
 import imp
-#sys.path.append('../lib/RMSD/')
-#import calculate_rmsd as rmsd
+
 rmsd = imp.load_source("RMSD", "../lib/RMSD/calculate_rmsd")
+
+
 
 def get_RMS_deviation(molObj1, molObj2):
     """
