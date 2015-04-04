@@ -41,7 +41,7 @@ Main directory structure:
 ## Dependencies
 This code is using other module/libraries.
 - RMS Deviation between 2 geometries: https://github.com/charnley/rmsd
-- Conversion from cartesian to various formats (.pdb, .gzmat, .mol2): Openbabel 
+- Conversion from cartesian to various formats (.pdb, .gzmat, .mol2): [Openbabel ](http://openbabel.org/)
 
 
 ## Testing the code
@@ -75,5 +75,6 @@ The code is testing continuously (after every `git push`) using [Wercker](http:/
 └── requirements.txt
 ```
 wercker.yml will specify the flow of packages to install, variables to setup and commands to perform, while requirements.txt includes the list of packages to install and eventually which version you required.
+
 [![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
 
