@@ -27,15 +27,15 @@ setup(
 
     packages = find_packages(),
 
-    install_requires=[
-        "argparse",
-        "wsgiref",
-        "numpy",
-        "pandas",
-        "pyparsing",
-        "pytest",
-        "plotly",
-    ],
+    # install_requires=[
+    #     "argparse",
+    #     "wsgiref",
+    #     "numpy",
+    #     "pandas",
+    #     "pyparsing",
+    #     "pytest",
+    #     "plotly",
+    # ],
     #dependency_links = [
     #    ""
     #],
