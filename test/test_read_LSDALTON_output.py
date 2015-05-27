@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 import unittest
 import random
@@ -109,7 +109,7 @@ O     -2.64668005209016     -0.76603191879626      2.34072515927041"""
         self.molOptimized = readLS.parse_molecule_optimized(self.path_to_file1)
     def test_extracting_input_moleculeString_from_output(self):
         stripped_molstr = "\n".join([line.strip() for line in self.moleculeString1.split('\n')])
-        self.assertEqual(self.str_mol1.strip(), stripped_molstr.strip())        
+        self.assertEqual(self.str_mol1.strip(), stripped_molstr.strip())
     def test_extracting_header_input_moleculeString(self):
         molInput = readLS.parse_input_MOL_string_BASIS(self.str_mol1)
         infos_stored = """BASIS
@@ -144,7 +144,7 @@ class molecular_gradient(unittest.TestCase):
     def setUp(self):
         self.path_to_file = "../src/files/lsdalton_files/lsdalton20140924_geomOpt-b3lyp_Vanlenthe_6-31G_df-def2_Histidine_2CPU_16OMP_2014_10_28T1007.out"
         self.grad = readLS.get_last_molecular_gradient(self.path_to_file)
-		
+
     def test_extract_gradient_to_file(self):
         grad_01 = [{'y': '0.0000014502', 'x': '-0.0000106785', 'z': '-0.0000085260', 'atom': 'H'},
                    {'y': '0.0000563897', 'x': '0.0000638938', 'z': '0.0000176832', 'atom': 'H'},
@@ -194,8 +194,6 @@ class molecular_gradient(unittest.TestCase):
                        ['O', np.array([ -2.22115000e-05,  -3.33703000e-05,  -7.52538000e-05])]]
         [self.assertEqual(elem[0][0],elem[1][0]) for elem in zip(obj['gradient'],grad_stored)]
         [self.assertTrue(np.array_equal(elem[0][1],elem[1][1])) for elem in zip(obj['gradient'],grad_stored)]
-        
-
 
 
 if __name__ == '__main__':
