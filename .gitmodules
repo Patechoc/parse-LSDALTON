@@ -1,3 +1,6 @@
 [submodule "lib/RMSD"]
 	path = lib/RMSD
 	url = https://github.com/charnley/rmsd.git
+[submodule "lib/atomsinmolecule"]
+	path = lib/atomsinmolecule
+	url = https://patrick_merlot@bitbucket.org/patrick_merlot/atomsinmolecule.git

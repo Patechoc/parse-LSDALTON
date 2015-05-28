@@ -3,8 +3,8 @@
 import sys, os
 import re
 import numpy as np
-import molecule as mol
-
+#import molecule as mol
+import atomsInMolecule as mol
 
 class moleculeInput(mol.molecule):
     def __init__(self, shortname="", name="", comments="",
