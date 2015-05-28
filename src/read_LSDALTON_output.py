@@ -6,7 +6,7 @@ import subprocess as subproc
 from parser import *
 #import atomsInMolecule as mol
 import imp
-mol = imp.load_source("atomsInMolecule", "../lib/atomsinmolecule/atomsInMolecule")
+mol = imp.load_source("atomsInMolecule", "../lib/atomsinmolecule/atomsInMolecule/atomsInMolecule.py")
 import Inputs_DALTON as dalton
 
 
