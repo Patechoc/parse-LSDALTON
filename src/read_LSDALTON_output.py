@@ -4,8 +4,8 @@ import sys, os, re, math
 import numpy as np
 import subprocess as subproc
 from parser import *
-#import molecule as mol
-import atomsInMolecule as mol
+#import atomsInMolecule as mol
+mol = imp.load_source("atomsInMolecule", "../lib/atomsinmolecule/atomsInMolecule")
 import Inputs_DALTON as dalton
 
 
