@@ -46,6 +46,7 @@ build:
     - script:
         name: Code Coverage with Coveralls
         code: |
+          pip install python-coveralls
           export COVERALLS_GIT_COMMIT=$WERCKER_GIT_COMMIT
           export COVERALLS_GIT_BRANCH=$WERCKER_GIT_BRANCH
           export COVERALLS_SERVICE_NAME=wercker
