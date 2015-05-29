@@ -78,5 +78,6 @@ The code is testing continuously (after every `git push`) using [Wercker](http:/
 wercker.yml will specify the flow of packages to install, variables to setup and commands to perform, while requirements.txt includes the list of packages to install and eventually which version you required.
 
 [![Coverage Status](https://coveralls.io/repos/Patechoc/parse-LSDALTON/badge.svg)](https://coveralls.io/r/Patechoc/parse-LSDALTON)
+[![Build Status](https://travis-ci.org/Patechoc/parse-LSDALTON.svg?branch=master)](https://travis-ci.org/Patechoc/parse-LSDALTON)
 [![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
 
