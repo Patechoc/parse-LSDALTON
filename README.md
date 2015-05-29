@@ -1,8 +1,5 @@
 # Parse-LSDALTON
 
-![https://coveralls.io/repos/z4r/python-coveralls/badge.png?branch=master](https://coveralls.io/r/z4r/python-coveralls)
-
-
 To parse input and ouput [LSDALTON](http://daltonprogram.org/) files, and build visualizations of benchmarked methods.
 
 ## Local installation using [setuptools](https://pythonhosted.org/setuptools/setuptools.html) in a virtual environment
@@ -80,5 +77,6 @@ The code is testing continuously (after every `git push`) using [Wercker](http:/
 ```
 wercker.yml will specify the flow of packages to install, variables to setup and commands to perform, while requirements.txt includes the list of packages to install and eventually which version you required.
 
+[![Coverage status](https://coveralls.io/repos/z4r/python-coveralls/badge.png?branch=master)](https://coveralls.io/r/z4r/python-coveralls)
 [![wercker status](https://app.wercker.com/status/723dc9ae58f0940dcdab0d2379126fa9/m "wercker status")](https://app.wercker.com/project/bykey/723dc9ae58f0940dcdab0d2379126fa9)
 
