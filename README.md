@@ -1,4 +1,8 @@
 # Parse-LSDALTON
+
+![https://coveralls.io/repos/z4r/python-coveralls/badge.png?branch=master](https://coveralls.io/r/z4r/python-coveralls)
+
+
 To parse input and ouput [LSDALTON](http://daltonprogram.org/) files, and build visualizations of benchmarked methods.
 
 ## Local installation using [setuptools](https://pythonhosted.org/setuptools/setuptools.html) in a virtual environment
