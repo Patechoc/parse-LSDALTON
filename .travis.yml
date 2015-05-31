@@ -10,7 +10,7 @@ python:
 install:
   - "pip install ."
   - "pip install -r requirements.txt"
-  - "PYTHONPATH=$parseLSDaltonPATH=$(pwd)"
+  - "parseLSDaltonPATH=$(pwd)"
   - "PYTHONPATH=$PYTHONPATH:$parseLSDaltonPATH"
   - "PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/src"
   - "PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/plots"
