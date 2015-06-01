@@ -27,11 +27,14 @@ build:
         code: |
           parseLSDaltonPATH=$(pwd)
           echo "parseLSDaltonPATH: $parseLSDaltonPATH"
-          export PYTHONPATH=$PYTHONPATH:$parseLSDaltonPATH
+          PYTHONPATH=$PYTHONPATH:$parseLSDaltonPATH
           echo "PYTHONPATH: $PYTHONPATH"
-          export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/src
-          export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/plots
-          export PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/tables
+          PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/src
+          PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/lib
+          PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/lib/atomsinmolecule
+          PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/plots
+          PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/tables
+          export PYTHONPATH
           echo "PYTHONPATH: $PYTHONPATH"
 
     - script:
@@ -41,18 +44,4 @@ build:
           echo "pip version $(pip --version) running"
           echo "PyTest version $(py.test --version) running"
           cd test
-          python -m pytest
-
-    - script:
-        name: Code Coverage with Coveralls
-        code: |
-          pip install python-coveralls
-          # .coveralls.yml
-          #repo_token: on wercker
-          export COVERALLS_GIT_COMMIT=$WERCKER_GIT_COMMIT
-          export COVERALLS_GIT_BRANCH=$WERCKER_GIT_BRANCH
-          export COVERALLS_SERVICE_NAME=wercker
-          export COVERALLS_REPO_TOKEN=$COVERALLS_TOKEN
-          export COVERALLS_GIT_COMMIT=$WERCKER_GIT_COMMIT
-          export COVERALLS_SERVICE_JOB_ID=$WERCKER_BUILD_ID
-          export COVERALLS_GIT_BRANCH=$WERCKER_GIT_BRANCH
+          py.test -v
