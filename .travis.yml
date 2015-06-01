@@ -4,10 +4,25 @@ python:
   - "2.7"
 #  - "nightly"
 
+
+### Whitelisting example
+branches:
+  only:
+    - master
+
+### Blacklisting example
+#branches:
+#  except:
+#    - develop
+#    - feature
+
+
+
 ### command to install dependencies
 install:
   - "pip install ."
   - "pip install -r requirements.txt"
+  - "pip install coveralls"
   - "parseLSDaltonPATH=$(pwd)"
   - "PYTHONPATH=$PYTHONPATH:$parseLSDaltonPATH"
   - "PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/src"
@@ -16,5 +31,9 @@ install:
   - "echo $PYTHONPATH"
   - "export PYTHONPATH"
 
-### Run the tests
-script: cd test; python -m pytest
+script:
+  cd test
+  coverage run python -m pytest
+
+after_success:
+  coveralls
