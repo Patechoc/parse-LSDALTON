@@ -32,7 +32,8 @@ install:
   - "export PYTHONPATH"
 
 script:
-  cd test; coverage run python -m pytest
+  cd test
+  coverage run python -m pytest
 
 after_success:
   coveralls

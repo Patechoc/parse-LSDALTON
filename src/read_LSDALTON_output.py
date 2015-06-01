@@ -4,7 +4,7 @@ import sys, os, re, math
 import numpy as np
 import subprocess as subproc
 from parser import *
-import atomsInMolecule as mol
+import atomsinmolecule.atomsinmolecule as mol
 import Inputs_DALTON as dalton
 
 

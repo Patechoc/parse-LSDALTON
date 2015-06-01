@@ -4,7 +4,7 @@ import sys, os
 import re
 import numpy as np
 #import molecule as mol
-import atomsInMolecule as mol
+import atomsinmolecule.atomsinmolecule as mol
 
 class moleculeInput(mol.molecule):
     def __init__(self, shortname="", name="", comments="",

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import molecule as mol
+
+import atomsinmolecule.atomsinmolecule as mol
 import sys, os
 import numpy as np
 
