@@ -12,6 +12,8 @@ install:
   - "PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/src"
   - "PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/plots"
   - "PYTHONPATH=$PYTHONPATH:${parseLSDaltonPATH}/tables"
+  - "echo $PYTHONPATH"
+  - "export PYTHONPATH"
 
 # command to run tests
 script: cd test; python -m pytest
