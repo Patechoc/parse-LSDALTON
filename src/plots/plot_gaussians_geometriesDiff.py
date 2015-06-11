@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 
 import sys, os
+from datetime import date
+import re
 #import numpy as np
 #import plotly.plotly as py
 #from plotly.graph_objs import *
 #import subprocess as subproc
+import configFile
 #import read_LSDALTON_output as readLS
 #import compare_LSDALTON_outputs as compLS
-#import configFile
-#from datetime import date
+
+
 
 def run():
     inputs = configFile.get_inputs("Topology differences between various optimized geometries of Valinomycin (cc-pVTZ)")
@@ -16,19 +19,16 @@ def run():
     today = date.today()
     today_str = today.isoformat()
     mol_list   = inputs.mol_list
-    basis_list = [bas['pattern'] for bas in inputs.basisSets]
-    ref        = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK']
-    dal_ref    = [{'LinK':dal['pattern']} for dal in ref]
-    path_to_ref = ref[0]['path_to_files']
+    basisPatterns = [bas['pattern'] for bas in inputs.basisSets]
+    ref_noDF      = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK-noDF']
 
-    dals = [dal for dal in inputs.dal_list if dal['abrev'] != 'LinK']
-    dal_list   = []
-    dal_list.extend( [{'abrev':dal['abrev'], 'pattern':dal['pattern']} for dal in dals] )
-    print dal_list[0]
-    path_to_dals = dals[0]['path_to_files']
-    results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
-    if inputs.doPlot == True:
-        generate_boxplot(inputs.title, results, mol_list, today_str)
+    pattern_LinK = re.compile("LinK")
+    dals = [dal for dal in inputs.dal_list if (dal['abrev'] != 'LinK-noDF' and
+                                               pattern_LinK.match(dal['abrev']))]
+    print dals
+    #results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
+    #if inputs.doPlot == True:
+    #    generate_plots(inputs.title, results, mol_list, today_str)
 
 def get_colors():
     bleu   = "rgb( 31,119,180)" ## "color":"rgb(54,144,192)",
@@ -90,7 +90,7 @@ def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
     return results
 
 
-def generate_boxplot(titre, results, mol_list, today_str):
+def generate_plots(titre, results, mol_list, today_str):
     # ## DATA TO PLOT
     # #y0 = np.random.randn(50)
     # #y1 = np.random.randn(50)+1
