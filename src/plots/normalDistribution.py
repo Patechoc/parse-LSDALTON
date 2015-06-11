@@ -70,9 +70,7 @@ def plot_Plotly(gaussians):
         #     xanchor='auto'
         # )
     )
-    fig = Figure(data=data, layout=layout)
-    plot_url = py.plot(fig, filename='Topology comparisons')
-
+    return [data, layout]
 
 def plot_Matplotlib(gaussians):
     # Plot the curves with different means and variances
@@ -97,5 +95,8 @@ if __name__ == "__main__":
                  {'mean':0., 'variance':1.},
                  {'mean':0., 'variance':5.},
                  {'mean':-2., 'variance':0.5}]
-    #plot_Matplotlib(gaussians)
-    plot_Plotly(gaussians)
+    plot_Matplotlib(gaussians)
+
+    [data, layout] = plot_Plotly(gaussians)
+    fig = Figure(data=data, layout=layout)
+    plot_url = py.plot(fig, filename='Topology comparisons')

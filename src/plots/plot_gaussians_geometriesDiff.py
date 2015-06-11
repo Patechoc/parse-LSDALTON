@@ -26,7 +26,7 @@ def run():
     dals = [dal for dal in inputs.dal_list if (dal['abrev'] != 'LinK-noDF' and
                                                pattern_LinK.match(dal['abrev']))]
     print dals
-    #results = get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals)
+    results = get_data(inputs)
     #if inputs.doPlot == True:
     #    generate_plots(inputs.title, results, mol_list, today_str)
 
@@ -49,105 +49,23 @@ def run_command_or_exit(cmd):
         out = None
     return out
 
-def get_data(mol_list, basis_list, dal_list, dal_ref, path_to_ref, path_to_dals):
+def get_data(inputs):
     results = {}
-    # combinationAvoided = []
-    # for basisVal in basis_list:
-    #     basis = basisVal.strip()
-    #     results[basis] = {} 
-    #     print basis
-    #     dal_files = []
-    #     for dalObj in dal_list:
-    #         dft_func = dalObj['abrev'].strip()
-    #         dalPattern = dalObj['pattern'].strip()
-    #         results[basis][dft_func] = {} 
-    #         print "\t\t"+dft_func
-    #         file_dal = ""
-    #         for molVal in mol_list:
-    #             mol  = molVal.strip()
-    #             print "\t"+mol
-    #             file_ref = ""
-    #             cmd= "ls "+ path_to_ref+"/lsd*"+dal_ref[0]['LinK']+"*"+basis+"*"+mol+"*.out"
-    #             file_ref = run_command_or_exit(cmd)
-    #             #if file_ref != None:
-    #             #    print "\t\t"+file_ref
-                
-    #             cmd= "ls "+ path_to_dals+"/lsd*"+dalPattern+"*"+basis+"*"+mol+"*.out"
-    #             file_dal = run_command_or_exit(cmd)
-    #             #if file_dal != None:
-    #             #    print "\t\t"+file_dal
-
-    #             ## compare gradient of reference with ADMM
-    #             #print file_ref
-    #             diffGrad = compLS.get_compareInfoGradients(file_ref, file_dal)
-    #             print diffGrad
-    #             if diffGrad != None:
-    #                 results[basis][dft_func][mol] =  np.absolute(diffGrad['matDiffGrad'].flatten())
-    #             else:
-    #                 combinationAvoided.append([basis,dft_func,mol])
-    # print "Combinations avoided:\n"
-    # print "\n".join(["\t".join(combi) for combi in combinationAvoided])
+    print inputs
     return results
 
 
 def generate_plots(titre, results, mol_list, today_str):
-    # ## DATA TO PLOT
-    # #y0 = np.random.randn(50)
-    # #y1 = np.random.randn(50)+1
-
     myColors = get_colors()
-    # traceFunc = {}
-    # for regbase in results.keys():
-    #     traces = np.array([])
-    #     numFunc = 0
-    #     yFunc = np.array([])
-    #     xFunc = np.array([])
-    #     for func in results[regbase].keys():
-    #         numFunc = numFunc+1
-    #         #for mol in results[regbase][func].keys():
-    #         for mol in [m for m in mol_list if m in results[regbase][func].keys()]:
-    #             elemsPerMol = results[regbase][func][mol] ### elements of grad. diff
-    #             xFunc = np.append(xFunc,[mol for elem in elemsPerMol])
-    #             yFunc = np.append(yFunc,[elemsPerMol])
-    #             traceFunc[func] = Box(y = yFunc,    ### diffGrad elements
-    #                                   x = xFunc,   ### elements grouped on the same molecule
-    #                                   name=func, ### ADMM functional combined for this basis set choice
-    #                                   marker=Marker(color=myColors[numFunc%len(myColors)]),
-    #                                   boxpoints='all',
-    #                                   jitter=0.4,
-    #                                   pointpos=-0.0
-    #                               )
-    #         traces = np.append(traces,traceFunc[func])
-    #         data = Data(traces)
-    # #print traceFunc['OPTX']
-    # layout = Layout(
-    #     title=titre, # ('+today_str+')',
-    #     #xaxis=XAxis(
-    #         #title='set of molecules',
-    #         # titlefont=Font(
-    #         #     family='Courier New, monospace',
-    #         #     size=18,
-    #         #     color='#7f7f7f'
-    #         # )
-    #     #),
-    #     yaxis=YAxis(
-    #         title='Abs. errors in molecular gradient',
-    #         zeroline=False,
-    #         # titlefont=Font(
-    #         #     family='Courier New, monospace',
-    #         #     size=18,
-    #         #     color='#7f7f7f'
-    #         # )
-    #         type='log',
-    #         autorange=True,
-    #         exponentformat='power',
-    #     ),
-    #     boxmode='group',
-    # )
+    # gaussians = [{'mean':0., 'variance':0.2},
+    #              {'mean':0., 'variance':1.},
+    #              {'mean':0., 'variance':5.},
+    #              {'mean':-2., 'variance':0.5}]
+    # plot_Matplotlib(gaussians)
+
+    # [data, layout] = plot_Plotly(gaussians)
     # fig = Figure(data=data, layout=layout)
-    # plot_url = py.plot(fig, filename='Gradient differences')
-
-
+    # plot_url = py.plot(fig, filename='Topology comparisons')
 
 if __name__ == "__main__":
     run()

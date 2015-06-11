@@ -12,6 +12,7 @@ class InputAnalysis(object):
     def __init__(self, title=today_str):
         self.title = title
         self.mol_list = []
+        self.dal_list = []
         self.dal_ref  = []
         self.doPlot = False
         self.basisSets = []
@@ -23,6 +24,14 @@ class InputAnalysis(object):
         self.basisSets = basisSets
         self.doPlot = doPlot
         return self
+
+    def __str__(self):
+        str = "Title:\n{}".format(self.title)
+        str += "\n\tMolecules:\n\t\t- "+ "\n\t\t- ".join(self.mol_list)
+        str += "\n\tDalton inputs:\n\t\t- "+ "\n\t\t- ".join(dal['abrev'] for dal in self.dal_list)
+        str += "\n\tBasis sets:\n\t\t- "+ "\n\t\t- ".join(basis['abrev'] for basis in self.basisSets)
+        return str
+
 
 def get_inputs(title):
     inputs = InputAnalysis(title)
