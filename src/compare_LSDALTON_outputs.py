@@ -39,7 +39,6 @@ def get_compareInfoGradients(path_to_file1, path_to_file2=""):
     diffObj['stdDevDiffGrad'] = math.sqrt(diffObj['varianceDiffGrad'])
     diffObj['rmsDiffGrad'] = math.sqrt(sum( [x*x for x in absDiffMat.flatten()])/(3.*nbAtom))
     return diffObj
-    
 
 # ============================================================================ #
 # Testing

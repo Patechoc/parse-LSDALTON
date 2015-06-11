@@ -6,6 +6,7 @@ import compare_LSDALTON_outputs as compLS
 import plotly_boxPlot_RMSgradDiff_benchmark_set
 import tabulate_stats_benchmark_set
 #import plotly_gaussians_gradDiff_stats_benchmark_set
+import plot_gaussians_geometriesDiff
 
 
 if __name__ == "__main__":
@@ -15,3 +16,4 @@ if __name__ == "__main__":
     ''' csv tables to share raw data'''
     tabulate_stats_benchmark_set.run()
     #plotly_gaussians_gradDiff_stats_benchmark_set.run()
+    plot_gaussians_geometriesDiff.run()
