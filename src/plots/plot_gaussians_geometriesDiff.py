@@ -52,6 +52,14 @@ def run_command_or_exit(cmd):
 def get_data(inputs):
     results = {}
     print inputs
+    path_to_file1 = "/home/ctcc2/Documents/CODE-DEV/xyz2top/xyz2top/tests/files/valinomycin_geomOpt_DFT-b3lyp_cc-pVTZ.xyz"
+    path_to_file2 = "/home/ctcc2/Documents/CODE-DEV/xyz2top/xyz2top/tests/files/valinomycin_geomOpt_DFT-b3lyp-noDF_cc-pVTZ.xyz"
+    import xyz2molecule as xyz
+    molecule1 = xyz.parse_XYZ(path_to_file1)
+    molecule2 = xyz.parse_XYZ(path_to_file2)
+    import topologyDiff as topD
+    diff = topD.topologyDiff(molecule1, molecule2, covRadFactor=1.3)
+    print diff
     return results
 
 
@@ -66,6 +74,7 @@ def generate_plots(titre, results, mol_list, today_str):
     # [data, layout] = plot_Plotly(gaussians)
     # fig = Figure(data=data, layout=layout)
     # plot_url = py.plot(fig, filename='Topology comparisons')
+
 
 if __name__ == "__main__":
     run()
