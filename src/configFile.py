@@ -145,7 +145,7 @@ def get_inputs(title):
     elif (title == "Topology differences between various optimized geometries of Valinomycin (cc-pVTZ)"):
         print "Title found: ",title
         mol_list = ['valinomycin'] #['taxol','valinomycin']
-        path_to_ref = ["/home/ctcc2/Documents/CODE-DEV/xyz2top/xyz2top/tests/files/"]
+        path_to_ref = "/home/ctcc2/Documents/CODE-DEV/xyz2top/xyz2top/tests/files/"
         dal_list = [{'abrev':'LinK', 'pattern':'geomOpt_DFT-b3lyp', 'path_to_files':path_to_ref }]
 
         path_to_dals = path_to_ref
@@ -153,7 +153,7 @@ def get_inputs(title):
         dal_list.extend(dals)
         basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'}]#,
                      #{'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
-        doPlot = False
+        doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
     else:
