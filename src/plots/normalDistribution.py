@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.plotly as py
 from plotly.graph_objs import *
+from decimal import *
 
-LINE_WIDTH = 3
 
 
 def pdf(x, mean, var):
@@ -14,23 +14,84 @@ def pdf(x, mean, var):
     std = math.sqrt(var)
     return 1 / (std * (math.sqrt(2 * math.pi))) * (math.e ** -(((x - mean) ** 2) / (2 * var)))
 
-def pdf_values(mean, var, name=None, FROM_X=None, TO_X=None):
+def pdf_values(mean, var, label=None, FROM_X=None, TO_X=None, NUMBER_OF_SAMPLES=None):
     """Plot the probability density function of
     the Normal distribution for the given mean and variance"""
+    std = math.sqrt(var)
+    context = Context(prec=2, rounding=ROUND_UP)
     if FROM_X == None:
-        FROM_X = -6
+        FROM_X = int(context.create_decimal_from_float(mean - 3.*std))
     if TO_X == None:
-        TO_X = 6
-    NUMBER_OF_SAMPLES = 1000 # The more samples the smoother :)
+        TO_X   = int(context.create_decimal_from_float(mean + 3.*std))
+    if NUMBER_OF_SAMPLES == None:
+        NUMBER_OF_SAMPLES = 1000 # The more samples the smoother :)
     # Take NUMBER_OF_SAMPLES numbers evenly from [FROM_X, TO_X]
     xs = np.linspace(FROM_X, TO_X, NUMBER_OF_SAMPLES)
     ys = [pdf(x, mean, var) for x in xs]
     #label = r"$\mu={0: .1f}, \sigma^2={1: .1f}$".format(mean, var)
     #label = "mu={0: .1f}, sigma={1: .1f}".format(mean, var)
-    label = "$\mu = {0: .1f}, \sigma^2 = {1: .1f}$".format(mean, var)
-    if name != None:
-        label = name
-    return [xs, ys, label]
+    name = "$\mu = {0:+.2E}, \quad \sigma^2 = {1:+.2E}$".format(mean, var)
+    if label != None:
+        name = label
+    return [xs, ys, name]
+
+
+def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None):
+    # gaussians = [{'mean':2.1e-05, 'variance':9.6e-10, 'name':'test1'},
+    #              {'mean':0., 'variance':1.},
+    #              {'mean':0., 'variance':5.},
+    #              {'mean':-2., 'variance':0.5}]
+    LINE_WIDTH = 3
+    xMinD = gaussians[0]["mean"]
+    xMaxD = gaussians[0]["mean"]
+    for gaussian in gaussians:
+        std = math.sqrt(gaussian["variance"])
+        xMinD = min(xMinD, gaussian["mean"]-3.*std)
+        xMaxD = max(xMaxD, gaussian["mean"]+3.*std)
+
+    # context = Context(prec=2, rounding=ROUND_UP)
+    # print "xMinD, xMaxD\n"
+    # print "{}\t{}\n".format(xMinD, xMaxD)
+    # xMinI = int(context.create_decimal_from_float(xMinD))
+    # xMaxI = int(context.create_decimal_from_float(xMaxD))
+    # print "xMinI, xMaxI\n"
+    # print "{}\t{}\n".format(xMinI, xMaxI)
+    # #print xMax
+    if FROM_X == None:
+        FROM_X = xMinD
+    if TO_X == None:
+        TO_X   = xMaxD
+    ### Plot the curves with different means and variances
+    fig, ax = plt.subplots()
+    for gaussian in gaussians:
+        if 'name' in gaussian.keys():
+            [xs, ys, label] = pdf_values(gaussian["mean"],
+                                         gaussian["variance"],
+                                         label=gaussian["name"],
+                                         FROM_X=FROM_X, TO_X=TO_X)
+        else:
+            [xs, ys, label] = pdf_values(gaussian["mean"],
+                                         gaussian["variance"],
+                                         FROM_X=FROM_X, TO_X=TO_X)
+
+        ax.plot(xs, ys, label=label, linewidth=LINE_WIDTH)
+        #    # Configure the x-axis size
+    plt.xlim((FROM_X, TO_X))
+    # Configure the y-axis size
+    #plt.ylim((-0.1, 1.1)) # Extend the y axis a bit to the top and bottom
+    # Configure the x-axis labels
+    #plt.xticks(range(FROM_X + 1, TO_X)) # 1 tick for each integer in [FROM_X - 1, TO_X + 1]
+    # Configure the y-axis labels to show values of [0, 1] with step size 0.1
+    #plt.yticks([i * 0.1 for i in xrange(11)])
+    if title != None:
+        #fig.suptitle(title, fontsize=20)
+        fig.suptitle(title)
+    #plt.xlabel('xlabel', fontsize=18)
+    #plt.ylabel('ylabel', fontsize=16)
+    plt.grid() # Toggle the axes grid
+    plt.legend() # Show a legend
+    plt.show() # Show the actual plot
+
 
 def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None):
     #py.sign_in('DemoAccount', 'lr1c37zw81')
@@ -46,7 +107,7 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None):
         if 'name' in gaussian.keys():
             [xs, ys, label] = pdf_values(gaussian["mean"],
                                          gaussian["variance"],
-                                         name=gaussian["name"],
+                                         label=gaussian["name"],
                                          FROM_X=FROM_X, TO_X=TO_X)
         else:
             [xs, ys, label] = pdf_values(gaussian["mean"],
@@ -87,42 +148,15 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None):
     )
     return [data, layout]
 
-def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None):
-    # Plot the curves with different means and variances
-    fig, ax = plt.subplots()
-    if FROM_X == None:
-        FROM_X = -6
-    if TO_X == None:
-        TO_X = 6
-    for gaussian in gaussians:
-        if 'name' in gaussian.keys():
-            [xs, ys, label] = pdf_values(gaussian["mean"],
-                                         gaussian["variance"],
-                                         name=gaussian["name"],
-                                         FROM_X=FROM_X, TO_X=TO_X)
-        else:
-            [xs, ys, label] = pdf_values(gaussian["mean"],
-                                         gaussian["variance"],
-                                         FROM_X=FROM_X, TO_X=TO_X)
-        ax.plot(xs, ys, label=label, linewidth=LINE_WIDTH)
-#    # Configure the x-axis size
-#    plt.xlim((FROM_X, TO_X))
-#    # Configure the y-axis size
-#    plt.ylim((-0.1, 1.1)) # Extend the y axis a bit to the top and bottom
-#    # Configure the x-axis labels
-#    plt.xticks(range(FROM_X + 1, TO_X)) # 1 tick for each integer in [FROM_X - 1, TO_X + 1]
-#    # Configure the y-axis labels to show values of [0, 1] with step size 0.1
-#    plt.yticks([i * 0.1 for i in xrange(11)])
-    plt.grid() # Toggle the axes grid
-    plt.legend() # Show a legend
-    plt.show() # Show the actual plot
 
 if __name__ == "__main__":
     gaussians = [{'mean':2.1e-05, 'variance':9.6e-10, 'name':'test1'},
                  {'mean':0., 'variance':1.},
                  {'mean':0., 'variance':5.},
                  {'mean':-2., 'variance':0.5}]
-    plot_Matplotlib(gaussians)
+    plot_Matplotlib(gaussians, title="titre", FROM_X=-5, TO_X=5)
+    plot_Matplotlib(gaussians, title="titre")
+    #plot_Plotly(gaussians, title="titre", FROM_X=-5, TO_X=5)
 
     # [data, layout] = plot_Plotly(gaussians)
     # fig = Figure(data=data, layout=layout)

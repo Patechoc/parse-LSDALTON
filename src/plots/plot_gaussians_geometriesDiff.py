@@ -126,29 +126,28 @@ def generate_plots(inputs, results):
     #import pprint
     #pprint.pprint(results)
     gaussians = []
+
     for res in results:
+        title = "Bond distance deviation from the reference (LinK-noDF/{}) for geometry optimized {}.".format(res['basisReg'], res['molName'])
         if res['dalAbrev'] != 'LinK-noDF':
             #print res['statsError']
-            title = "Topology diff. for {}: LinK-noDF vs {} ({})".format(res['molName'], res['dalAbrev'], res['basisReg']),
+            title = "Bond distance diff. for {} against LinK-noDF as reference ({})".format(res['molName'], res['basisReg'])
             gaussians.append({'mean':res['statsError'].error_bonds['mean'],
-                              #'name':"bond errors ({})".format(res['statsError'].error_bonds['unit']),
+                              'name':"${} \quad ({:.1E}\pm{:.1E} \angstrom))$".format(res['dalAbrev'], res['statsError'].error_bonds['mean'], res['statsError'].error_bonds['variance']),
                               'variance':res['statsError'].error_bonds['variance']})
-            gaussians.append({'mean':res['statsError'].error_angles['mean'],
-                              #'name':"Angle errors ({})".format(res['statsError'].error_angles['unit']),
-                              'variance':res['statsError'].error_angles['variance']})
-            gaussians.append({'mean':res['statsError'].error_dihedrals['mean'],
-                              #'name':"dihedral errors ({})".format(res['statsError'].error_dihedrals['unit']),
-                              'variance':res['statsError'].error_dihedrals['variance']})
             print gaussians
-    max_var = max(res['statsError'].error_bonds['variance'],
-                  res['statsError'].error_angles['variance'],
-                  res['statsError'].error_dihedrals['variance'])
-    normalDistribution.plot_Matplotlib(gaussians, title) #, FROM_X=-1.*max_var, TO_X=max_var)
+#    max_var = max(res['statsError'].error_bonds['variance'],
+#                  res['statsError'].error_angles['variance'],
+#                  res['statsError'].error_dihedrals['variance'])
+    max_var = max([elem['variance'] for elem in gaussians])
+    print "max var = {:.5e}".format(max_var)
+#    normalDistribution.plot_Matplotlib(gaussians, title, FROM_X=-1.*max_var, TO_X=max_var)
+    normalDistribution.plot_Matplotlib(gaussians, title)
 
 
-    # [data, layout] = plot_Plotly(gaussians)
-    # fig = Figure(data=data, layout=layout)
-    # plot_url = py.plot(fig, filename='Topology comparisons')
+#     # [data, layout] = plot_Plotly(gaussians)
+#     # fig = Figure(data=data, layout=layout)
+#     # plot_url = py.plot(fig, filename='Topology comparisons')
 
 
 if __name__ == "__main__":
