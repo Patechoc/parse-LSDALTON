@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 
 def run():
-    inputs = configFile.get_inputs("Topology differences between various optimized geometries of Valinomycin (cc-pVTZ)")
+    inputs = configFile.get_inputs("Topology deviations due to density-fitting {Valinomycin, cc-pVTZ}")
 
     today = date.today()
     today_str = today.isoformat()
