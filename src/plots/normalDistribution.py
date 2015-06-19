@@ -90,7 +90,9 @@ def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None):
     #plt.ylabel('ylabel', fontsize=16)
     plt.grid() # Toggle the axes grid
     plt.legend() # Show a legend
-    plt.show() # Show the actual plot
+    # plt.show() # Show the actual plot
+    #return fig
+
 
 
 def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None):
