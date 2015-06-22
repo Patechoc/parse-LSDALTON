@@ -172,7 +172,7 @@ def get_inputs(title):
                      {'type':'auxBasis', 'abrev':'df-def2','pattern':'df-def2'},
                      {'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'}]#,
                      #{'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
-        doPlot = False
+        doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
     else:
         print "Title for the configuration setup not recognized!!!!"

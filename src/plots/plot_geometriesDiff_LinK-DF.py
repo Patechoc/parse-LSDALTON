@@ -17,15 +17,6 @@ import matplotlib.pyplot as plt
 
 def run():
     inputs = configFile.get_inputs("Topology deviations due to density-fitting {Valinomycin, cc-pVTZ}")
-
-    # mol_list   = inputs.mol_list
-    # basisPatterns = [bas['pattern'] for bas in inputs.basisSets]
-    # #dalRef_noDF      = [dal for dal in inputs.dal_list if dal['abrev'] == 'LinK-noDF']
-
-    # pattern_LinK = re.compile("LinK")
-    # dals = [dal for dal in inputs.dal_list if (dal['abrev'] != 'LinK-noDF' and
-    #                                            pattern_LinK.match(dal['abrev']))]
-    #print dals
     results = get_data(inputs)
     if inputs.doPlot == True:
         generate_plots_DensityFitting(inputs, results)
@@ -138,12 +129,6 @@ def get_data(inputs):
                         'diffTopoError': diff,
                     }
                     results.append(newComparison)
-                    print newComparison['fileOutREF']
-                    print newComparison['fileOut2']
-                    print newComparison['fileXYZREF']
-                    print newComparison['fileXYZ2']
-                    print diff
-                    print "\n"
     return results
 
 
@@ -156,35 +141,49 @@ def generate_plots_DensityFitting(inputs, results):
     bonds = []
     angles = []
     dihedrals = []
-    for res in results:
-        title = "Deviations in optimized geometries from LinK-noDF for {}.".format(res['molName'])
-        if res['dalAbrev'] != 'LinK-noDF':
-            #print res['statsError']
-            title = "Bond distance diff. for {} against LinK-noDF as reference ({})".format(res['molName'], res['basisReg'])
-            bonds.append({
-                'mean':res['statsError'].error_bonds['mean'],
-                'variance':res['statsError'].error_angles['variance'],
-                'basisReg':res['basisReg'],
-                'name':"bonds - {} $(\mu={:.1E}\pm{:.1E} \AA )$".format(res['dalAbrev'],res['statsError'].error_bonds['mean'], res['statsError'].error_bonds['variance'])})
-            angles.append({
-                'mean':res['statsError'].error_angles['mean'],
-                'variance':res['statsError'].error_angles['variance'],
-                'basisReg':res['basisReg'],
-                'name':"angles - {} $(\mu={:.1E}\pm{:.1E} ^\circ )$".format(res['dalAbrev'], res['statsError'].error_angles['mean'], res['statsError'].error_angles['variance'])})
-            dihedrals.append({
-                'mean':res['statsError'].error_dihedrals['mean'],
-                'variance':res['statsError'].error_dihedrals['variance'],
-                'basisReg':res['basisReg'],
-                'name':"dihedrals - {} $(\mu={:.1E}\pm{:.1E} ^\circ )$".format(res['dalAbrev'], res['statsError'].error_dihedrals['mean'], res['statsError'].error_dihedrals['variance'])})
+    basisReg_list = [bas for bas in inputs.basisSets if bas['type']=='regBasis']
+    for str_mol in [mols for mols in inputs.mol_list if mols=='valinomycin']:
+        for regBas in basisReg_list:
+            for res in [subres for subres in results if subres['molName']==str_mol and subres['basisREG']==regBas]:
+                title = "deviations of geometries optimized with {}/{} against LinK-noDF.".format(res['molName'],regBas['abrev'])
+                titleBonds = "Bond "+ title
+                titleAngles = "Angle "+ title
+                titleDihedrals = "Dihedral "+ title
+                print res['diffTopoError']
+                if True:
+                    bonds.append({
+                        'mean':res['diffTopoError'].error_bonds['mean'],
+                        'variance':res['diffTopoError'].error_bonds['variance'],
+                        'basisReg':res['basisREG'],
+                        'name':"{}/{} $(\mu={:.1E}\pm{:.1E} \AA )$".format(res['dal2']['abrev'],
+                                                                           res['basisAux']['abrev'],
+                                                                           res['diffTopoError'].error_bonds['mean'],
+                                                                           res['diffTopoError'].error_bonds['variance'])})
+                    angles.append({
+                        'mean':res['diffTopoError'].error_angles['mean'],
+                        'variance':res['diffTopoError'].error_angles['variance'],
+                        'basisReg':res['basisREG'],
+                        'name':"{}/{} $(\mu={:.1E}\pm{:.1E} ^\circ )$".format(res['dal2']['abrev'],
+                                                                           res['basisAux']['abrev'],
+                                                                           res['diffTopoError'].error_bonds['mean'],
+                                                                           res['diffTopoError'].error_bonds['variance'])})
+                    dihedrals.append({
+                        'mean':res['diffTopoError'].error_dihedrals['mean'],
+                        'variance':res['diffTopoError'].error_dihedrals['variance'],
+                        'basisReg':res['basisREG'],
+                        'name':"{}/{} $(\mu={:.1E}\pm{:.1E} ^\circ )$".format(res['dal2']['abrev'],
+                                                                           res['basisAux']['abrev'],
+                                                                           res['diffTopoError'].error_bonds['mean'],
+                                                                           res['diffTopoError'].error_bonds['variance'])})
 
-    #    normalDistribution.plot_Matplotlib(bonds, title, FROM_X=-1.*max_var, TO_X=max_var)
-    normalDistribution.plot_Matplotlib(bonds, title)
-    normalDistribution.plot_Matplotlib(angles, title)
-    normalDistribution.plot_Matplotlib(dihedrals, title)
-    plt.show()
-#     # [data, layout] = plot_Plotly(gaussians)
-#     # fig = Figure(data=data, layout=layout)
-#     # plot_url = py.plot(fig, filename='Topology comparisons')
+            #    normalDistribution.plot_Matplotlib(bonds, title, FROM_X=-1.*max_var, TO_X=max_var)
+            normalDistribution.plot_Matplotlib(bonds, titleBonds)
+            normalDistribution.plot_Matplotlib(angles, titleAngles)
+            normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
+            plt.show()
+        #     # [data, layout] = plot_Plotly(gaussians)
+        #     # fig = Figure(data=data, layout=layout)
+        #     # plot_url = py.plot(fig, filename='Topology comparisons')
 
 
 if __name__ == "__main__":
