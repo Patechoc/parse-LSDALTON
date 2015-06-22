@@ -36,7 +36,7 @@ def pdf_values(mean, var, label=None, FROM_X=None, TO_X=None, NUMBER_OF_SAMPLES=
     return [xs, ys, name]
 
 
-def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None):
+def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
     # gaussians = [{'mean':2.1e-05, 'variance':9.6e-10, 'name':'test1'},
     #              {'mean':0., 'variance':1.},
     #              {'mean':0., 'variance':5.},
@@ -63,6 +63,8 @@ def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None):
         TO_X   = xMaxD
     ### Plot the curves with different means and variances
     fig, ax = plt.subplots()
+    if xlabel != None:
+        ax.set_xlabel(xlabel)
     for gaussian in gaussians:
         if 'name' in gaussian.keys():
             [xs, ys, label] = pdf_values(gaussian["mean"],
@@ -74,15 +76,18 @@ def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None):
                                          gaussian["variance"],
                                          FROM_X=FROM_X, TO_X=TO_X)
 
+        ax.tick_params(axis='y',
+                       left='off',
+                       right='off',
+                       labelleft='off',
+                       labelright='off',
+                       direction='out',
+                       length=6,
+                       width=2,
+                       colors='r')
         ax.plot(xs, ys, label=label, linewidth=LINE_WIDTH)
         #    # Configure the x-axis size
     plt.xlim((FROM_X, TO_X))
-    # Configure the y-axis size
-    #plt.ylim((-0.1, 1.1)) # Extend the y axis a bit to the top and bottom
-    # Configure the x-axis labels
-    #plt.xticks(range(FROM_X + 1, TO_X)) # 1 tick for each integer in [FROM_X - 1, TO_X + 1]
-    # Configure the y-axis labels to show values of [0, 1] with step size 0.1
-    #plt.yticks([i * 0.1 for i in xrange(11)])
     if title != None:
         #fig.suptitle(title, fontsize=20)
         fig.suptitle(title)
@@ -156,8 +161,15 @@ if __name__ == "__main__":
                  {'mean':0., 'variance':1.},
                  {'mean':0., 'variance':5.},
                  {'mean':-2., 'variance':0.5}]
-    plot_Matplotlib(gaussians, title="titre", FROM_X=-5, TO_X=5)
-    plot_Matplotlib(gaussians, title="titre")
+    plot_Matplotlib(gaussians,
+                    title="xLim from -5 to 5",
+                    FROM_X=-5,
+                    TO_X=5,
+                    xlabel="some distance (in $\AA$)")
+    plot_Matplotlib(gaussians, title="no specific x-limits")
+    plt.show()
+
+
     #plot_Plotly(gaussians, title="titre", FROM_X=-5, TO_X=5)
 
     # [data, layout] = plot_Plotly(gaussians)

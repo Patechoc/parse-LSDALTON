@@ -29,7 +29,7 @@ class InputAnalysis(object):
         str = "Title:\n{}".format(self.title)
         str += "\n\tMolecules:\n\t\t- "+ "\n\t\t- ".join(self.mol_list)
         str += "\n\tDalton inputs:\n\t\t- "+ "\n\t\t- ".join(dal['abrev'] for dal in self.dal_list)
-        str += "\n\tBasis sets:\n\t\t- "+ "\n\t\t- ".join(basis['abrev'] for basis in self.basisSets)
+        str += "\n\tBasis sets:\n\t\t- "+ "\n\t\t- ".join(basis['abrev']+" ("+basis['type']+")" for basis in self.basisSets)
         return str
 
 
@@ -158,18 +158,22 @@ def get_inputs(title):
 
     elif (title == "Topology deviations due to density-fitting {Valinomycin, cc-pVTZ}"):
         print "Title found: ",title
-        mol_list = ['valinomycin'] #['taxol','valinomycin']
-        path_to_ref = "/home/ctcc2/Documents/CODE-DEV/xyz2top/xyz2top/tests/files/"
-        dal_list = [{'abrev':'LinK', 'pattern':'geomOpt_DFT-b3lyp', 'path_to_files':path_to_ref }]
+        mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
+        path_to_dals = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"
+        dal_list = [{'abrev':'LinK-noDF',
+                     'pattern':'geomOpt-b3lyp_Vanlenthe_noDF',
+                     'path_to_files':path_to_dals },
+                    {'abrev':'LinK',
+                     'pattern':'geomOpt-b3lyp_Vanlenthe',
+                     'path_to_files':path_to_dals }]
 
-        path_to_dals = path_to_ref
-        dals = [{'abrev':'LinK-noDF', 'pattern':'geomOpt_DFT-b3lyp-noDF', 'path_to_files':path_to_dals}]
-        dal_list.extend(dals)
-        basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'}]#,
+
+        basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'},
+                     {'type':'auxBasis', 'abrev':'df-def2','pattern':'df-def2'},
+                     {'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'}]#,
                      #{'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
-        doPlot = True
+        doPlot = False
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
-
     else:
         print "Title for the configuration setup not recognized!!!!"
         sys.exit()
