@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 
 def run():
-    title = "Topology deviations due to density-fitting"
+    title = "Topology deviations due to basis set error"
     inputs = configFile.get_inputs(title)
     results = get_data(inputs)
     if inputs.doPlot == True:
@@ -220,9 +220,9 @@ def generate_plots_DensityFitting(inputs, results):
                         'name':name})
 
             #    normalDistribution.plot_Matplotlib(bonds, title, FROM_X=-1.*max_var, TO_X=max_var)
-            normalDistribution.plot_Plotly(bonds, titleBonds)
-            normalDistribution.plot_Plotly(angles, titleAngles)
-            normalDistribution.plot_Plotly(dihedrals, titleDihedrals)
+            #normalDistribution.plot_Plotly(bonds, titleBonds)
+            #normalDistribution.plot_Plotly(angles, titleAngles)
+            #normalDistribution.plot_Plotly(dihedrals, titleDihedrals)
 
             normalDistribution.plot_Matplotlib(bonds, titleBonds)
             normalDistribution.plot_Matplotlib(angles, titleAngles)

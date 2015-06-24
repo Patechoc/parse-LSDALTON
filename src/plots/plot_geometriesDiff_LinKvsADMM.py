@@ -16,8 +16,7 @@ import matplotlib.pyplot as plt
 
 
 def run():
-    title = "Topology deviations due to density-fitting"
-    inputs = configFile.get_inputs(title)
+    inputs = configFile.get_inputs("Topology deviations due to density-fitting {Valinomycin, cc-pVTZ}")
     results = get_data(inputs)
     if inputs.doPlot == True:
         generate_plots_DensityFitting(inputs, results)
@@ -64,31 +63,18 @@ def get_data(inputs):
             refDal = [dal for dal in inputs.dal_list if dal['abrev']=='LinK-noDF'][0]
             print "\tDAL_REF:",refDal['abrev']
             dals   = [dal for dal in inputs.dal_list if dal['abrev']!='LinK-noDF']
-            # find one file through various possible directories
-            paths_to_RefOut = refDal['path_to_files']
-            pathToFile_RefOut = ""
-            ind = 0
-            res_cmd = None
-            while res_cmd == None and ind < len(paths_to_RefOut):
-                #print "\t\tind:",ind
-                path_to_RefOut = paths_to_RefOut[ind]
-                grepRefOut = path_to_RefOut + "/lsdalton*" + "".join([refDal["pattern"],"*",
-                                                                      regBas['pattern'],"*",
-                                                                      str_mol]) + "*.out"
-                cmd = "ls " + grepRefOut
-                res_tmp = run_command_or_exit(cmd)
-                if res_tmp != None:
-                    res_cmd = res_tmp.strip().split("\n")
-                    pathToFile_RefOut = ""
-                    if (len(res_cmd) != 1):
-                        sys.exit("no files or too many fitting this command: "+cmd)
-                    else:
-                        pathToFile_RefOut= res_cmd[0]
-                else:
-                    ind = ind + 1
-                #print "\t\t",pathToFile_RefOut
+            path_to_RefOut = refDal['path_to_files']
+            grepRefOut = path_to_RefOut + "/lsdalton*" + "".join([refDal["pattern"],"*",
+                                                                   regBas['pattern'],"*",
+                                                                   str_mol]) + "*.out"
 
-            ### convert dalton output to XYZ format
+            cmd = "ls " + grepRefOut
+            res_cmd = run_command_or_exit(cmd).strip().split("\n")
+            pathToFile_RefOut = ""
+            if (len(res_cmd) != 1):
+                sys.exit("no files or too many fitting this command: "+cmd)
+            else:
+                pathToFile_RefOut= res_cmd[0]
             pathToXYZ = "./temp/"
             cmd = "mkdir -p " + pathToXYZ
             res_cmd = run_command_or_exit(cmd)
@@ -104,40 +90,21 @@ def get_data(inputs):
             ## compared Ref topology to: LinK+DF with basisAux (df-def2 or cc-pVTZdenfit)
             for dal in dals:
                 print "\t\tDAL:",dal['abrev']
-                if regBas['abrev']=='6-31G*':
-                    basisAuxSubList = [bas for bas in basisAux_list if bas['abrev']=='df-def2' ]
-                else:
-                    basisAuxSubList = basisAux_list
-                for aux in basisAuxSubList:
+                for aux in basisAux_list:
                     # compare topo, store results to be returned
                     print "\t\t\tAUX:",aux['abrev']
-                    path_to_dalOut = dal['path_to_files']
+                    path_to_out = dal['path_to_files']
+                    grepOut = path_to_out + "/lsdalton*" + "".join([dal["pattern"],"*",
+                                                                       regBas['pattern'],"*",
+                                                                       aux['pattern'],"*",
+                                                                       str_mol]) + "*.out | grep -v "+refDal["pattern"]
+                    cmd = "ls " + grepOut
+                    res_cmd = run_command_or_exit(cmd).strip().split("\n")
                     pathToFile_out = ""
-                    ind = 0
-                    res_cmd = None
-                    while res_cmd == None and ind < len(path_to_dalOut):
-                        #print "\t\t\tind: ",ind
-                        path_to_out = path_to_dalOut[ind]
-                        grepOut = path_to_out + "/lsdalton*" + "".join([dal["pattern"],"*",
-                                                                        regBas['pattern'],"*",
-                                                                        aux['pattern'],"*",
-                                                                        str_mol]) + "*.out | grep -v "+refDal["pattern"]
-                        cmd = "ls " + grepOut
-                        res_tmp = run_command_or_exit(cmd)
-                        if res_tmp != None:
-                            res_cmd = res_tmp.strip().split("\n")
-                            pathToFile_out = ""
-                            if (len(res_cmd) != 1):
-                                sys.exit("no files or too many fitting this command: "+cmd)
-                            else:
-                                pathToFile_out = res_cmd[0]
-                        else:
-                            ind = ind + 1
-                        #print res_cmd
-                        #print "\t\t\tcmd: ", cmd
-                        #print "\t\t\tpath: ", pathToFile_out
-
-                    ### convert dalton output to XYZ format
+                    if (len(res_cmd) != 1):
+                        sys.exit("no files or too many fitting this command: " + cmd)
+                    else:
+                        pathToFile_out = res_cmd[0]
                     molOptimXYZ = readLS.parse_molecule_optimized(pathToFile_out)
                     [filepath, extension] = os.path.splitext(os.path.basename(pathToFile_out))
                     xyzStr = molOptimXYZ.getContent_format_XYZ()
@@ -161,10 +128,7 @@ def get_data(inputs):
                         'basisAux'     : aux,
                         'diffTopoError': diff,
                     }
-                    if newComparison['diffTopoError'].error_bonds['variance'] == 0:
-                        print "\t\t\tvariance == 0 >>> won't be plotted"
-                    else:
-                        results.append(newComparison)
+                    results.append(newComparison)
     return results
 
 
@@ -174,14 +138,12 @@ def generate_plots_DensityFitting(inputs, results):
     print inputs
     #import pprint
     #pprint.pprint(results)
+    bonds = []
+    angles = []
+    dihedrals = []
     basisReg_list = [bas for bas in inputs.basisSets if bas['type']=='regBasis']
-    #for str_mol in [mols for mols in inputs.mol_list if mols=='valinomycin']:
-    #for str_mol in [mols for mols in inputs.mol_list if mols=='c180']:
-    for str_mol in [mols for mols in inputs.mol_list]:
+    for str_mol in [mols for mols in inputs.mol_list if mols=='valinomycin']:
         for regBas in basisReg_list:
-            bonds = []
-            angles = []
-            dihedrals = []
             for res in [subres for subres in results if subres['molName']==str_mol and subres['basisREG']==regBas]:
                 title = "/{} ({}, ref=LinK without DF)".format(res['molName'],regBas['abrev'])
                 titleBonds = "Bond deviations"+ title

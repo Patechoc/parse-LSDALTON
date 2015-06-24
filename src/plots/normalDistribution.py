@@ -3,10 +3,10 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
 import plotly.plotly as py
 from plotly.graph_objs import *
 from decimal import *
-
 
 
 def pdf(x, mean, var):
@@ -88,6 +88,8 @@ def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
         ax.plot(xs, ys, label=label, linewidth=LINE_WIDTH)
         #    # Configure the x-axis size
     plt.xlim((FROM_X, TO_X))
+    #plt.ticklabel_format(axis='x', style='sci', scilimits=(-0,0))
+    ax.get_xaxis().set_major_formatter(plt.LogFormatter(10,  labelOnlyBase=False))
     if title != None:
         #fig.suptitle(title, fontsize=20)
         fig.suptitle(title)
@@ -97,19 +99,27 @@ def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
     plt.legend() # Show a legend
     # plt.show() # Show the actual plot
     #return fig
+    return [fig, ax]
 
 
-
-def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None):
+def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
     #py.sign_in('DemoAccount', 'lr1c37zw81')
     # Plot the curves with different means and variances
     lines = []
     #for gaussian in gaussians:
     #    lines.append(Scatter(x=res[0], y=res[1]) for res in pdf_values(gaussian["mean"], gaussian["variance"]))
+    xMinD = gaussians[0]["mean"]
+    xMaxD = gaussians[0]["mean"]
+    for gaussian in gaussians:
+        std = math.sqrt(gaussian["variance"])
+        xMinD = min(xMinD, gaussian["mean"]-3.*std)
+        xMaxD = max(xMaxD, gaussian["mean"]+3.*std)
+
     if FROM_X == None:
-        FROM_X = -6
+        FROM_X = xMinD
     if TO_X == None:
-        TO_X = 6
+        TO_X   = xMaxD
+
     for gaussian in gaussians:
         if 'name' in gaussian.keys():
             [xs, ys, label] = pdf_values(gaussian["mean"],
@@ -124,36 +134,50 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None):
         lines.append(Scatter(x=xs, y=ys, name=label))
         #    lines = [ Scatter(x=res[0], y=res[1]) for res in pdf_values(gaussian["mean"], gaussian["variance"]) for gaussian in gaussians]
         #    #print lines
+    titre = ""
+    if title != None:
+        titre = title
+
     data = Data(lines)
     layout = Layout(
+        title = titre,
 #        showlegend=True,
 #        autosize=True,
 #        width=1310,
 #        height=712,
         xaxis=XAxis(
-            range=[-6, 6],
+            range=[FROM_X, TO_X],
+            exponentformat='E',
             # type='linear',
             # autorange=False,
-            # showline=False,
+            showlegend=True,
+            showgrid=True,
+            showline=False,
             # nticks=0.1,
             # ticks='',
+            ticks='outside',
             # dtick=1
         ),
         yaxis=YAxis(
-            range=[-0.01, 1.01],
-            # type='linear',
-            # autorange=False,
-            # showline=False,
+            #range=[-0.01, 1.01],
+            type='linear',
+            autorange=True,
+            showgrid=False,
+            showline=False,
             # nticks=0.1,
-            # ticks='',
             # dtick=0.1
+            ticks='',
+            showticklabels=False,
         ),
         # legend=Legend(
         #     borderwidth=0,
         #     xanchor='auto'
         # )
     )
-    return [data, layout]
+
+    fig = Figure(data=data, layout=layout)
+    plot_url = py.plot(fig, filename=titre)
+    return plot_url
 
 
 if __name__ == "__main__":
@@ -161,17 +185,12 @@ if __name__ == "__main__":
                  {'mean':0., 'variance':1.},
                  {'mean':0., 'variance':5.},
                  {'mean':-2., 'variance':0.5}]
-    plot_Matplotlib(gaussians,
-                    title="xLim from -5 to 5",
-                    FROM_X=-5,
-                    TO_X=5,
-                    xlabel="some distance (in $\AA$)")
-    plot_Matplotlib(gaussians, title="no specific x-limits")
+    # [fig, ax] = plot_Matplotlib(gaussians,
+    #                 title="xLim from -5 to 5",
+    #                 FROM_X=-5,
+    #                 TO_X=5,
+    #                 xlabel="some distance (in $\AA$)")
+    [fig, ax] = plot_Matplotlib(gaussians, title="no specific x-limits")
     plt.show()
 
-
-    #plot_Plotly(gaussians, title="titre", FROM_X=-5, TO_X=5)
-
-    # [data, layout] = plot_Plotly(gaussians)
-    # fig = Figure(data=data, layout=layout)
-    # plot_url = py.plot(fig, filename='Topology comparisons')
+    plot_Plotly(gaussians, title="Titre TEST")

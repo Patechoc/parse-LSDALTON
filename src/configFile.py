@@ -156,24 +156,47 @@ def get_inputs(title):
         doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
-    elif (title == "Topology deviations due to density-fitting {Valinomycin, cc-pVTZ}"):
+    elif (title == "Topology deviations due to density-fitting"):
         print "Title found: ",title
         mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
-        path_to_dals = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"
+        path_cc_pVTZ = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"
+        path_6_31Gs = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
         dal_list = [{'abrev':'LinK-noDF',
                      'pattern':'geomOpt-b3lyp_Vanlenthe_noDF',
-                     'path_to_files':path_to_dals },
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
                     {'abrev':'LinK',
                      'pattern':'geomOpt-b3lyp_Vanlenthe',
-                     'path_to_files':path_to_dals }]
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] }]
 
 
         basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'},
                      {'type':'auxBasis', 'abrev':'df-def2','pattern':'df-def2'},
-                     {'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'}]#,
-                     #{'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
+                     {'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'},
+                     {'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
         doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
+
+    elif (title == "Topology deviations due to basis set error"):
+        print "Title found: ",title
+        mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
+        path_cc_pVTZ = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"
+        path_6_31Gs = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
+        dal_list = [{'abrev':'LinK-noDF',
+                     'pattern':'geomOpt-b3lyp_Vanlenthe_noDF',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'LinK',
+                     'pattern':'geomOpt-b3lyp_Vanlenthe',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] }]
+
+
+        basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'},
+                     {'type':'auxBasis', 'abrev':'df-def2','pattern':'df-def2'},
+                     {'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'},
+                     {'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
+        doPlot = True
+        inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
+
+
     else:
         print "Title for the configuration setup not recognized!!!!"
         sys.exit()
