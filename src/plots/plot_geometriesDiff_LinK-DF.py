@@ -225,13 +225,13 @@ def generate_plots_DensityFitting(inputs, results):
             #    normalDistribution.plot_Matplotlib(bonds, title, FROM_X=-1.*max_var, TO_X=max_var)
             normalDistribution.plot_Plotly(bonds,
                                            titleBonds,
-                                           xLabel="Bond deviation ("+u"\u212B"+")")
+                                           xLabel=u"Bond deviation (\u212B)")
             normalDistribution.plot_Plotly(angles,
                                            titleAngles,
-                                           xLabel="Angle deviation ("+u"\u00B0"+")")
+                                           xLabel=u"Angle deviation (\u00B0)")
             normalDistribution.plot_Plotly(dihedrals,
                                            titleDihedrals,
-                                           xLabel="Dihedral deviation ("+u"\u00B0"+")")
+                                           xLabel=u"Dihedral deviation (\u00B0)")
 
             #normalDistribution.plot_Matplotlib(bonds, titleBonds)
             #normalDistribution.plot_Matplotlib(angles, titleAngles)

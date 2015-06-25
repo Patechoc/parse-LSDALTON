@@ -139,7 +139,7 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xLabel=""):
         elif gaussian['xUnit'] == 'degree':
             mean += u" \u00B0"
             std  += u" \u00B0"
-        mean_std = mean + "\n" + std
+        mean_std = mean + "<br>" + std
         # myAnnotations.append( Annotation( x=gaussian["mean"],
         #                                   y=max(ys),
         #                                   xref='x',
