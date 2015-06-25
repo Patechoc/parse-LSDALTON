@@ -197,6 +197,7 @@ def generate_plots_DensityFitting(inputs, results):
                         'mean':res['diffTopoError'].error_bonds['mean'],
                         'variance':res['diffTopoError'].error_bonds['variance'],
                         'basisReg':res['basisREG'],
+                        'xUnit':'angstrom',
                         'name':name})
 
                     ######### ANGLES ######### 
@@ -207,6 +208,7 @@ def generate_plots_DensityFitting(inputs, results):
                         'mean':res['diffTopoError'].error_angles['mean'],
                         'variance':res['diffTopoError'].error_angles['variance'],
                         'basisReg':res['basisREG'],
+                        'xUnit':'degree',
                         'name':name})
 
                     ######### DIHEDRAL ANGLES ######### 
@@ -217,17 +219,24 @@ def generate_plots_DensityFitting(inputs, results):
                         'mean':res['diffTopoError'].error_dihedrals['mean'],
                         'variance':res['diffTopoError'].error_dihedrals['variance'],
                         'basisReg':res['basisREG'],
+                        'xUnit':'degree',
                         'name':name})
 
             #    normalDistribution.plot_Matplotlib(bonds, title, FROM_X=-1.*max_var, TO_X=max_var)
-            normalDistribution.plot_Plotly(bonds, titleBonds)
-            normalDistribution.plot_Plotly(angles, titleAngles)
-            normalDistribution.plot_Plotly(dihedrals, titleDihedrals)
+            normalDistribution.plot_Plotly(bonds,
+                                           titleBonds,
+                                           xLabel="Bond deviation ("+u"\u212B"+")")
+            normalDistribution.plot_Plotly(angles,
+                                           titleAngles,
+                                           xLabel="Angle deviation ("+u"\u00B0"+")")
+            normalDistribution.plot_Plotly(dihedrals,
+                                           titleDihedrals,
+                                           xLabel="Dihedral deviation ("+u"\u00B0"+")")
 
-            normalDistribution.plot_Matplotlib(bonds, titleBonds)
-            normalDistribution.plot_Matplotlib(angles, titleAngles)
-            normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
-            plt.show()
+            #normalDistribution.plot_Matplotlib(bonds, titleBonds)
+            #normalDistribution.plot_Matplotlib(angles, titleAngles)
+            #normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
+            #plt.show()
 
 if __name__ == "__main__":
     run()

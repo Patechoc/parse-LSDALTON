@@ -8,7 +8,6 @@ import plotly.plotly as py
 from plotly.graph_objs import *
 from decimal import *
 
-
 def pdf(x, mean, var):
     """Probability density function of the Normal distribution"""
     std = math.sqrt(var)
@@ -102,7 +101,7 @@ def plot_Matplotlib(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
     return [fig, ax]
 
 
-def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
+def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xLabel=""):
     #py.sign_in('DemoAccount', 'lr1c37zw81')
     # Plot the curves with different means and variances
     lines = []
@@ -120,6 +119,7 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
     if TO_X == None:
         TO_X   = xMaxD
 
+    myAnnotations = []
     for gaussian in gaussians:
         if 'name' in gaussian.keys():
             [xs, ys, label] = pdf_values(gaussian["mean"],
@@ -130,10 +130,49 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
             [xs, ys, label] = pdf_values(gaussian["mean"],
                                          gaussian["variance"],
                                          FROM_X=FROM_X, TO_X=TO_X)
-
-        lines.append(Scatter(x=xs, y=ys, name=label))
-        #    lines = [ Scatter(x=res[0], y=res[1]) for res in pdf_values(gaussian["mean"], gaussian["variance"]) for gaussian in gaussians]
-        #    #print lines
+        mean     = u'\u03BC'+"={0: .1E}".format(gaussian["mean"])
+        variance = u"\u03C3\u00B2"+"={0: .1E}".format(gaussian["variance"])
+        std = u"\u03C3=\u00B1"+"{0: .1E}".format(math.sqrt(gaussian["variance"]))
+        if gaussian['xUnit'] == 'angstrom':
+            mean += u" \u212B"
+            std  += u" \u212B"
+        elif gaussian['xUnit'] == 'degree':
+            mean += u" \u00B0"
+            std  += u" \u00B0"
+        mean_std = mean + "\n" + std
+        # myAnnotations.append( Annotation( x=gaussian["mean"],
+        #                                   y=max(ys),
+        #                                   xref='x',
+        #                                   yref='y',
+        #                                   text=mean,
+        #                                   showarrow=True,
+        #                                   arrowhead=5, # 0 to 7
+        #                                   ax=60,
+        #                                   ay=-20
+        #                               ))
+        myAnnotations.append( Annotation( x=gaussian["mean"]+math.sqrt(gaussian["variance"]),
+                                          y=pdf(gaussian["mean"]+math.sqrt(gaussian["variance"]),
+                                                gaussian["mean"],
+                                                gaussian["variance"]),
+                                          xref='x',
+                                          yref='y',
+                                          text=mean_std,
+                                          showarrow=True,
+                                          arrowhead=5, # 0 to 7
+                                          ax=60,
+                                          ay=-20
+                                      ))
+        lines.append( Scatter(x=xs,
+                               y=ys,
+                               name=label))
+        # lines.append( Scatter(x=[gaussian["mean"]],
+        #                       y=[max(ys)],
+        #                       name = mean_variance,
+        #                       mode='markers',
+        #                       text=[mean],
+        #                       textposition='top right'))
+        # lines = [ Scatter(x=res[0], y=res[1]) for res in pdf_values(gaussian["mean"], gaussian["variance"]) for gaussian in gaussians]
+        #print lines
     titre = ""
     if title != None:
         titre = title
@@ -141,16 +180,16 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
     data = Data(lines)
     layout = Layout(
         title = titre,
-#        showlegend=True,
+        showlegend=True,
 #        autosize=True,
 #        width=1310,
 #        height=712,
         xaxis=XAxis(
+            title = xLabel,
             range=[FROM_X, TO_X],
             exponentformat='E',
             # type='linear',
             # autorange=False,
-            showlegend=True,
             showgrid=True,
             showline=False,
             # nticks=0.1,
@@ -169,6 +208,7 @@ def plot_Plotly(gaussians, title=None, FROM_X=None, TO_X=None, xlabel=None):
             ticks='',
             showticklabels=False,
         ),
+        annotations = Annotations(myAnnotations),
         # legend=Legend(
         #     borderwidth=0,
         #     xanchor='auto'
