@@ -176,7 +176,7 @@ def get_inputs(title):
         doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
-    elif (title == "Topology deviations due to basis set error"):
+    elif (title == "Topology - Basis set error"):
         print "Title found: ",title
         mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
         path_cc_pVTZ = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"

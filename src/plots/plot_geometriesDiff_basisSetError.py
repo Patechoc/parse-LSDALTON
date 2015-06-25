@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 
 def run():
-    title = "Topology deviations due to basis set error"
+    title = "Topology - Basis set error"
     inputs = configFile.get_inputs(title)
     results = get_data(inputs)
     if inputs.doPlot == True:

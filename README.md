@@ -1,6 +1,6 @@
 # Parse-LSDALTON
 
-To parse input and ouput [LSDALTON](http://daltonprogram.org/) files, and build visualizations of benchmarked methods.
+To parse input and ouput of [LSDALTON](http://daltonprogram.org/), and build visualizations of benchmarked methods.
 
 ## Local installation using [setuptools](https://pythonhosted.org/setuptools/setuptools.html) in a virtual environment
 ```
@@ -45,8 +45,8 @@ This code is using other module/libraries.
 - Conversion from cartesian to various formats (.pdb, .gzmat, .mol2): [Openbabel ](http://openbabel.org/)
 
 
-## Testing the code
-### using the standard Python unit testing framework ([PyUnit](https://docs.python.org/2/library/unittest.html))
+## Testing
+### with the standard Python unit testing framework ([PyUnit](https://docs.python.org/2/library/unittest.html))
 You can just run the tests like so:
 ```
 $ cd test
@@ -58,7 +58,7 @@ $ python -m unittest discover -v
 ```
 (see https://docs.python.org/2/library/unittest.html for more information about unit testing)
 
-### using [PyTest](http://pytest.org/)
+### with [PyTest](http://pytest.org/)
 ```
 $ cd test
 $ py.test -q test_read_LSDALTON_output
@@ -69,8 +69,7 @@ $ cd test
 $ py.test
 ```
 
-## Continuous delivery
-The code is testing continuously (after every `git push`) using [Wercker](http://wercker.com/) and explains why we need the following files:
+The code is tested continuously using [Wercker](http://wercker.com/) which requires those files:
 ```
 ├── wercker.yml
 └── requirements.txt
