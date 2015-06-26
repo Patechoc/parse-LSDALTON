@@ -223,6 +223,7 @@ def generate_plots_DensityFitting(inputs, results):
                         'name':name})
 
             #    normalDistribution.plot_Matplotlib(bonds, title, FROM_X=-1.*max_var, TO_X=max_var)
+            ### PLOTLY
             normalDistribution.plot_Plotly(bonds,
                                            titleBonds,
                                            xLabel=u"Bond deviation (\u212B)")
@@ -233,10 +234,11 @@ def generate_plots_DensityFitting(inputs, results):
                                            titleDihedrals,
                                            xLabel=u"Dihedral deviation (\u00B0)")
 
-            #normalDistribution.plot_Matplotlib(bonds, titleBonds)
-            #normalDistribution.plot_Matplotlib(angles, titleAngles)
-            #normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
-            #plt.show()
+            ### MATPLOTLIB
+            normalDistribution.plot_Matplotlib(bonds, titleBonds)
+            normalDistribution.plot_Matplotlib(angles, titleAngles)
+            normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
+            plt.show()
 
 if __name__ == "__main__":
     run()

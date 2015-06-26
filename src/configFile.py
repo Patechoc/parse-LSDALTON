@@ -176,23 +176,48 @@ def get_inputs(title):
         doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
-    elif (title == "Topology - Basis set error"):
+    elif (title == "Topology deviations - ADMM"):
         print "Title found: ",title
-        mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
+        #mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
+        mol_list = ['valinomycin'] #['taxol','valinomycin']
         path_cc_pVTZ = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"
         path_6_31Gs = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
-        dal_list = [{'abrev':'LinK-noDF',
-                     'pattern':'geomOpt-b3lyp_Vanlenthe_noDF',
-                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
-                    {'abrev':'LinK',
+        dal_list = [{'abrev':'LinK',
                      'pattern':'geomOpt-b3lyp_Vanlenthe',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMM2-PBEX',
+                     'pattern':'geomOpt-b3lyp_ADMM2-PBEX',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMM2-B88X',
+                     'pattern':'geomOpt-b3lyp_ADMM2-B88X',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMM2-KT3X',
+                     'pattern':'geomOpt-b3lyp_ADMM2-KT3X',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMM2-OPTX',
+                     'pattern':'geomOpt-b3lyp_ADMM2-OPTX',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMMS-PBEX',
+                     'pattern':'geomOpt-b3lyp_ADMMS-PBEX',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMMS-B88X',
+                     'pattern':'geomOpt-b3lyp_ADMMS-B88X',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMMS-KT3X',
+                     'pattern':'geomOpt-b3lyp_ADMMS-KT3X',
+                     'path_to_files':[path_cc_pVTZ, path_6_31Gs] },
+                    {'abrev':'ADMMS-OPTX',
+                     'pattern':'geomOpt-b3lyp_ADMMS-OPTX',
                      'path_to_files':[path_cc_pVTZ, path_6_31Gs] }]
 
 
         basisSets = [{'type':'regBasis', 'abrev':'cc-pVTZ','pattern':'cc-pVTZ'},
+                     {'type':'regBasis', 'abrev':'6-31G*', 'pattern':'6-31Gs'},
                      {'type':'auxBasis', 'abrev':'df-def2','pattern':'df-def2'},
-                     {'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'},
-                     {'type':'regBasis', 'abrev':'6-31G*','pattern':'6-31Gs'}]
+
+                     {'type':'admmBasis','abrev':'3-21G',  'pattern':'3-21G'}]
+                     #{'type':'auxBasis', 'abrev':'cc-pVTZdenfit','pattern':'cc-pVTZdenfit'},
+
         doPlot = True
         inputs.set_inputs(title, mol_list, dal_list, basisSets, doPlot)
 
