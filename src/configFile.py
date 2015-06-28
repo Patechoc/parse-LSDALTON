@@ -179,7 +179,7 @@ def get_inputs(title):
     elif (title == "Topology deviations - ADMM"):
         print "Title found: ",title
         #mol_list = ['c180','valinomycin'] #['taxol','valinomycin']
-        mol_list = ['valinomycin'] #['taxol','valinomycin']
+        mol_list = ['taxol','valinomycin']
         path_cc_pVTZ = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_cc-pVTZ"
         path_6_31Gs = "/home/ctcc2/Documents/LSDALTON/SIMULATIONS/RESULTS_ADMM_geomOpt/benchmark_6-31Gs"
         dal_list = [{'abrev':'LinK',

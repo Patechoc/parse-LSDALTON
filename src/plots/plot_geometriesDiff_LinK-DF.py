@@ -11,6 +11,7 @@ import xyz2molecule as xyz
 import topologyDiff as topD
 import normalDistribution
 import matplotlib.pyplot as plt
+import lib_spreadsheet as libCSV
 #import compare_LSDALTON_outputs as compLS
 
 
@@ -41,7 +42,11 @@ def run_command_or_exit(cmd):
         out = None
     return out
 
+def write_data2csv(ArrayOfDict, csv_filename):
+    newFile = libCSV.write_arrayOfObjects_to_csv(ArrayOfDict, csv_filename, delimiterW=',', quotecharW='"')
+
 def get_data(inputs):
+    results_csv = []
     results = []
     today = date.today()
     today_str = today.isoformat()
@@ -161,10 +166,42 @@ def get_data(inputs):
                         'basisAux'     : aux,
                         'diffTopoError': diff,
                     }
+                    newRow = {
+                        'molName'    : str_mol,
+                        'basisREG'   : regBas['abrev'],
+                        'basisAux'   : aux['abrev'],
+                        'dalREF'     : refDal['abrev'],
+                        #'dalREF_pattern'     : refDal['pattern'],
+                        'dal2'       : dal['abrev'],
+                        #'dal2_pattern'       : dal['pattern'],
+                        #'fileOutREF' : pathToFile_RefOut,
+                        #'fileOut2'   : pathToFile_out,
+                        #'fileXYZREF' : path_to_fileRefXYZ,
+                        #'fileXYZ2'   : path_to_fileXYZ,
+                        'covRadiusFactor': diff.topology1.covRadFactor,
+                        'nbAtoms': diff.molecule1.nbAtomsInMolecule,
+                        #'error_bonds_unit': diff.error_bonds['unit'],
+                        'error_bonds_mean': diff.error_bonds['mean'],
+                        'error_bonds_stdDev': diff.error_bonds['stdDev'],
+                        #'error_bonds_mad': diff.error_bonds['mad'],
+                        'error_bonds_maxAbs': diff.error_bonds['maxAbs'],
+                        #'error_angles_unit': diff.error_angles['unit'],
+                        'error_angles_mean': diff.error_angles['mean'],
+                        'error_angles_stdDev': diff.error_angles['stdDev'],
+                        #'error_angles_mad': diff.error_angles['mad'],
+                        'error_angles_maxAbs': diff.error_angles['maxAbs'],
+                        #'error_dihedrals_unit': diff.error_dihedrals['unit'],
+                        'error_dihedrals_mean': diff.error_dihedrals['mean'],
+                        'error_dihedrals_stdDev': diff.error_dihedrals['stdDev'],
+                        #'error_dihedrals_mad': diff.error_dihedrals['mad'],
+                        'error_dihedrals_maxAbs': diff.error_dihedrals['maxAbs'],
+                    }
                     if newComparison['diffTopoError'].error_bonds['variance'] == 0:
                         print "\t\t\tvariance == 0 >>> won't be plotted"
                     else:
                         results.append(newComparison)
+                        results_csv.append(newRow)
+    write_data2csv(results_csv, "./results_LinK_noDF_vs_DF.csv")
     return results
 
 
@@ -235,10 +272,10 @@ def generate_plots_DensityFitting(inputs, results):
                                            xLabel=u"Dihedral deviation (\u00B0)")
 
             ### MATPLOTLIB
-            normalDistribution.plot_Matplotlib(bonds, titleBonds)
-            normalDistribution.plot_Matplotlib(angles, titleAngles)
-            normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
-            plt.show()
+            #normalDistribution.plot_Matplotlib(bonds, titleBonds)
+            #normalDistribution.plot_Matplotlib(angles, titleAngles)
+            #normalDistribution.plot_Matplotlib(dihedrals, titleDihedrals)
+            #plt.show()
 
 if __name__ == "__main__":
     run()
